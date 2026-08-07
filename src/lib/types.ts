@@ -28,12 +28,19 @@ export interface UsuarioIgreja {
   papel: PapelIgreja;
 }
 
+export interface CartaoSalvo {
+  bandeira: string;
+  ultimosDigitos: string;
+  tokenFake: string;
+}
+
 export interface Fiel {
   id: string;
   igrejaId: string;
   nome: string;
   telefone: string;
   criadoEm: string;
+  cartaoSalvo?: CartaoSalvo;
 }
 
 export interface LinkPagamento {
@@ -85,10 +92,10 @@ export interface Contribuicao {
   campanhaId: string | null;
   meio: MeioPagamento;
   valorBruto: number;
-  comissaoPercentual: number;
-  comissaoValor: number;
-  custoGateway: number;
-  valorLiquido: number;
+  taxaPercentual: number;
+  taxaValor: number;
+  valorTotalFiel: number;
+  taxaCobradaVia: "cartao_salvo" | "pix_separado";
   criadaEm: string;
 }
 

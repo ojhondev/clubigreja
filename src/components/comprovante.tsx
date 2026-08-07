@@ -1,4 +1,4 @@
-import { getCampanha, getContribuicao, getIgreja } from "@/lib/mock-db";
+import { getCampanha, getContribuicao, getFiel, getIgreja } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
 import { Card } from "@/components/ui";
@@ -12,14 +12,18 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Contribuição livre",
 };
 
-const ROTULO_MEIO: Record<string, string> = { pix: "Pix", cartao: "Cartão", boleto: "Boleto" };
-
 export function Comprovante({ contribuicaoId }: { contribuicaoId: string }) {
   const contribuicao = getContribuicao(contribuicaoId);
   if (!contribuicao) notFound();
 
   const igreja = getIgreja(contribuicao.igrejaId);
   const campanha = contribuicao.campanhaId ? getCampanha(contribuicao.campanhaId) : undefined;
+  const fiel = getFiel(contribuicao.fielId);
+
+  const taxaRotulo =
+    contribuicao.taxaCobradaVia === "cartao_salvo" && fiel?.cartaoSalvo
+      ? `Cartão ${fiel.cartaoSalvo.bandeira} final ${fiel.cartaoSalvo.ultimosDigitos}`
+      : "Pix separado";
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -30,15 +34,29 @@ export function Comprovante({ contribuicaoId }: { contribuicaoId: string }) {
       <p className="mt-1 text-muted">Obrigado por apoiar {igreja?.nome}.</p>
 
       <Card className="mt-6 w-full text-left">
-        <p className="mb-4 text-3xl font-bold">{formatarMoeda(contribuicao.valorBruto)}</p>
-        <dl className="space-y-2 text-sm">
+        <p className="mb-1 text-sm text-muted">Valor recebido pela igreja</p>
+        <p className="mb-4 text-3xl font-bold text-success">{formatarMoeda(contribuicao.valorBruto)}</p>
+
+        <dl className="space-y-2 border-t border-border pt-4 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted">Finalidade</dt>
             <dd className="font-medium">{campanha ? campanha.titulo : ROTULO_TIPO[contribuicao.tipo]}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted">Meio de pagamento</dt>
-            <dd className="font-medium">{ROTULO_MEIO[contribuicao.meio]}</dd>
+            <dt className="text-muted">Doação via Pix</dt>
+            <dd className="font-medium">{formatarMoeda(contribuicao.valorBruto)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted">Taxa de processamento</dt>
+            <dd className="font-medium">{formatarMoeda(contribuicao.taxaValor)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted">Cobrada em</dt>
+            <dd className="font-medium">{taxaRotulo}</dd>
+          </div>
+          <div className="flex justify-between border-t border-border pt-2">
+            <dt className="font-medium">Total pago por você</dt>
+            <dd className="font-bold">{formatarMoeda(contribuicao.valorTotalFiel)}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-muted">Data</dt>
@@ -50,6 +68,10 @@ export function Comprovante({ contribuicaoId }: { contribuicaoId: string }) {
           </div>
         </dl>
       </Card>
+
+      <p className="mt-4 text-xs text-muted">
+        A igreja recebeu o valor integral da sua contribuição — a taxa de processamento é paga por você, à parte.
+      </p>
     </div>
   );
 }

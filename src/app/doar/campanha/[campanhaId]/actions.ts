@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { getCampanha, criarFielConvidado } from "@/lib/mock-db";
 import { gateway } from "@/lib/payments";
-import type { MeioPagamento } from "@/lib/types";
 
 export async function doarCampanhaPublicoAction(formData: FormData) {
   const campanhaId = String(formData.get("campanhaId"));
@@ -11,8 +10,9 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
   if (!campanha) return;
 
   const nome = String(formData.get("nome") ?? "").trim();
-  const meio = String(formData.get("meio")) as MeioPagamento;
   const valorBruto = Number(formData.get("valor"));
+  const cartaoNumero = formData.get("cartaoNumero");
+  const cartaoNome = formData.get("cartaoNome");
   if (!valorBruto || valorBruto <= 0) return;
 
   const fielConvidado = criarFielConvidado(campanha.igrejaId, nome);
@@ -22,8 +22,9 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
     fielId: fielConvidado.id,
     tipo: "campanha",
     campanhaId: campanha.id,
-    meio,
     valorBruto,
+    novoCartao:
+      cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
 
   redirect(`/doar/comprovante/${resultado.id}`);

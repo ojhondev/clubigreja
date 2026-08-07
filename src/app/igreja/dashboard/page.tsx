@@ -5,9 +5,9 @@ import {
   getContribuicoesPorTipo,
   getCrescimentoMensal,
   getResumoFinanceiro,
+  getTaxasFieisMesAtual,
   getTotaisPorMesDetalhado,
   getUltimasContribuicoes,
-  getValorAReceber,
 } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, ProgressBar, SectionLabel, StatCard } from "@/components/ui";
@@ -21,7 +21,7 @@ export default async function DashboardIgrejaPage() {
   const igrejaId = sessao!.igrejaId!;
   const igreja = getIgreja(igrejaId)!;
   const resumo = getResumoFinanceiro(igrejaId);
-  const aReceber = getValorAReceber(igrejaId);
+  const taxasFieisMes = getTaxasFieisMesAtual(igrejaId);
   const porTipo = getContribuicoesPorTipo(igrejaId);
   const totaisMensais = getTotaisPorMesDetalhado(igrejaId);
   const crescimento = getCrescimentoMensal(igrejaId);
@@ -85,7 +85,7 @@ export default async function DashboardIgrejaPage() {
             </Badge>
           )}
         </Card>
-        <StatCard label="Valor à receber" value={formatarMoeda(aReceber)} />
+        <StatCard label="Taxa paga pelos fiéis este mês" value={formatarMoeda(taxasFieisMes)} />
         <StatCard label="Sua captação de campanhas" value={formatarMoeda(porTipo.campanha)} />
         <StatCard label="Sua captação de dízimo" value={formatarMoeda(porTipo.dizimo)} />
       </div>
@@ -102,7 +102,7 @@ export default async function DashboardIgrejaPage() {
       </div>
 
       <p className="mt-4 text-xs text-muted">
-        Repassado até agora: {formatarMoeda(resumo.totalLiquido)} de {formatarMoeda(resumo.totalBruto)} arrecadados.
+        Sua igreja recebe 100% do que for arrecadado — a taxa de processamento é paga pelos fiéis, à parte.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">

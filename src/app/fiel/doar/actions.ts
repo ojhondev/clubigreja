@@ -4,16 +4,17 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
-import type { MeioPagamento, TipoArrecadacao } from "@/lib/types";
+import type { TipoArrecadacao } from "@/lib/types";
 
 export async function doarAction(formData: FormData) {
   const sessao = await getSessao();
   if (!sessao?.igrejaId) return;
 
   const tipo = String(formData.get("tipo")) as TipoArrecadacao;
-  const meio = String(formData.get("meio")) as MeioPagamento;
   const valorBruto = Number(formData.get("valor"));
   const campanhaId = (formData.get("campanhaId") as string) || null;
+  const cartaoNumero = formData.get("cartaoNumero");
+  const cartaoNome = formData.get("cartaoNome");
 
   if (!valorBruto || valorBruto <= 0) return;
 
@@ -22,8 +23,9 @@ export async function doarAction(formData: FormData) {
     fielId: sessao.usuarioId,
     tipo,
     campanhaId,
-    meio,
     valorBruto,
+    novoCartao:
+      cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
 
   revalidatePath("/fiel/inicio");

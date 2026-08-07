@@ -1,19 +1,29 @@
-import { registrarContribuicao } from "../mock-db";
+import { getFiel, registrarContribuicao, salvarCartaoFiel } from "../mock-db";
 import type { CobrancaInput, CobrancaResultado, PaymentGateway } from "./gateway";
 
-// Simula o comportamento de um gateway com split (formato Asaas): confirma o
-// pagamento na hora, calcula a comissão do Club Igreja e "credita" o líquido
-// na conta da igreja — tudo em memória, sem nenhuma chamada de rede.
+function tokenizarCartaoFake(numero: string) {
+  const digitos = numero.replace(/\D/g, "");
+  const ultimosDigitos = digitos.slice(-4) || "0000";
+  const bandeira = digitos.startsWith("4") ? "Visa" : digitos.startsWith("5") ? "Mastercard" : "Cartão";
+  return { bandeira, ultimosDigitos, tokenFake: `tok_fake_${Date.now()}` };
+}
+
+// Simula duas cobranças independentes, sem nenhuma chamada de rede: o Pix da
+// doação (100% pra igreja) e a cobrança da taxa de processamento (pro Club
+// Igreja) — nunca uma única cobrança dividida entre as duas contas.
 export class MockPaymentGateway implements PaymentGateway {
   async criarCobranca(input: CobrancaInput): Promise<CobrancaResultado> {
     await simularLatenciaDeRede();
+
+    if (input.novoCartao) {
+      salvarCartaoFiel(input.fielId, tokenizarCartaoFake(input.novoCartao.numero));
+    }
 
     const contribuicao = registrarContribuicao({
       fielId: input.fielId,
       igrejaId: input.igrejaId,
       tipo: input.tipo,
       campanhaId: input.campanhaId,
-      meio: input.meio,
       valorBruto: input.valorBruto,
     });
 
@@ -21,8 +31,10 @@ export class MockPaymentGateway implements PaymentGateway {
       id: contribuicao.id,
       status: "CONFIRMADO",
       valorBruto: contribuicao.valorBruto,
-      comissaoValor: contribuicao.comissaoValor,
-      valorLiquido: contribuicao.valorLiquido,
+      taxaValor: contribuicao.taxaValor,
+      valorTotalFiel: contribuicao.valorTotalFiel,
+      taxaCobradaVia: contribuicao.taxaCobradaVia,
+      cartaoSalvo: getFiel(input.fielId)?.cartaoSalvo,
       criadaEm: contribuicao.criadaEm,
     };
   }

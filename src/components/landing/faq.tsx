@@ -7,12 +7,12 @@ const PERGUNTAS = [
   {
     pergunta: "O dinheiro da minha igreja está seguro?",
     resposta:
-      "Sim. O Club Igreja não guarda o dinheiro da sua igreja — cada contribuição já nasce dividida (split automático) entre a comissão do Club e a conta bancária da própria igreja, através de um gateway de pagamento regulamentado pelo Banco Central. Em nenhum momento a igreja perde acesso ao próprio dinheiro.",
+      "Sim. O Club Igreja nunca guarda nem movimenta o dinheiro da sua igreja — cada contribuição é um Pix direto pra chave Pix da própria igreja, sem passar pela nossa conta em nenhum momento. A igreja recebe 100% do que for arrecadado.",
   },
   {
     pergunta: "Isso é legal? Precisamos de alguma autorização?",
     resposta:
-      "Sim, é legal. Sua igreja precisa apenas ter CNPJ para se cadastrar. A comissão do Club é clara desde o cadastro (1,5% em campanhas, 1% ao mês em dízimo recorrente), sem letras miúdas.",
+      "Sim, é legal. Sua igreja precisa apenas ter CNPJ para se cadastrar. A taxa de processamento (3,5% em dízimo, 2,5% em campanhas) é paga pelo próprio fiel, somada ao valor da contribuição — sua igreja nunca perde nada do que for arrecadado.",
   },
   {
     pergunta: "Precisamos entender de tecnologia para usar?",
@@ -22,7 +22,7 @@ const PERGUNTAS = [
   {
     pergunta: "Quanto tempo até o dinheiro cair na conta da igreja?",
     resposta:
-      "O repasse é automático — em poucos dias úteis o valor líquido (já descontada a comissão) cai direto na conta bancária cadastrada pela igreja, sem precisar pedir nada.",
+      "Na hora. A contribuição é um Pix direto pra chave Pix da própria igreja — não existe prazo de repasse porque o Club Igreja nunca chega a receber esse dinheiro.",
   },
   {
     pergunta: "Podemos cancelar a qualquer momento?",

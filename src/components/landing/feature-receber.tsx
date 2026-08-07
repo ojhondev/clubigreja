@@ -10,8 +10,8 @@ export function FeatureReceber() {
             Receba diretamente na conta da igreja.
           </h2>
           <p className="mt-4 max-w-md text-lg text-muted">
-            Receba dízimos, ofertas e campanhas em poucos toques. Pix, cartão, recorrência e
-            links.
+            Receba dízimos, ofertas e campanhas via Pix, direto na chave da própria igreja — sem
+            intermediário, sem prazo de repasse, sem desconto.
           </p>
           <a href="mailto:contato@dclubigreja.com" className="mt-6 inline-block">
             <Button variant="dark-outline" className="font-display">

@@ -7,16 +7,15 @@ export interface LinhaExportavel {
   data: string;
   fiel: string;
   finalidade: string;
-  meio: string;
-  bruto: number;
-  comissao: number;
-  liquido: number;
+  valorIgreja: number;
+  taxaFiel: number;
+  totalPagoFiel: number;
 }
 
 function paraCsv(linhas: LinhaExportavel[]): string {
-  const cabecalho = ["Data", "Fiel", "Finalidade", "Meio", "Bruto", "Comissão", "Líquido"];
+  const cabecalho = ["Data", "Fiel", "Finalidade", "Valor recebido pela igreja", "Taxa paga pelo fiel", "Total pago pelo fiel"];
   const corpo = linhas.map((l) =>
-    [l.data, l.fiel, l.finalidade, l.meio, l.bruto.toFixed(2), l.comissao.toFixed(2), l.liquido.toFixed(2)]
+    [l.data, l.fiel, l.finalidade, l.valorIgreja.toFixed(2), l.taxaFiel.toFixed(2), l.totalPagoFiel.toFixed(2)]
       .map((campo) => `"${String(campo).replace(/"/g, '""')}"`)
       .join(";")
   );

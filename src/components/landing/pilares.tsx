@@ -11,7 +11,7 @@ const PILARES = [
     icon: LayoutDashboard,
     titulo: "Organizar",
     descricao:
-      "Painel financeiro com extrato pronto para prestação de contas, mural de comunicados, gestão de campanhas e repasse automático direto na conta da igreja.",
+      "Painel financeiro com extrato pronto para prestação de contas, mural de comunicados e gestão de campanhas — cada contribuição já cai direto na conta da igreja, sem prazo de repasse.",
   },
   {
     icon: Users,

@@ -13,13 +13,13 @@ const ROTULO_STATUS: Record<string, string> = {
 
 export default function IgrejasAdminPage() {
   const gmvTotal = igrejas.reduce((soma, i) => soma + getResumoFinanceiro(i.id).totalBruto, 0);
-  const comissaoTotal = igrejas.reduce((soma, i) => soma + getResumoFinanceiro(i.id).totalComissao, 0);
+  const receitaTotal = igrejas.reduce((soma, i) => soma + getResumoFinanceiro(i.id).totalTaxasFieis, 0);
   const pendentes = igrejas.filter((i) => i.statusOnboarding === "em_analise" || i.statusOnboarding === "pendente");
   const demais = igrejas.filter((i) => i.statusOnboarding === "aprovado" || i.statusOnboarding === "reprovado");
 
   return (
     <div>
-      <PageHeader title="Igrejas na plataforma" subtitle="Visão consolidada de GMV e comissão retida." />
+      <PageHeader title="Igrejas na plataforma" subtitle="Visão consolidada de GMV e taxa de processamento paga pelos fiéis." />
 
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <Card>
@@ -32,7 +32,7 @@ export default function IgrejasAdminPage() {
         </Card>
         <Card>
           <p className="text-sm text-muted">Receita do Club Igreja</p>
-          <p className="mt-1 text-2xl font-bold text-success">{formatarMoeda(comissaoTotal)}</p>
+          <p className="mt-1 text-2xl font-bold text-success">{formatarMoeda(receitaTotal)}</p>
         </Card>
       </div>
 

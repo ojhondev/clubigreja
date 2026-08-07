@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, CreditCard } from "lucide-react";
 import { PhoneFrame } from "./phone-frame";
 import { StepFlow, type Step } from "./step-flow";
 
@@ -53,6 +53,16 @@ function TelaValor() {
           </motion.div>
         ))}
       </div>
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="mt-4 rounded-xl bg-[#F7FAFF] px-3 py-2.5"
+      >
+        <p className="text-xs text-muted">Você vai pagar</p>
+        <p className="text-lg font-bold text-foreground">R$ 103,50</p>
+        <p className="mt-1 text-[11px] text-muted">Já inclui a taxa de processamento — a igreja recebe R$ 100,00.</p>
+      </motion.div>
     </PhoneFrame>
   );
 }
@@ -60,16 +70,14 @@ function TelaValor() {
 function TelaPagamento() {
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Como você quer pagar?</p>
-      <div className="flex gap-3">
-        <div className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-primary bg-[#EAF6FF] px-3 py-3 text-sm font-bold text-primary">
-          <span className="h-2.5 w-2.5 rounded-full bg-primary" />
-          Pix
-        </div>
-        <div className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-border px-3 py-3 text-sm font-bold text-muted">
-          <span className="h-2.5 w-2.5 rounded-full border border-muted" />
-          Cartão
-        </div>
+      <p className="mb-3 text-sm font-bold text-foreground">Confirmar contribuição</p>
+      <div className="rounded-xl border border-border bg-white px-3 py-2.5">
+        <p className="text-xs text-muted">Pix da doação</p>
+        <p className="text-sm font-bold text-foreground">R$ 100,00 direto pra igreja</p>
+      </div>
+      <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5">
+        <CreditCard size={16} className="shrink-0 text-primary" />
+        <p className="text-xs text-muted">Taxa cobrada automaticamente no cartão final 4242</p>
       </div>
       <motion.div
         initial={{ scale: 1 }}
@@ -79,6 +87,7 @@ function TelaPagamento() {
       >
         Confirmar contribuição
       </motion.div>
+      <p className="mt-3 text-center text-[11px] text-muted">Uma confirmação só — o Pix e a taxa acontecem juntos.</p>
     </PhoneFrame>
   );
 }
@@ -109,7 +118,7 @@ function TelaComprovante() {
           transition={{ delay: 0.45 }}
           className="mt-1 text-sm text-muted"
         >
-          Dízimo · R$ 100,00 · Pix
+          Dízimo · R$ 100,00 pra igreja + R$ 3,50 de taxa
         </motion.p>
         <motion.p
           initial={{ opacity: 0 }}
@@ -117,7 +126,7 @@ function TelaComprovante() {
           transition={{ delay: 0.6 }}
           className="mt-4 text-xs text-muted"
         >
-          Comprovante enviado automaticamente. A igreja recebe direto na conta.
+          A igreja recebe os 100% na hora. A taxa é paga por você, à parte.
         </motion.p>
       </div>
     </PhoneFrame>
@@ -133,17 +142,18 @@ export function FielFlow({ qrDataUrl }: { qrDataUrl: string }) {
     },
     {
       titulo: "Escolhe a finalidade e o valor",
-      descricao: "Dízimo, oferta ou uma campanha específica — com valores sugeridos para agilizar em poucos toques.",
+      descricao: "O total já aparece com a taxa incluída, antes de confirmar — sem cálculo escondido.",
       render: () => <TelaValor />,
     },
     {
-      titulo: "Escolhe Pix ou cartão e confirma",
-      descricao: "Sem cadastro complicado. Poucos toques e a contribuição já está a caminho da conta da igreja.",
+      titulo: "Uma confirmação só",
+      descricao:
+        "O Pix vai direto pra igreja e a taxa é cobrada ao mesmo tempo no cartão salvo — sem pedir uma segunda aprovação.",
       render: () => <TelaPagamento />,
     },
     {
       titulo: "Recebe o comprovante na hora",
-      descricao: "O fiel guarda o histórico de tudo o que já contribuiu, sem a igreja precisar fazer nada.",
+      descricao: "Com o valor que foi pra igreja e a taxa que o fiel pagou, bem separados.",
       render: () => <TelaComprovante />,
     },
   ];

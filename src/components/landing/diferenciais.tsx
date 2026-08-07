@@ -8,8 +8,8 @@ const ITENS = [
   },
   {
     icon: Zap,
-    titulo: "Split automático",
-    descricao: "O repasse cai direto na conta da igreja — sem boleto manual, sem planilha.",
+    titulo: "Você recebe 100%",
+    descricao: "Cada contribuição vai direto pro Pix da igreja, na hora — nenhum valor é retido ou repassado depois.",
   },
   {
     icon: ShieldCheck,

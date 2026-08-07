@@ -1,11 +1,14 @@
 import { getContribuicoesDaIgreja, getFiel } from "./mock-db";
-import { mesAno, hoje, dataLocal } from "./hoje";
+import { mesAno, hoje } from "./hoje";
 import type { Contribuicao } from "./types";
 
+// A igreja recebe 100% do valorBruto — a taxa de processamento é paga pelo
+// fiel, por fora, e nunca é descontada do que a igreja arrecada. totalTaxasFieis
+// existe só como informação de transparência (quanto os fiéis pagaram ao todo),
+// não afeta o quanto a igreja recebeu.
 export interface ResumoFinanceiro {
   totalBruto: number;
-  totalComissao: number;
-  totalLiquido: number;
+  totalTaxasFieis: number;
   totalBrutoMesAtual: number;
   quantidadeContribuicoes: number;
 }
@@ -17,13 +20,12 @@ export function getResumoFinanceiro(igrejaId: string): ResumoFinanceiro {
   return contribuicoes.reduce<ResumoFinanceiro>(
     (acc, c) => {
       acc.totalBruto += c.valorBruto;
-      acc.totalComissao += c.comissaoValor;
-      acc.totalLiquido += c.valorLiquido;
+      acc.totalTaxasFieis += c.taxaValor;
       acc.quantidadeContribuicoes += 1;
       if (mesAno(c.criadaEm) === mesAtual) acc.totalBrutoMesAtual += c.valorBruto;
       return acc;
     },
-    { totalBruto: 0, totalComissao: 0, totalLiquido: 0, totalBrutoMesAtual: 0, quantidadeContribuicoes: 0 }
+    { totalBruto: 0, totalTaxasFieis: 0, totalBrutoMesAtual: 0, quantidadeContribuicoes: 0 }
   );
 }
 
@@ -40,17 +42,17 @@ export function getContribuicoesPorTipo(igrejaId: string): Record<Contribuicao["
   return base;
 }
 
-// Repasse à igreja é feito em ciclo D+7 (ver PRD) — simula o saldo líquido
-// ainda dentro dessa janela, ou seja, "a caminho" da conta da igreja.
-export function getValorAReceber(igrejaId: string): number {
+// O dízimo/oferta/campanha vai direto via Pix pra chave da própria igreja —
+// não existe mais um ciclo de repasse (o Club Igreja nunca custodia esse
+// valor). Isso mede quanto os fiéis pagaram de taxa de processamento no mês,
+// como informação de transparência pra igreja (não afeta o que ela recebeu).
+export function getTaxasFieisMesAtual(igrejaId: string): number {
   const contribuicoes = getContribuicoesDaIgreja(igrejaId);
-  const referencia = hoje();
-  const seteDiasAtras = new Date(referencia);
-  seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+  const mesAtual = mesAno(hoje());
 
   return contribuicoes
-    .filter((c) => dataLocal(c.criadaEm) >= seteDiasAtras)
-    .reduce((soma, c) => soma + c.valorLiquido, 0);
+    .filter((c) => mesAno(c.criadaEm) === mesAtual)
+    .reduce((soma, c) => soma + c.taxaValor, 0);
 }
 
 export interface TotalMensal {

@@ -9,20 +9,18 @@ export function PricingSection() {
             Preços do Club
           </span>
           <h2 className="font-display mt-4 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
-            Apenas uma taxa fixa.
+            Sua igreja recebe 100%.
           </h2>
           <p className="font-display mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-            1,5% de campanhas.
-            <br />
-            1% em dízimo recorrente.
+            A taxa é paga pelo fiel, não pela igreja.
           </p>
         </div>
 
         <PricingSimulator />
 
         <p className="mx-auto mt-16 max-w-2xl text-center text-lg text-foreground/80">
-          De forma facilitada, o administrador da Igreja pode criar campanhas de arrecadação e
-          publicar o link para a comunidade através do WhatsApp, QR Code ou por e-mail.
+          A cada contribuição, o fiel vê o total antes de confirmar — sem letras miúdas. A igreja nunca
+          paga mensalidade e nunca tem nada descontado do que for arrecadado.
         </p>
       </div>
     </section>

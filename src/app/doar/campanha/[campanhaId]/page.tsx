@@ -3,6 +3,7 @@ import { getArrecadadoCampanha, getCampanha, getIgreja } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
 import { Button, Card, ProgressBar } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
+import { CartaoTaxa } from "@/components/cartao-taxa";
 import { doarCampanhaPublicoAction } from "./actions";
 
 export default async function CampanhaPublicaPage({ params }: { params: Promise<{ campanhaId: string }> }) {
@@ -46,21 +47,9 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
             />
           </label>
 
-          <SeletorValor />
+          <SeletorValor tipo="campanha" />
 
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium text-muted">Como você quer pagar?</legend>
-            <div className="flex gap-3">
-              <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-primary bg-[#EAF6FF] px-4 py-3 font-bold text-primary">
-                <input type="radio" name="meio" value="pix" defaultChecked className="accent-primary" />
-                Pix
-              </label>
-              <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-border px-4 py-3 font-bold text-muted has-[:checked]:border-primary has-[:checked]:text-primary">
-                <input type="radio" name="meio" value="cartao" className="accent-primary" />
-                Cartão
-              </label>
-            </div>
-          </fieldset>
+          <CartaoTaxa />
 
           <Button type="submit" className="w-full">
             Contribuir agora

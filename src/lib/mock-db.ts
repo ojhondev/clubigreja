@@ -1,6 +1,7 @@
-import { calcularSplit } from "./comissao";
+import { calcularTaxaProcessamento } from "./comissao";
 import { slugify } from "./slug";
 import type {
+  CartaoSalvo,
   Campanha,
   ComunicadoMural,
   Contribuicao,
@@ -50,10 +51,31 @@ export const usuariosIgreja: UsuarioIgreja[] = [
 ];
 
 export const fieis: Fiel[] = [
-  { id: "fiel-1", igrejaId: "igreja-1", nome: "Ana Beatriz Souza", telefone: "(19) 99111-2233", criadoEm: "2026-05-12" },
+  {
+    id: "fiel-1",
+    igrejaId: "igreja-1",
+    nome: "Ana Beatriz Souza",
+    telefone: "(19) 99111-2233",
+    criadoEm: "2026-05-12",
+    cartaoSalvo: { bandeira: "Visa", ultimosDigitos: "4242", tokenFake: "tok_fake_ana" },
+  },
   { id: "fiel-2", igrejaId: "igreja-1", nome: "Carlos Eduardo Lima", telefone: "(19) 99222-3344", criadoEm: "2026-05-15" },
-  { id: "fiel-3", igrejaId: "igreja-1", nome: "Beatriz Ramos", telefone: "(19) 99333-4455", criadoEm: "2026-06-01" },
-  { id: "fiel-4", igrejaId: "igreja-1", nome: "Roberto Nascimento", telefone: "(19) 99444-5566", criadoEm: "2026-06-20" },
+  {
+    id: "fiel-3",
+    igrejaId: "igreja-1",
+    nome: "Beatriz Ramos",
+    telefone: "(19) 99333-4455",
+    criadoEm: "2026-06-01",
+    cartaoSalvo: { bandeira: "Mastercard", ultimosDigitos: "8821", tokenFake: "tok_fake_beatriz" },
+  },
+  {
+    id: "fiel-4",
+    igrejaId: "igreja-1",
+    nome: "Roberto Nascimento",
+    telefone: "(19) 99444-5566",
+    criadoEm: "2026-06-20",
+    cartaoSalvo: { bandeira: "Visa", ultimosDigitos: "1099", tokenFake: "tok_fake_roberto" },
+  },
   { id: "fiel-5", igrejaId: "igreja-1", nome: "Lúcia Ferreira", telefone: "(19) 99555-6677", criadoEm: "2026-07-02" },
 ];
 
@@ -147,23 +169,22 @@ function contribuicao(
   fielId: string,
   tipo: Contribuicao["tipo"],
   campanhaId: string | null,
-  meio: Contribuicao["meio"],
   valorBruto: number,
   criadaEm: string
 ): Contribuicao {
-  const split = calcularSplit(tipo, meio, valorBruto);
+  const taxa = calcularTaxaProcessamento(tipo, valorBruto);
   return {
     id,
     igrejaId: "igreja-1",
     fielId,
     tipo,
     campanhaId,
-    meio,
+    meio: "pix",
     valorBruto,
-    comissaoPercentual: split.comissaoPercentual,
-    comissaoValor: split.comissaoValor,
-    custoGateway: split.custoGateway,
-    valorLiquido: split.valorLiquido,
+    taxaPercentual: taxa.taxaPercentual,
+    taxaValor: taxa.taxaValor,
+    valorTotalFiel: taxa.valorTotalFiel,
+    taxaCobradaVia: "cartao_salvo",
     criadaEm,
   };
 }
@@ -171,26 +192,26 @@ function contribuicao(
 function seedContribuicoes(): Contribuicao[] {
   return [
     // Ana: dízimo em dia (contribuiu este mês)
-    contribuicao("contrib-1", "fiel-1", "dizimo", null, "pix", 300, "2026-06-04"),
-    contribuicao("contrib-2", "fiel-1", "dizimo", null, "pix", 300, "2026-07-05"),
-    contribuicao("contrib-3", "fiel-1", "dizimo", null, "pix", 320, "2026-08-03"),
-    contribuicao("contrib-4", "fiel-1", "campanha", "campanha-1", "pix", 100, "2026-06-15"),
+    contribuicao("contrib-1", "fiel-1", "dizimo", null, 300, "2026-06-04"),
+    contribuicao("contrib-2", "fiel-1", "dizimo", null, 300, "2026-07-05"),
+    contribuicao("contrib-3", "fiel-1", "dizimo", null, 320, "2026-08-03"),
+    contribuicao("contrib-4", "fiel-1", "campanha", "campanha-1", 100, "2026-06-15"),
 
     // Carlos: parou de contribuir em junho — deve aparecer o lembrete
-    contribuicao("contrib-5", "fiel-2", "dizimo", null, "cartao", 250, "2026-06-10"),
-    contribuicao("contrib-6", "fiel-2", "campanha", "campanha-1", "pix", 200, "2026-06-20"),
+    contribuicao("contrib-5", "fiel-2", "dizimo", null, 250, "2026-06-10"),
+    contribuicao("contrib-6", "fiel-2", "campanha", "campanha-1", 200, "2026-06-20"),
 
     // Beatriz: contribuiu em julho, ainda não em agosto — lembrete deve aparecer
-    contribuicao("contrib-7", "fiel-3", "dizimo", null, "pix", 180, "2026-07-08"),
-    contribuicao("contrib-8", "fiel-3", "oferta", null, "pix", 50, "2026-07-08"),
+    contribuicao("contrib-7", "fiel-3", "dizimo", null, 180, "2026-07-08"),
+    contribuicao("contrib-8", "fiel-3", "oferta", null, 50, "2026-07-08"),
 
     // Roberto: dízimo recorrente em dia
-    contribuicao("contrib-9", "fiel-4", "dizimo", null, "pix", 400, "2026-07-01"),
-    contribuicao("contrib-10", "fiel-4", "dizimo", null, "pix", 400, "2026-08-01"),
-    contribuicao("contrib-11", "fiel-4", "campanha", "campanha-2", "cartao", 150, "2026-07-15"),
+    contribuicao("contrib-9", "fiel-4", "dizimo", null, 400, "2026-07-01"),
+    contribuicao("contrib-10", "fiel-4", "dizimo", null, 400, "2026-08-01"),
+    contribuicao("contrib-11", "fiel-4", "campanha", "campanha-2", 150, "2026-07-15"),
 
     // Lúcia: nunca contribuiu com dízimo ainda (só campanha) — lembrete deve aparecer
-    contribuicao("contrib-12", "fiel-5", "campanha", "campanha-1", "pix", 80, "2026-07-10"),
+    contribuicao("contrib-12", "fiel-5", "campanha", "campanha-1", 80, "2026-07-10"),
   ];
 }
 
@@ -318,31 +339,42 @@ export function getNotificacoesDoFiel(fielId: string): NotificacaoFiel[] {
 
 let proximoIdContribuicao = contribuicoes.length + 1;
 
+// A doação em si é sempre Pix, direto pra chave da igreja — nunca passa pela
+// conta do Club Igreja. A taxa de processamento é uma cobrança separada: no
+// cartão salvo do fiel, se ele tiver um cadastrado (cobrada automaticamente,
+// sem pedir uma segunda confirmação), ou registrada como "pix_separado" caso
+// contrário.
 export function registrarContribuicao(input: {
   fielId: string;
   igrejaId: string;
   tipo: Contribuicao["tipo"];
   campanhaId: string | null;
-  meio: Contribuicao["meio"];
   valorBruto: number;
 }): Contribuicao {
-  const split = calcularSplit(input.tipo, input.meio, input.valorBruto);
+  const taxa = calcularTaxaProcessamento(input.tipo, input.valorBruto);
+  const fiel = getFiel(input.fielId);
+
   const nova: Contribuicao = {
     id: `contrib-${proximoIdContribuicao++}`,
     igrejaId: input.igrejaId,
     fielId: input.fielId,
     tipo: input.tipo,
     campanhaId: input.campanhaId,
-    meio: input.meio,
+    meio: "pix",
     valorBruto: input.valorBruto,
-    comissaoPercentual: split.comissaoPercentual,
-    comissaoValor: split.comissaoValor,
-    custoGateway: split.custoGateway,
-    valorLiquido: split.valorLiquido,
+    taxaPercentual: taxa.taxaPercentual,
+    taxaValor: taxa.taxaValor,
+    valorTotalFiel: taxa.valorTotalFiel,
+    taxaCobradaVia: fiel?.cartaoSalvo ? "cartao_salvo" : "pix_separado",
     criadaEm: new Date().toISOString().slice(0, 10),
   };
   contribuicoes.push(nova);
   return nova;
+}
+
+export function salvarCartaoFiel(fielId: string, cartao: CartaoSalvo): void {
+  const fiel = fieis.find((f) => f.id === fielId);
+  if (fiel) fiel.cartaoSalvo = cartao;
 }
 
 let proximoIdLink = linksPagamento.length + 1;

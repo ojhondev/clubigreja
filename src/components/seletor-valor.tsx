@@ -1,11 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { calcularTaxaProcessamento, formatarMoeda } from "@/lib/comissao";
+import type { TipoArrecadacao } from "@/lib/types";
 
 const SUGESTOES = [30, 50, 100, 200];
 
-export function SeletorValor({ valorInicial }: { valorInicial?: number }) {
+export function SeletorValor({
+  valorInicial,
+  tipo = "dizimo",
+}: {
+  valorInicial?: number;
+  tipo?: TipoArrecadacao;
+}) {
   const [valor, setValor] = useState<string>(valorInicial ? String(valorInicial) : "");
+  const numero = Number(valor);
+  const taxa = numero > 0 ? calcularTaxaProcessamento(tipo, numero) : null;
 
   return (
     <div>
@@ -39,6 +49,16 @@ export function SeletorValor({ valorInicial }: { valorInicial?: number }) {
           className="rounded-xl border border-border px-4 py-4 text-2xl font-bold"
         />
       </label>
+
+      {taxa && (
+        <div className="mt-3 rounded-xl bg-[#F7FAFF] px-4 py-3">
+          <p className="text-sm text-muted">Você vai pagar</p>
+          <p className="text-xl font-bold text-foreground">{formatarMoeda(taxa.valorTotalFiel)}</p>
+          <p className="mt-1 text-xs text-muted">
+            Já inclui a taxa de processamento — a igreja recebe o valor integral escolhido.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

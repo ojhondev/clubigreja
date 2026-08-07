@@ -1,9 +1,13 @@
-import type { MeioPagamento, TipoArrecadacao } from "./types";
+import type { TipoArrecadacao } from "./types";
 
-// Fonte única das taxas — reaproveitada pelo cálculo de split real e pelo
-// simulador público da landing page, para nunca divergirem.
-export const TAXA_CAMPANHA = 0.015;
-export const TAXA_DIZIMO = 0.01;
+// Fonte única da taxa de processamento — reaproveitada pelo cálculo real de
+// cobrança e pelo simulador público da landing page, para nunca divergirem.
+//
+// Modelo: a igreja recebe 100% do valor que o fiel escolheu contribuir. A
+// taxa de processamento é somada ao valor e paga pelo próprio fiel — nunca
+// é descontada da igreja.
+export const TAXA_DIZIMO = 0.035;
+export const TAXA_CAMPANHA = 0.025;
 
 const PERCENTUAL_POR_TIPO: Record<TipoArrecadacao, number> = {
   dizimo: TAXA_DIZIMO,
@@ -13,37 +17,25 @@ const PERCENTUAL_POR_TIPO: Record<TipoArrecadacao, number> = {
   livre: TAXA_CAMPANHA,
 };
 
-// Estimativa de custo do gateway (Asaas) usada para calcular a margem líquida do Club Igreja.
-// A comissão cobrada da igreja já inclui esse custo — nunca é destacada ao doador.
-function custoGateway(meio: MeioPagamento, valorBruto: number): number {
-  if (meio === "pix") return 0.99;
-  if (meio === "cartao") return valorBruto * 0.0199 + 0.49;
-  return 3.49; // boleto (fora do MVP, mantido para referência futura)
+export function taxaPercentualDoTipo(tipo: TipoArrecadacao): number {
+  return PERCENTUAL_POR_TIPO[tipo];
 }
 
-export interface CalculoSplit {
-  comissaoPercentual: number;
-  comissaoValor: number;
-  custoGateway: number;
-  valorLiquido: number;
+export interface CalculoTaxa {
+  valorBruto: number;
+  taxaPercentual: number;
+  taxaValor: number;
+  valorTotalFiel: number;
 }
 
-export function calcularSplit(
-  tipo: TipoArrecadacao,
-  meio: MeioPagamento,
-  valorBruto: number
-): CalculoSplit {
-  const comissaoPercentual = PERCENTUAL_POR_TIPO[tipo];
-  const comissaoValor = Math.round(valorBruto * comissaoPercentual * 100) / 100;
-  const custo = Math.round(custoGateway(meio, valorBruto) * 100) / 100;
-  const valorLiquido = Math.round((valorBruto - comissaoValor) * 100) / 100;
+// valorBruto é o que a igreja recebe (100%, sem desconto). taxaValor é
+// somado por cima e pago pelo fiel — valorTotalFiel é o que sai do bolso dele.
+export function calcularTaxaProcessamento(tipo: TipoArrecadacao, valorBruto: number): CalculoTaxa {
+  const taxaPercentual = PERCENTUAL_POR_TIPO[tipo];
+  const taxaValor = Math.round(valorBruto * taxaPercentual * 100) / 100;
+  const valorTotalFiel = Math.round((valorBruto + taxaValor) * 100) / 100;
 
-  return {
-    comissaoPercentual,
-    comissaoValor,
-    custoGateway: custo,
-    valorLiquido,
-  };
+  return { valorBruto, taxaPercentual, taxaValor, valorTotalFiel };
 }
 
 export function formatarMoeda(valor: number): string {

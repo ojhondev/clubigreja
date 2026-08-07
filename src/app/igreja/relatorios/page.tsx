@@ -15,12 +15,6 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Valor livre",
 };
 
-const ROTULO_MEIO: Record<string, string> = {
-  pix: "Pix",
-  cartao: "Cartão",
-  boleto: "Boleto",
-};
-
 export default async function RelatoriosPage() {
   const sessao = await getSessao();
   const igrejaId = sessao!.igrejaId!;
@@ -35,10 +29,9 @@ export default async function RelatoriosPage() {
     data: formatarData(c.criadaEm),
     fiel: getFiel(c.fielId)?.nome ?? "—",
     finalidade: ROTULO_TIPO[c.tipo],
-    meio: ROTULO_MEIO[c.meio],
-    bruto: c.valorBruto,
-    comissao: c.comissaoValor,
-    liquido: c.valorLiquido,
+    valorIgreja: c.valorBruto,
+    taxaFiel: c.taxaValor,
+    totalPagoFiel: c.valorTotalFiel,
   }));
   const nomeArquivoCsv = `extrato-${igreja.slug}-${new Date().toISOString().slice(0, 10)}.csv`;
 
@@ -51,18 +44,23 @@ export default async function RelatoriosPage() {
 
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <Card>
-          <p className="text-sm text-muted">Total arrecadado (bruto)</p>
-          <p className="mt-1 text-xl font-bold">{formatarMoeda(resumo.totalBruto)}</p>
+          <p className="text-sm text-muted">Total recebido pela igreja</p>
+          <p className="mt-1 text-xl font-bold text-success">{formatarMoeda(resumo.totalBruto)}</p>
         </Card>
         <Card>
-          <p className="text-sm text-muted">Comissão retida (Club Igreja)</p>
-          <p className="mt-1 text-xl font-bold text-muted">{formatarMoeda(resumo.totalComissao)}</p>
+          <p className="text-sm text-muted">Contribuições recebidas</p>
+          <p className="mt-1 text-xl font-bold">{resumo.quantidadeContribuicoes}</p>
         </Card>
         <Card>
-          <p className="text-sm text-muted">Total repassado à igreja</p>
-          <p className="mt-1 text-xl font-bold text-success">{formatarMoeda(resumo.totalLiquido)}</p>
+          <p className="text-sm text-muted">Taxa de processamento paga pelos fiéis</p>
+          <p className="mt-1 text-xl font-bold text-muted">{formatarMoeda(resumo.totalTaxasFieis)}</p>
         </Card>
       </div>
+
+      <p className="mb-8 text-sm text-muted">
+        Sua igreja recebe 100% do valor de cada contribuição — a taxa de processamento é paga à parte, pelo
+        próprio fiel, e nunca é descontada do que a igreja arrecada.
+      </p>
 
       <Card className="mb-8">
         <h2 className="mb-4 font-bold">Por finalidade</h2>
@@ -84,10 +82,9 @@ export default async function RelatoriosPage() {
               <th className="py-2 pr-4">Data</th>
               <th className="py-2 pr-4">Fiel</th>
               <th className="py-2 pr-4">Finalidade</th>
-              <th className="py-2 pr-4">Meio</th>
-              <th className="py-2 pr-4 text-right">Bruto</th>
-              <th className="py-2 pr-4 text-right">Comissão</th>
-              <th className="py-2 text-right">Líquido</th>
+              <th className="py-2 pr-4 text-right">Recebido pela igreja</th>
+              <th className="py-2 pr-4 text-right">Taxa do fiel</th>
+              <th className="py-2 text-right">Total pago pelo fiel</th>
             </tr>
           </thead>
           <tbody>
@@ -96,12 +93,11 @@ export default async function RelatoriosPage() {
                 <td className="py-2 pr-4">{formatarData(c.criadaEm)}</td>
                 <td className="py-2 pr-4">{getFiel(c.fielId)?.nome ?? "—"}</td>
                 <td className="py-2 pr-4">{ROTULO_TIPO[c.tipo]}</td>
-                <td className="py-2 pr-4">{ROTULO_MEIO[c.meio]}</td>
-                <td className="py-2 pr-4 text-right">{formatarMoeda(c.valorBruto)}</td>
+                <td className="py-2 pr-4 text-right font-medium text-success">{formatarMoeda(c.valorBruto)}</td>
                 <td className="py-2 pr-4 text-right text-muted">
-                  {formatarMoeda(c.comissaoValor)} ({(c.comissaoPercentual * 100).toFixed(1)}%)
+                  {formatarMoeda(c.taxaValor)} ({(c.taxaPercentual * 100).toFixed(1)}%)
                 </td>
-                <td className="py-2 text-right font-medium text-success">{formatarMoeda(c.valorLiquido)}</td>
+                <td className="py-2 text-right font-medium">{formatarMoeda(c.valorTotalFiel)}</td>
               </tr>
             ))}
           </tbody>
