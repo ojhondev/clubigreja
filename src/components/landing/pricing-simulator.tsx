@@ -28,7 +28,7 @@ function ColunaSimulador({
       </span>
 
       <label className="mt-4 flex flex-col gap-1">
-        <span className="text-sm text-muted">Sua igreja arrecadou</span>
+        <span className="text-sm text-muted">O fiel doou</span>
         <div className="flex items-center gap-1 rounded-xl bg-[#EEF1FC] px-4 py-3">
           <span className="text-lg font-bold text-foreground sm:text-2xl">R$</span>
           <input
@@ -72,8 +72,8 @@ export function PricingSimulator() {
     <div className="relative mx-auto max-w-3xl">
       <div className="absolute inset-x-4 -bottom-3 top-3 rounded-[2rem] bg-primary sm:inset-x-8" />
       <div className="relative grid gap-8 rounded-[2rem] bg-white p-6 shadow-xl sm:grid-cols-2 sm:p-10">
-        <ColunaSimulador titulo="Campanhas" taxaPercentual={TAXA_CAMPANHA} valorInicial={100000} />
-        <ColunaSimulador titulo="Dízimo Recorrente" taxaPercentual={TAXA_DIZIMO} valorInicial={25000} />
+        <ColunaSimulador titulo="Campanhas" taxaPercentual={TAXA_CAMPANHA} valorInicial={50} />
+        <ColunaSimulador titulo="Dízimo Recorrente" taxaPercentual={TAXA_DIZIMO} valorInicial={50} />
       </div>
     </div>
   );
