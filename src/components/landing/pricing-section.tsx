@@ -12,15 +12,14 @@ export function PricingSection() {
             Sua igreja recebe 100%.
           </h2>
           <p className="font-display mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-            A taxa é paga pelo fiel, não pela igreja.
+            Nada de mensalidade, apenas uma taxa por transação. Simples assim.
           </p>
         </div>
 
         <PricingSimulator />
 
         <p className="mx-auto mt-16 max-w-2xl text-center text-lg text-foreground/80">
-          A cada contribuição, o fiel vê o total antes de confirmar — sem letras miúdas. A igreja nunca
-          paga mensalidade e nunca tem nada descontado do que for arrecadado.
+          Campanhas: Taxa de 2,5% por pagamento. Dízimo Recorrente: Taxa de 3,5% por pagamento.
         </p>
       </div>
     </section>
