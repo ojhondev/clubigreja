@@ -1,0 +1,47 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { criarIgreja, criarUsuarioIgreja } from "@/lib/mock-db";
+import { criarSessao } from "@/lib/auth/session";
+
+export interface EstadoCadastroIgreja {
+  erro?: string;
+}
+
+export async function cadastrarIgrejaAction(
+  _estadoAnterior: EstadoCadastroIgreja,
+  formData: FormData
+): Promise<EstadoCadastroIgreja> {
+  const nome = String(formData.get("nome") ?? "").trim();
+  const cnpj = String(formData.get("cnpj") ?? "").trim();
+  const responsavelNome = String(formData.get("responsavelNome") ?? "").trim();
+  const responsavelEmail = String(formData.get("responsavelEmail") ?? "").trim();
+  const cidade = String(formData.get("cidade") ?? "").trim();
+  const uf = String(formData.get("uf") ?? "").trim().toUpperCase();
+
+  if (!nome || !responsavelNome || !responsavelEmail || !cidade || !uf) {
+    return { erro: "Preencha todos os campos obrigatórios." };
+  }
+
+  const cnpjDigitos = cnpj.replace(/\D/g, "");
+  if (cnpjDigitos.length !== 14) {
+    return { erro: "Informe um CNPJ válido (14 dígitos) — é obrigatório para operar na plataforma." };
+  }
+
+  const igreja = criarIgreja({ nome, cnpj, responsavelNome, responsavelEmail, cidade, uf });
+  const usuario = criarUsuarioIgreja({
+    igrejaId: igreja.id,
+    nome: responsavelNome,
+    email: responsavelEmail,
+    papel: "administrador",
+  });
+
+  await criarSessao({
+    papel: "igreja",
+    usuarioId: usuario.id,
+    igrejaId: igreja.id,
+    nome: usuario.nome,
+  });
+
+  redirect("/igreja/dashboard");
+}

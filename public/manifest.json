@@ -1,0 +1,13 @@
+{
+  "name": "Club Igreja",
+  "short_name": "Club Igreja",
+  "description": "Dízimo, ofertas e campanhas da sua igreja em um só lugar.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#002991",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
