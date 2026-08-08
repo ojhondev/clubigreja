@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { Card } from "@/components/ui";
 import { Logo } from "@/components/logo";
+import { BotaoVoltarSite } from "@/components/botao-voltar-site";
 import { Building2, User } from "lucide-react";
 
 export default function EntrarPage() {
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-12">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-12 pb-24 sm:pb-12">
+      <BotaoVoltarSite />
+
       <div className="mb-10 text-center">
         <div className="mb-3 flex justify-center">
           <Logo height={40} />

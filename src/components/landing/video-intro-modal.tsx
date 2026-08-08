@@ -4,30 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { registrarLeadVideoAction } from "./video-lead-actions";
 
-// Placeholder — troca pelo vídeo real assim que o cliente enviar.
-const VIDEO_ID = "YE7VzlLtp-4";
 const CHAVE_LOCALSTORAGE = "club-igreja-video-visto";
-const SRC_IFRAME_API = "https://www.youtube.com/iframe_api";
-
-interface YouTubePlayer {
-  playVideo: () => void;
-  mute: () => void;
-  unMute: () => void;
-  seekTo: (segundos: number, permitir: boolean) => void;
-  getCurrentTime: () => number;
-  getDuration: () => number;
-  destroy: () => void;
-}
-
-declare global {
-  interface Window {
-    YT: {
-      Player: new (elemento: HTMLElement, options: Record<string, unknown>) => YouTubePlayer;
-      PlayerState: { PAUSED: number; ENDED: number };
-    };
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
 
 export function VideoIntroModal() {
   const [visivel, setVisivel] = useState(false);
@@ -36,8 +13,7 @@ export function VideoIntroModal() {
   const [progresso, setProgresso] = useState(0);
   const [mudo, setMudo] = useState(true);
   const [enviado, setEnviado] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<YouTubePlayer | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const ultimoTempoRef = useRef(0);
 
   useEffect(() => {
@@ -51,89 +27,40 @@ export function VideoIntroModal() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Cria um elemento próprio a cada execução do efeito (em vez de reaproveitar um id
-  // fixo) — o React 19/StrictMode roda o efeito duas vezes em dev, e o YouTube troca
-  // o elemento por um iframe, então reaproveitar o mesmo id quebra na segunda vez.
+  // O X só pode fechar depois de 3s de vídeo rodando — não no primeiro frame.
   useEffect(() => {
-    if (!visivel || !wrapperRef.current) return;
-
-    let destruido = false;
-    let intervalo: ReturnType<typeof setInterval> | undefined;
-    let timerFechar: ReturnType<typeof setTimeout> | undefined;
-    let player: YouTubePlayer | null = null;
-
-    const elementoPlayer = document.createElement("div");
-    wrapperRef.current.appendChild(elementoPlayer);
-
-    function criarPlayer() {
-      if (destruido) return;
-      player = new window.YT.Player(elementoPlayer, {
-        videoId: VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          fs: 0,
-          iv_load_policy: 3,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (evento: { target: YouTubePlayer }) => {
-            if (destruido) return;
-            playerRef.current = evento.target;
-            timerFechar = setTimeout(() => {
-              if (!destruido) setPodeFechar(true);
-            }, 3000);
-            intervalo = setInterval(() => {
-              const atual = evento.target.getCurrentTime();
-              const duracao = evento.target.getDuration();
-              if (duracao > 0) setProgresso(Math.min(100, (atual / duracao) * 100));
-
-              // Impede avanço manual: se o tempo pulou mais do que o esperado, volta.
-              if (atual - ultimoTempoRef.current > 2) {
-                evento.target.seekTo(ultimoTempoRef.current, true);
-              } else {
-                ultimoTempoRef.current = atual;
-              }
-            }, 500);
-          },
-          onStateChange: (evento: { data: number; target: YouTubePlayer }) => {
-            if (evento.data === window.YT.PlayerState.PAUSED) evento.target.playVideo();
-            if (evento.data === window.YT.PlayerState.ENDED) setTerminou(true);
-          },
-        },
-      });
-    }
-
-    if (window.YT?.Player) {
-      criarPlayer();
-    } else {
-      if (!document.querySelector(`script[src="${SRC_IFRAME_API}"]`)) {
-        const script = document.createElement("script");
-        script.src = SRC_IFRAME_API;
-        document.body.appendChild(script);
-      }
-      window.onYouTubeIframeAPIReady = criarPlayer;
-    }
-
-    return () => {
-      destruido = true;
-      if (intervalo) clearInterval(intervalo);
-      if (timerFechar) clearTimeout(timerFechar);
-      player?.destroy?.();
-      playerRef.current = null;
-    };
+    if (!visivel) return;
+    const timerFechar = setTimeout(() => setPodeFechar(true), 3000);
+    return () => clearTimeout(timerFechar);
   }, [visivel]);
 
+  function impedirPausa() {
+    const video = videoRef.current;
+    if (video && !video.ended) video.play().catch(() => {});
+  }
+
+  function acompanharProgresso() {
+    const video = videoRef.current;
+    if (!video) return;
+    const atual = video.currentTime;
+    if (video.duration > 0) setProgresso(Math.min(100, (atual / video.duration) * 100));
+    ultimoTempoRef.current = atual;
+  }
+
+  // Impede avanço manual: se o tempo pulou mais do que o esperado, volta.
+  function impedirAvanco() {
+    const video = videoRef.current;
+    if (!video) return;
+    if (Math.abs(video.currentTime - ultimoTempoRef.current) > 1.5) {
+      video.currentTime = ultimoTempoRef.current;
+    }
+  }
+
   function alternarSom() {
-    const player = playerRef.current;
-    if (!player) return;
-    if (mudo) player.unMute();
-    else player.mute();
-    setMudo(!mudo);
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setMudo(video.muted);
   }
 
   async function enviarFormulario(e: React.FormEvent<HTMLFormElement>) {
@@ -160,7 +87,21 @@ export function VideoIntroModal() {
         )}
 
         <div className="relative aspect-video w-full bg-black">
-          <div ref={wrapperRef} className="h-full w-full" />
+          <video
+            ref={videoRef}
+            src="/video-intro.mp4"
+            autoPlay
+            muted={mudo}
+            playsInline
+            disablePictureInPicture
+            controls={false}
+            onPause={impedirPausa}
+            onTimeUpdate={acompanharProgresso}
+            onSeeking={impedirAvanco}
+            onEnded={() => setTerminou(true)}
+            onContextMenu={(e) => e.preventDefault()}
+            className="h-full w-full bg-black object-contain"
+          />
           {!terminou && <div className="absolute inset-0 z-10" />}
           <button
             type="button"

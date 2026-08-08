@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { fieis, usuariosIgreja, igrejas, getIgreja } from "@/lib/mock-db";
 import { Badge, Card } from "@/components/ui";
 import { Logo } from "@/components/logo";
+import { BotaoVoltarSite } from "@/components/botao-voltar-site";
 import { entrarComoFiel, entrarComoIgreja, entrarComoSuperadmin } from "./actions";
 
 const ROTULO_STATUS: Record<string, string> = {
@@ -15,20 +15,7 @@ const ROTULO_STATUS: Record<string, string> = {
 export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-12 pb-24 sm:pb-12">
-      <Link
-        href="/"
-        className="fixed left-6 top-6 z-40 hidden items-center gap-2 rounded-full border-2 border-primary bg-white px-5 py-3 text-sm font-bold text-primary shadow-md hover:bg-[#EAF6FF] sm:flex"
-      >
-        <ArrowLeft size={18} />
-        Voltar ao site
-      </Link>
-      <Link
-        href="/"
-        className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-2 border-t border-border bg-white px-4 py-5 text-base font-bold text-primary shadow-[0_-4px_16px_rgba(0,0,0,0.08)] sm:hidden"
-      >
-        <ArrowLeft size={16} />
-        Voltar ao site
-      </Link>
+      <BotaoVoltarSite />
 
       <div className="mb-8 text-center">
         <div className="mb-3 flex justify-center">
