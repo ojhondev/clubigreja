@@ -32,6 +32,7 @@ declare global {
 export function VideoIntroModal() {
   const [visivel, setVisivel] = useState(false);
   const [terminou, setTerminou] = useState(false);
+  const [podeFechar, setPodeFechar] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [mudo, setMudo] = useState(true);
   const [enviado, setEnviado] = useState(false);
@@ -58,6 +59,7 @@ export function VideoIntroModal() {
 
     let destruido = false;
     let intervalo: ReturnType<typeof setInterval> | undefined;
+    let timerFechar: ReturnType<typeof setTimeout> | undefined;
     let player: YouTubePlayer | null = null;
 
     const elementoPlayer = document.createElement("div");
@@ -82,6 +84,9 @@ export function VideoIntroModal() {
           onReady: (evento: { target: YouTubePlayer }) => {
             if (destruido) return;
             playerRef.current = evento.target;
+            timerFechar = setTimeout(() => {
+              if (!destruido) setPodeFechar(true);
+            }, 3000);
             intervalo = setInterval(() => {
               const atual = evento.target.getCurrentTime();
               const duracao = evento.target.getDuration();
@@ -117,6 +122,7 @@ export function VideoIntroModal() {
     return () => {
       destruido = true;
       if (intervalo) clearInterval(intervalo);
+      if (timerFechar) clearTimeout(timerFechar);
       player?.destroy?.();
       playerRef.current = null;
     };
@@ -141,8 +147,8 @@ export function VideoIntroModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-white">
-        {terminou && (
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white lg:max-w-4xl">
+        {podeFechar && (
           <button
             type="button"
             onClick={() => setVisivel(false)}

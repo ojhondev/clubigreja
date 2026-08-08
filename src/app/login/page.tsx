@@ -17,14 +17,14 @@ export default function LoginPage() {
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-12 pb-24 sm:pb-12">
       <Link
         href="/"
-        className="fixed left-4 top-4 z-40 hidden items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-bold text-foreground shadow-sm hover:bg-[#EAF6FF] sm:flex"
+        className="fixed left-6 top-6 z-40 hidden items-center gap-2 rounded-full border-2 border-primary bg-white px-5 py-3 text-sm font-bold text-primary shadow-md hover:bg-[#EAF6FF] sm:flex"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={18} />
         Voltar ao site
       </Link>
       <Link
         href="/"
-        className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-2 border-t border-border bg-white px-4 py-4 text-sm font-bold text-foreground shadow-[0_-4px_16px_rgba(0,0,0,0.06)] sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-2 border-t border-border bg-white px-4 py-5 text-base font-bold text-primary shadow-[0_-4px_16px_rgba(0,0,0,0.08)] sm:hidden"
       >
         <ArrowLeft size={16} />
         Voltar ao site

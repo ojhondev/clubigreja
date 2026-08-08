@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui";
+import { PricingSimulator } from "./pricing-simulator";
 
 export function PricingSection() {
   return (
     <section id="precos" className="bg-accent py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto mb-12 max-w-2xl text-center">
           <span className="inline-block rounded-full border border-black/10 bg-white px-4 py-1.5 text-sm font-bold text-foreground">
             Preços do Club
           </span>
@@ -12,18 +12,11 @@ export function PricingSection() {
             Sua igreja recebe 100%.
           </h2>
           <p className="font-display mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-            Nada de mensalidade. Nenhum custo para a sua igreja.
+            Nada de mensalidade, apenas uma taxa por transação. Simples assim.
           </p>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-foreground/80">
-            Sua igreja nunca paga nada pra usar o Club — cadastro, painel, campanhas e dízimo
-            recorrente, tudo incluso, sempre. Fale com nosso time pra entender como o Club se sustenta.
-          </p>
-          <a href="mailto:contato@dclubigreja.com" className="mt-6 inline-block">
-            <Button variant="dark" className="font-display">
-              Fale com nosso time
-            </Button>
-          </a>
         </div>
+
+        <PricingSimulator />
       </div>
     </section>
   );
