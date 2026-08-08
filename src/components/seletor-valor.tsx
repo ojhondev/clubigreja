@@ -54,9 +54,7 @@ export function SeletorValor({
         <div className="mt-3 rounded-xl bg-[#F7FAFF] px-4 py-3">
           <p className="text-sm text-muted">Você vai pagar</p>
           <p className="text-xl font-bold text-foreground">{formatarMoeda(taxa.valorTotalFiel)}</p>
-          <p className="mt-1 text-xs text-muted">
-            Já inclui a taxa de processamento — a igreja recebe o valor integral escolhido.
-          </p>
+          <p className="mt-1 text-xs text-muted">Incluindo taxa de processamento do pagamento.</p>
         </div>
       )}
     </div>

@@ -6,10 +6,7 @@ export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-border bg-[#F7FAFF] px-4 py-3">
         <CreditCard size={18} className="shrink-0 text-primary" />
-        <p className="text-sm text-muted">
-          A taxa de processamento é cobrada automaticamente no cartão {cartaoSalvo.bandeira} final{" "}
-          {cartaoSalvo.ultimosDigitos}.
-        </p>
+        <p className="text-sm text-muted">Incluindo taxa de processamento do pagamento.</p>
       </div>
     );
   }

@@ -54,7 +54,7 @@ export function IconSidebar({ sairAction }: { sairAction: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-20 shrink-0 flex-col items-center border-r border-border bg-sidebar py-6 md:flex print:hidden">
+    <aside className="sticky top-0 hidden h-screen w-20 shrink-0 flex-col items-center self-start border-r border-border bg-sidebar py-4 md:flex print:hidden">
       <button
         type="button"
         className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl text-muted hover:bg-black/5"

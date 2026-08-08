@@ -4,6 +4,7 @@ import { getMuralDaIgreja } from "@/lib/mock-db";
 import { getStatusDizimo, nomeMesAtual } from "@/lib/dizimo";
 import { Button, Card } from "@/components/ui";
 import { AtivarNotificacoes } from "@/components/ativar-notificacoes";
+import { FraseDoDia } from "@/components/frase-do-dia";
 import { formatarData } from "@/lib/formato";
 
 export default async function InicioFielPage() {
@@ -18,6 +19,8 @@ export default async function InicioFielPage() {
       <div>
         <h1 className="text-xl font-bold">Olá, {sessao!.nome.split(" ")[0]} 👋</h1>
       </div>
+
+      <FraseDoDia />
 
       {!statusDizimo.contribuiuEsteMes && (
         <Card className="border-primary/30 bg-[#EAF6FF]">

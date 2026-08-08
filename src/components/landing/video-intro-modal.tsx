@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { registrarLeadVideoAction } from "./video-lead-actions";
 
+const CHAVE_SESSAO = "club-igreja-video-visto";
+
 export function VideoIntroModal() {
   const [visivel, setVisivel] = useState(false);
   const [terminou, setTerminou] = useState(false);
@@ -14,9 +16,16 @@ export function VideoIntroModal() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const ultimoTempoRef = useRef(0);
 
-  // Aparece toda vez que a home é aberta — não só na primeira visita.
+  // Aparece uma vez por sessão de navegador — não a cada atualização/troca de
+  // página dentro da mesma aba (sessionStorage some ao fechar a aba/navegador).
   useEffect(() => {
-    const timer = setTimeout(() => setVisivel(true), 3000);
+    if (typeof window === "undefined" || sessionStorage.getItem(CHAVE_SESSAO)) return;
+
+    const timer = setTimeout(() => {
+      sessionStorage.setItem(CHAVE_SESSAO, "1");
+      setVisivel(true);
+    }, 3000);
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -66,8 +75,8 @@ export function VideoIntroModal() {
   if (!visivel) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white lg:max-w-4xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-4">
+      <div className="relative max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white sm:max-w-xl lg:max-w-2xl xl:max-w-3xl">
         {podeFechar && (
           <button
             type="button"
