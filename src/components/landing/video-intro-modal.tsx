@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { registrarLeadVideoAction } from "./video-lead-actions";
 
-const CHAVE_LOCALSTORAGE = "club-igreja-video-visto";
-
 export function VideoIntroModal() {
   const [visivel, setVisivel] = useState(false);
   const [terminou, setTerminou] = useState(false);
@@ -16,14 +14,9 @@ export function VideoIntroModal() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const ultimoTempoRef = useRef(0);
 
+  // Aparece toda vez que a home é aberta — não só na primeira visita.
   useEffect(() => {
-    if (typeof window === "undefined" || localStorage.getItem(CHAVE_LOCALSTORAGE)) return;
-
-    const timer = setTimeout(() => {
-      localStorage.setItem(CHAVE_LOCALSTORAGE, "1");
-      setVisivel(true);
-    }, 3000);
-
+    const timer = setTimeout(() => setVisivel(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
