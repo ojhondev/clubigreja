@@ -6,7 +6,7 @@ const COLUNAS = [
   {
     titulo: "Produto",
     links: [
-      { label: "Como funciona", href: "#pilares" },
+      { label: "Como funciona", href: "#como-funciona" },
       { label: "Recursos", href: "#recursos" },
       { label: "Diferenciais", href: "#diferenciais" },
       { label: "Preços", href: "#precos" },
@@ -16,8 +16,7 @@ const COLUNAS = [
   {
     titulo: "Igrejas",
     links: [
-      { label: "Igrejas Católicas", href: "#catolicas" },
-      { label: "Igrejas Evangélicas", href: "#evangelicas" },
+      { label: "Para Igrejas", href: "#catolicas" },
       { label: "Club Ação Social", href: "/acao-social" },
     ],
   },

@@ -12,7 +12,7 @@ const PERGUNTAS = [
   {
     pergunta: "Isso é legal? Precisamos de alguma autorização?",
     resposta:
-      "Sim, é legal. Sua igreja precisa apenas ter CNPJ para se cadastrar. A taxa de processamento (3,5% em dízimo, 2,5% em campanhas) é paga pelo próprio fiel, somada ao valor da contribuição — sua igreja nunca perde nada do que for arrecadado.",
+      "Sim, é legal. Sua igreja precisa apenas ter CNPJ para se cadastrar. Não existe mensalidade nem custo escondido — sua igreja recebe 100% do que for arrecadado, sempre.",
   },
   {
     pergunta: "Precisamos entender de tecnologia para usar?",

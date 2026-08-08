@@ -99,6 +99,14 @@ export interface Contribuicao {
   criadaEm: string;
 }
 
+export interface LeadVideo {
+  id: string;
+  nome: string;
+  whatsapp: string;
+  email: string;
+  criadoEm: string;
+}
+
 export interface NotificacaoFiel {
   id: string;
   fielId: string;

@@ -8,12 +8,11 @@ import { Button } from "@/components/ui";
 import { Logo } from "@/components/logo";
 
 const LINKS = [
-  { href: "/#pilares", label: "Como funciona" },
+  { href: "/#como-funciona", label: "Como funciona" },
   { href: "/#recursos", label: "Recursos" },
   { href: "/#diferenciais", label: "Diferenciais" },
   { href: "/#precos", label: "Preços" },
-  { href: "/#catolicas", label: "Igrejas Católicas" },
-  { href: "/#evangelicas", label: "Igrejas Evangélicas" },
+  { href: "/#catolicas", label: "Para Igrejas" },
   { href: "/#duvidas", label: "Dúvidas" },
   { href: "/acao-social", label: "Ação Social" },
 ];

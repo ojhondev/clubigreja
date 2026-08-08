@@ -25,11 +25,11 @@ export function SimulacaoBar() {
       <div className="mx-auto flex max-w-6xl items-center gap-3 sm:gap-4">
         <PlayCircle className="hidden shrink-0 text-primary sm:block" size={28} />
         <p className="flex-1 text-sm font-bold text-foreground sm:text-base">
-          Veja uma simulação de como funciona
+          Quer conhecer a plataforma por dentro?
         </p>
         <Link href="/simulacao" className="shrink-0">
           <Button variant="dark" className="font-display">
-            Ver simulação
+            Veja a Plataforma
           </Button>
         </Link>
         <button

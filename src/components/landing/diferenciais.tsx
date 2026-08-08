@@ -4,7 +4,7 @@ const ITENS = [
   {
     icon: Wallet,
     titulo: "Sem mensalidade",
-    descricao: "O Club só ganha quando sua igreja arrecada. Nenhuma taxa fixa, nenhuma surpresa.",
+    descricao: "Sua igreja nunca paga nada pra usar o Club. Nenhum custo fixo, nenhuma surpresa.",
   },
   {
     icon: Zap,
