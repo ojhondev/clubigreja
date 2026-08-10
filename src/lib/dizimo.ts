@@ -9,7 +9,7 @@ export interface StatusDizimo {
 
 export function getStatusDizimo(fielId: string): StatusDizimo {
   const contribuicoesDizimo = getContribuicoesDoFiel(fielId).filter(
-    (c) => c.tipo === "dizimo"
+    (c) => c.tipo === "dizimo" && c.status === "confirmado"
   );
 
   if (contribuicoesDizimo.length === 0) {

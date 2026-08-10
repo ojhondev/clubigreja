@@ -1,6 +1,13 @@
-import { getContribuicoesDaIgreja, getFiel } from "./mock-db";
+import { getContribuicoesDaIgreja as getTodasContribuicoesDaIgreja, getFiel } from "./mock-db";
 import { mesAno, hoje } from "./hoje";
 import type { Contribuicao } from "./types";
+
+// Todo cálculo financeiro deste arquivo considera só Pix já confirmado pelo
+// fiel — enquanto ele não volta pra confirmar, esse dinheiro ainda não foi
+// de fato recebido pela igreja.
+function getContribuicoesDaIgreja(igrejaId: string): Contribuicao[] {
+  return getTodasContribuicoesDaIgreja(igrejaId).filter((c) => c.status === "confirmado");
+}
 
 // A igreja recebe 100% do valorBruto — a taxa de processamento é paga pelo
 // fiel, por fora, e nunca é descontada do que a igreja arrecada. totalTaxasFieis

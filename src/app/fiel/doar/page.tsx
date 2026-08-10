@@ -4,7 +4,7 @@ import { Button, Card, PageHeader } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CampoFinalidadeEValor } from "@/components/campo-finalidade-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
-import { doarAction } from "./actions";
+import { iniciarDoacaoAction } from "./actions";
 import type { TipoArrecadacao } from "@/lib/types";
 
 export default async function DoarPage({
@@ -26,7 +26,7 @@ export default async function DoarPage({
       <PageHeader title={campanha ? campanha.titulo : "Contribuir"} subtitle="Poucos toques, sem burocracia." />
 
       <Card>
-        <form action={doarAction} className="space-y-5">
+        <form action={iniciarDoacaoAction} className="space-y-5">
           {campanha && (
             <>
               <input type="hidden" name="tipo" value={tipo} />
@@ -50,7 +50,7 @@ export default async function DoarPage({
           <CartaoTaxa cartaoSalvo={fiel?.cartaoSalvo} />
 
           <Button type="submit" className="w-full">
-            Confirmar contribuição
+            Continuar para o Pix
           </Button>
         </form>
       </Card>

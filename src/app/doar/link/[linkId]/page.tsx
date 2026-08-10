@@ -48,7 +48,7 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
           <CartaoTaxa />
 
           <Button type="submit" className="w-full">
-            Contribuir agora
+            Continuar para o Pix
           </Button>
         </form>
       </Card>

@@ -1,5 +1,6 @@
-import { getFiel, registrarContribuicao, salvarCartaoFiel } from "../mock-db";
-import type { CobrancaInput, CobrancaResultado, PaymentGateway } from "./gateway";
+import { confirmarContribuicao, getFiel, getIgreja, iniciarContribuicao, salvarCartaoFiel } from "../mock-db";
+import { gerarPixCopiaECola } from "../pix";
+import type { ConfirmacaoPagamento, DadosParaPagamento, IniciarContribuicaoInput, PaymentGateway } from "./gateway";
 
 function tokenizarCartaoFake(numero: string) {
   const digitos = numero.replace(/\D/g, "");
@@ -8,24 +9,51 @@ function tokenizarCartaoFake(numero: string) {
   return { bandeira, ultimosDigitos, tokenFake: `tok_fake_${Date.now()}` };
 }
 
-// Simula duas cobranças independentes, sem nenhuma chamada de rede: o Pix da
-// doação (100% pra igreja) e a cobrança da taxa de processamento (pro Club
-// Igreja) — nunca uma única cobrança dividida entre as duas contas.
+// Simula o fluxo real em duas chamadas independentes, sem nenhum acesso de
+// rede: iniciarContribuicao só registra a intenção e gera o Pix; a cobrança
+// da taxa só acontece em confirmarPagamento, quando o fiel volta e confirma
+// que já pagou — nunca uma única cobrança dividida entre as duas contas.
 export class MockPaymentGateway implements PaymentGateway {
-  async criarCobranca(input: CobrancaInput): Promise<CobrancaResultado> {
+  async iniciarContribuicao(input: IniciarContribuicaoInput): Promise<DadosParaPagamento> {
     await simularLatenciaDeRede();
 
     if (input.novoCartao) {
       salvarCartaoFiel(input.fielId, tokenizarCartaoFake(input.novoCartao.numero));
     }
 
-    const contribuicao = registrarContribuicao({
+    const igreja = getIgreja(input.igrejaId)!;
+    const contribuicao = iniciarContribuicao({
       fielId: input.fielId,
       igrejaId: input.igrejaId,
       tipo: input.tipo,
       campanhaId: input.campanhaId,
       valorBruto: input.valorBruto,
     });
+
+    const copiaECola = gerarPixCopiaECola({
+      chave: igreja.chavePix,
+      nomeRecebedor: igreja.nome,
+      cidade: igreja.cidade,
+      valor: contribuicao.valorBruto,
+      txId: contribuicao.id,
+    });
+
+    return {
+      contribuicaoId: contribuicao.id,
+      chavePix: igreja.chavePix,
+      nomeIgreja: igreja.nome,
+      valorBruto: contribuicao.valorBruto,
+      taxaValor: contribuicao.taxaValor,
+      valorTotalFiel: contribuicao.valorTotalFiel,
+      copiaECola,
+    };
+  }
+
+  async confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento> {
+    await simularLatenciaDeRede();
+
+    const contribuicao = confirmarContribuicao(contribuicaoId);
+    if (!contribuicao) throw new Error("Contribuição não encontrada");
 
     return {
       id: contribuicao.id,
@@ -34,7 +62,7 @@ export class MockPaymentGateway implements PaymentGateway {
       taxaValor: contribuicao.taxaValor,
       valorTotalFiel: contribuicao.valorTotalFiel,
       taxaCobradaVia: contribuicao.taxaCobradaVia,
-      cartaoSalvo: getFiel(input.fielId)?.cartaoSalvo,
+      cartaoSalvo: getFiel(contribuicao.fielId)?.cartaoSalvo,
       criadaEm: contribuicao.criadaEm,
     };
   }

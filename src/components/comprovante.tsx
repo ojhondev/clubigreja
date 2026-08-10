@@ -2,7 +2,7 @@ import { getCampanha, getContribuicao, getFiel, getIgreja } from "@/lib/mock-db"
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
 import { Card } from "@/components/ui";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const ROTULO_TIPO: Record<string, string> = {
   dizimo: "Dízimo",
@@ -12,9 +12,18 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Contribuição livre",
 };
 
-export function Comprovante({ contribuicaoId }: { contribuicaoId: string }) {
+export function Comprovante({
+  contribuicaoId,
+  caminhoPagarBase = "/doar/pagar",
+}: {
+  contribuicaoId: string;
+  caminhoPagarBase?: string;
+}) {
   const contribuicao = getContribuicao(contribuicaoId);
   if (!contribuicao) notFound();
+  // Só existe comprovante pra Pix já confirmado — se o fiel chegou aqui sem
+  // confirmar (ex: voltou no navegador), manda de volta pra tela de pagamento.
+  if (contribuicao.status !== "confirmado") redirect(`${caminhoPagarBase}/${contribuicaoId}`);
 
   const igreja = getIgreja(contribuicao.igrejaId);
   const campanha = contribuicao.campanhaId ? getCampanha(contribuicao.campanhaId) : undefined;

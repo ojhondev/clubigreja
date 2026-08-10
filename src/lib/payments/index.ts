@@ -5,4 +5,4 @@ import type { PaymentGateway } from "./gateway";
 // export const gateway: PaymentGateway = new AsaasPaymentGateway();
 export const gateway: PaymentGateway = new MockPaymentGateway();
 
-export type { CobrancaInput, CobrancaResultado, PaymentGateway } from "./gateway";
+export type { ConfirmacaoPagamento, DadosParaPagamento, IniciarContribuicaoInput, PaymentGateway } from "./gateway";

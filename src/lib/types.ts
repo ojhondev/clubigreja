@@ -17,6 +17,9 @@ export interface Igreja {
   uf: string;
   logoEmoji: string;
   statusOnboarding: StatusOnboarding;
+  // Chave Pix da própria igreja, cadastrada no banco dela — é pra onde o Pix
+  // do fiel vai direto. O Club Igreja nunca custodia esse valor.
+  chavePix: string;
   criadaEm: string;
 }
 
@@ -84,6 +87,12 @@ export interface ComunicadoMural {
   publicadoEm: string;
 }
 
+// aguardando_pix: o fiel já escolheu o valor, mas ainda precisa efetivamente
+// pagar o Pix no app do banco dele e voltar pra confirmar — a taxa só é
+// cobrada nesse momento de confirmação. confirmado: Pix confirmado pelo
+// fiel e taxa já cobrada no cartão salvo.
+export type StatusContribuicao = "aguardando_pix" | "confirmado";
+
 export interface Contribuicao {
   id: string;
   igrejaId: string;
@@ -96,6 +105,7 @@ export interface Contribuicao {
   taxaValor: number;
   valorTotalFiel: number;
   taxaCobradaVia: "cartao_salvo" | "pix_separado";
+  status: StatusContribuicao;
   criadaEm: string;
 }
 

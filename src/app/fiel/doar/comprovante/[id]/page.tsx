@@ -7,7 +7,7 @@ export default async function ComprovantePage({ params }: { params: Promise<{ id
 
   return (
     <div className="py-6">
-      <Comprovante contribuicaoId={id} />
+      <Comprovante contribuicaoId={id} caminhoPagarBase="/fiel/doar/pagar" />
       <div className="mt-6 flex w-full flex-col gap-3">
         <Link href="/fiel/inicio">
           <Button className="w-full">Voltar ao início</Button>

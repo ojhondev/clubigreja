@@ -30,6 +30,7 @@ export const igrejas: Igreja[] = [
     uf: "SP",
     logoEmoji: "⛪",
     statusOnboarding: "aprovado",
+    chavePix: "financeiro@novavida.org.br",
     criadaEm: "2026-05-10",
   },
 ];
@@ -186,6 +187,7 @@ function contribuicao(
     taxaValor: taxa.taxaValor,
     valorTotalFiel: taxa.valorTotalFiel,
     taxaCobradaVia: "cartao_salvo",
+    status: "confirmado",
     criadaEm,
   };
 }
@@ -315,9 +317,11 @@ export function getContribuicoesDoFiel(fielId: string): Contribuicao[] {
     .sort((a, b) => (a.criadaEm < b.criadaEm ? 1 : -1));
 }
 
+// Só conta Pix já confirmado pelo fiel — enquanto ele não volta pra confirmar
+// que pagou, esse valor ainda não foi de fato recebido pela igreja.
 export function getArrecadadoCampanha(campanhaId: string): number {
   return contribuicoes
-    .filter((c) => c.campanhaId === campanhaId)
+    .filter((c) => c.campanhaId === campanhaId && c.status === "confirmado")
     .reduce((soma, c) => soma + c.valorBruto, 0);
 }
 
@@ -340,12 +344,11 @@ export function getNotificacoesDoFiel(fielId: string): NotificacaoFiel[] {
 
 let proximoIdContribuicao = contribuicoes.length + 1;
 
-// A doação em si é sempre Pix, direto pra chave da igreja — nunca passa pela
-// conta do Club Igreja. A taxa de processamento é uma cobrança separada: no
-// cartão salvo do fiel, se ele tiver um cadastrado (cobrada automaticamente,
-// sem pedir uma segunda confirmação), ou registrada como "pix_separado" caso
-// contrário.
-export function registrarContribuicao(input: {
+// Passo 1 do fluxo real: o fiel escolheu o valor, mas ainda não pagou nada.
+// Criamos o registro como "aguardando_pix" — a igreja só aparece como tendo
+// recebido depois que o fiel volta e confirma que pagou (ver
+// confirmarContribuicao). Nenhuma cobrança acontece aqui.
+export function iniciarContribuicao(input: {
   fielId: string;
   igrejaId: string;
   tipo: Contribuicao["tipo"];
@@ -367,10 +370,21 @@ export function registrarContribuicao(input: {
     taxaValor: taxa.taxaValor,
     valorTotalFiel: taxa.valorTotalFiel,
     taxaCobradaVia: fiel?.cartaoSalvo ? "cartao_salvo" : "pix_separado",
+    status: "aguardando_pix",
     criadaEm: new Date().toISOString().slice(0, 10),
   };
   contribuicoes.push(nova);
   return nova;
+}
+
+// Passo 2: o fiel confirma que já pagou o Pix pra chave da igreja. É esse
+// clique — não um webhook bancário — que dispara a cobrança da taxa de
+// processamento no cartão salvo (ou como Pix separado, se não tiver cartão).
+export function confirmarContribuicao(contribuicaoId: string): Contribuicao | undefined {
+  const contribuicao = contribuicoes.find((c) => c.id === contribuicaoId);
+  if (!contribuicao) return undefined;
+  contribuicao.status = "confirmado";
+  return contribuicao;
 }
 
 export function salvarCartaoFiel(fielId: string, cartao: CartaoSalvo): void {
@@ -481,6 +495,9 @@ export function criarIgreja(input: {
     uf: input.uf,
     logoEmoji: "⛪",
     statusOnboarding: "em_analise",
+    // A igreja informa a própria chave Pix depois, na aprovação — usamos o
+    // e-mail do responsável como valor inicial pra nunca ficar vazia.
+    chavePix: input.responsavelEmail,
     criadaEm: new Date().toISOString().slice(0, 10),
   };
   igrejas.push(nova);

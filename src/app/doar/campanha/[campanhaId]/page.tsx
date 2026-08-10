@@ -52,7 +52,7 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
           <CartaoTaxa />
 
           <Button type="submit" className="w-full">
-            Contribuir agora
+            Continuar para o Pix
           </Button>
         </form>
       </Card>

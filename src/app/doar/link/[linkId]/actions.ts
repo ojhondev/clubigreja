@@ -17,7 +17,7 @@ export async function doarPublicoAction(formData: FormData) {
 
   const fielConvidado = criarFielConvidado(link.igrejaId, nome);
 
-  const resultado = await gateway.criarCobranca({
+  const dados = await gateway.iniciarContribuicao({
     igrejaId: link.igrejaId,
     fielId: fielConvidado.id,
     tipo: link.tipo,
@@ -27,5 +27,5 @@ export async function doarPublicoAction(formData: FormData) {
       cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
 
-  redirect(`/doar/comprovante/${resultado.id}`);
+  redirect(`/doar/pagar/${dados.contribuicaoId}`);
 }

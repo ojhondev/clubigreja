@@ -1,12 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 import type { TipoArrecadacao } from "@/lib/types";
 
-export async function doarAction(formData: FormData) {
+// Etapa 1 do fluxo real: só registra a intenção e prepara o Pix — nenhuma
+// cobrança acontece aqui. A confirmação (e a cobrança da taxa) só rola na
+// etapa 2, em /fiel/doar/pagar/[id].
+export async function iniciarDoacaoAction(formData: FormData) {
   const sessao = await getSessao();
   if (!sessao?.igrejaId) return;
 
@@ -18,7 +20,7 @@ export async function doarAction(formData: FormData) {
 
   if (!valorBruto || valorBruto <= 0) return;
 
-  const resultado = await gateway.criarCobranca({
+  const dados = await gateway.iniciarContribuicao({
     igrejaId: sessao.igrejaId,
     fielId: sessao.usuarioId,
     tipo,
@@ -28,8 +30,5 @@ export async function doarAction(formData: FormData) {
       cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
 
-  revalidatePath("/fiel/inicio");
-  revalidatePath("/fiel/historico");
-  revalidatePath("/fiel/campanhas");
-  redirect(`/fiel/doar/comprovante/${resultado.id}`);
+  redirect(`/fiel/doar/pagar/${dados.contribuicaoId}`);
 }

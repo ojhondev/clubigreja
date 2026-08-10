@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
 import { getCampanha, getContribuicoesDoFiel } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
-import { Card, PageHeader } from "@/components/ui";
+import { Badge, Button, Card, PageHeader } from "@/components/ui";
 
 const ROTULO_TIPO: Record<string, string> = {
   dizimo: "Dízimo",
@@ -17,7 +18,7 @@ const ROTULO_MEIO: Record<string, string> = { pix: "Pix", cartao: "Cartão", bol
 export default async function HistoricoPage() {
   const sessao = await getSessao();
   const contribuicoes = getContribuicoesDoFiel(sessao!.usuarioId);
-  const total = contribuicoes.reduce((s, c) => s + c.valorBruto, 0);
+  const total = contribuicoes.filter((c) => c.status === "confirmado").reduce((s, c) => s + c.valorBruto, 0);
 
   return (
     <div>
@@ -25,15 +26,28 @@ export default async function HistoricoPage() {
       <div className="space-y-3">
         {contribuicoes.map((c) => {
           const campanha = c.campanhaId ? getCampanha(c.campanhaId) : undefined;
+          const pendente = c.status === "aguardando_pix";
           return (
-            <Card key={c.id} className="flex items-center justify-between">
-              <div>
-                <p className="font-bold">{campanha ? campanha.titulo : ROTULO_TIPO[c.tipo]}</p>
-                <p className="text-sm text-muted">
-                  {formatarData(c.criadaEm)} · {ROTULO_MEIO[c.meio]}
-                </p>
+            <Card key={c.id} className={pendente ? "border-amber-300" : undefined}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-bold">{campanha ? campanha.titulo : ROTULO_TIPO[c.tipo]}</p>
+                  <p className="text-sm text-muted">
+                    {formatarData(c.criadaEm)} · {ROTULO_MEIO[c.meio]}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold">{formatarMoeda(c.valorBruto)}</p>
+                  {pendente && <Badge tone="warning">Aguardando Pix</Badge>}
+                </div>
               </div>
-              <p className="font-bold">{formatarMoeda(c.valorBruto)}</p>
+              {pendente && (
+                <Link href={`/fiel/doar/pagar/${c.id}`} className="mt-3 block">
+                  <Button variant="secondary" className="w-full">
+                    Pagar / confirmar agora
+                  </Button>
+                </Link>
+              )}
             </Card>
           );
         })}
