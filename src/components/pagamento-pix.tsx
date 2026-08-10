@@ -71,8 +71,8 @@ export async function PagamentoPix({
 
       <Card className="mb-5 bg-[#F7FAFF]">
         <p className="text-sm text-muted">
-          Depois de pagar, toque em <strong>&quot;Já fiz o Pix&quot;</strong>. Vamos cobrar automaticamente a taxa
-          de processamento ({formatarMoeda(contribuicao.taxaValor)}) no seu cartão salvo — sem pedir mais nada.
+          Ao efetuar o pagamento, toque em <strong>&quot;Já fiz o Pix&quot;</strong> para que façamos o
+          processamento do seu pagamento.
         </p>
       </Card>
 

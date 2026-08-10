@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { getIgreja, linksPagamento } from "@/lib/mock-db";
-import { Button, Card } from "@/components/ui";
+import { Card } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
+import { BotaoContinuarPix } from "@/components/botao-continuar-pix";
 import { doarPublicoAction } from "./actions";
 
 const ROTULO_TIPO: Record<string, string> = {
@@ -47,9 +48,7 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
 
           <CartaoTaxa />
 
-          <Button type="submit" className="w-full">
-            Continuar para o Pix
-          </Button>
+          <BotaoContinuarPix />
         </form>
       </Card>
 

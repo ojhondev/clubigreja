@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { getArrecadadoCampanha, getCampanha, getIgreja } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
-import { Button, Card, ProgressBar } from "@/components/ui";
+import { Card, ProgressBar } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
+import { BotaoContinuarPix } from "@/components/botao-continuar-pix";
 import { doarCampanhaPublicoAction } from "./actions";
 
 export default async function CampanhaPublicaPage({ params }: { params: Promise<{ campanhaId: string }> }) {
@@ -51,9 +52,7 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
 
           <CartaoTaxa />
 
-          <Button type="submit" className="w-full">
-            Continuar para o Pix
-          </Button>
+          <BotaoContinuarPix />
         </form>
       </Card>
 

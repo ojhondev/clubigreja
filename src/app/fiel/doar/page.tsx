@@ -1,9 +1,10 @@
 import { getSessao } from "@/lib/auth/session";
 import { getCampanha, getCampanhasDaIgreja, getFiel } from "@/lib/mock-db";
-import { Button, Card, PageHeader } from "@/components/ui";
+import { Card, PageHeader } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CampoFinalidadeEValor } from "@/components/campo-finalidade-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
+import { BotaoContinuarPix } from "@/components/botao-continuar-pix";
 import { iniciarDoacaoAction } from "./actions";
 import type { TipoArrecadacao } from "@/lib/types";
 
@@ -49,9 +50,7 @@ export default async function DoarPage({
 
           <CartaoTaxa cartaoSalvo={fiel?.cartaoSalvo} />
 
-          <Button type="submit" className="w-full">
-            Continuar para o Pix
-          </Button>
+          <BotaoContinuarPix />
         </form>
       </Card>
     </div>
