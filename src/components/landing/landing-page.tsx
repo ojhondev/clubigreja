@@ -14,7 +14,7 @@ import { Faq } from "./faq";
 import { CtaBand } from "./cta-band";
 import { LandingFooter } from "./footer";
 import { SimulacaoBar } from "./simulacao-bar";
-import { VideoIntroModal } from "./video-intro-modal";
+import { CalculadoraModal } from "./calculadora-modal";
 
 export async function LandingPage() {
   const url = await urlAbsoluta("/novavida/campanha/reforma-do-telhado");
@@ -39,7 +39,7 @@ export async function LandingPage() {
       </main>
       <LandingFooter />
       <SimulacaoBar />
-      <VideoIntroModal />
+      <CalculadoraModal />
     </div>
   );
 }

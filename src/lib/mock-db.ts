@@ -8,7 +8,6 @@ import type {
   Evento,
   Fiel,
   Igreja,
-  LeadVideo,
   LinkPagamento,
   NotificacaoFiel,
   UsuarioIgreja,
@@ -575,20 +574,4 @@ export function notificarFieisDaIgreja(
 export function marcarNotificacaoLida(notificacaoId: string): void {
   const notificacao = notificacoes.find((n) => n.id === notificacaoId);
   if (notificacao) notificacao.lida = true;
-}
-
-// Leads capturados no pop-up de vídeo da landing page (primeira visita).
-export const leadsVideo: LeadVideo[] = [];
-let proximoIdLeadVideo = 1;
-
-export function registrarLeadVideo(input: { nome: string; whatsapp: string; email: string }): LeadVideo {
-  const novo: LeadVideo = {
-    id: `lead-video-${proximoIdLeadVideo++}`,
-    nome: input.nome,
-    whatsapp: input.whatsapp,
-    email: input.email,
-    criadoEm: new Date().toISOString(),
-  };
-  leadsVideo.push(novo);
-  return novo;
 }

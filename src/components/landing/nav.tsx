@@ -14,7 +14,7 @@ const LINKS = [
   { href: "/#precos", label: "Preços" },
   { href: "/#catolicas", label: "Para Igrejas" },
   { href: "/#duvidas", label: "Dúvidas" },
-  { href: "/acao-social", label: "Ação Social" },
+  { href: "/calculadora", label: "Calculadora" },
 ];
 
 export function LandingNav() {

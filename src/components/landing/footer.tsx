@@ -17,7 +17,7 @@ const COLUNAS = [
     titulo: "Igrejas",
     links: [
       { label: "Para Igrejas", href: "#catolicas" },
-      { label: "Club Ação Social", href: "/acao-social" },
+      { label: "Calculadora", href: "/calculadora" },
     ],
   },
   {
