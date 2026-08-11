@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { linksPagamento, criarFielConvidado } from "@/lib/mock-db";
+import { getSessao } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarPublicoAction(formData: FormData) {
@@ -9,17 +10,20 @@ export async function doarPublicoAction(formData: FormData) {
   const link = linksPagamento.find((l) => l.id === linkId);
   if (!link) return;
 
-  const nome = String(formData.get("nome") ?? "").trim();
   const valorBruto = Number(formData.get("valor"));
   const cartaoNumero = formData.get("cartaoNumero");
   const cartaoNome = formData.get("cartaoNome");
   if (!valorBruto || valorBruto <= 0) return;
 
-  const fielConvidado = criarFielConvidado(link.igrejaId, nome);
+  const sessao = await getSessao();
+  const fielId =
+    sessao?.papel === "fiel"
+      ? sessao.usuarioId
+      : criarFielConvidado(link.igrejaId, String(formData.get("nome") ?? "").trim()).id;
 
   const dados = await gateway.iniciarContribuicao({
     igrejaId: link.igrejaId,
-    fielId: fielConvidado.id,
+    fielId,
     tipo: link.tipo,
     campanhaId: null,
     valorBruto,

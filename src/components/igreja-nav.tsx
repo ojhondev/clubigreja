@@ -9,6 +9,7 @@ import {
   Calendar,
   Megaphone,
   BarChart3,
+  Settings,
   Grid3x3,
   LogOut,
   type LucideIcon,
@@ -21,6 +22,7 @@ export const NAV_ITEMS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/igreja/eventos", label: "Eventos", icon: Calendar },
   { href: "/igreja/mural", label: "Mural", icon: Megaphone },
   { href: "/igreja/relatorios", label: "Relatórios", icon: BarChart3 },
+  { href: "/igreja/perfil", label: "Perfil", icon: Settings },
 ];
 
 export function PillNav() {

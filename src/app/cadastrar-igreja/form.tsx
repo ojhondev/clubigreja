@@ -33,9 +33,30 @@ export function FormCadastroIgreja() {
         <span className="text-sm font-bold text-muted">Nome do responsável *</span>
         <input name="responsavelNome" required placeholder="Nome de quem administra a conta" className="rounded-xl border border-border px-4 py-3" />
       </label>
+      <div className="grid grid-cols-2 gap-4">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-muted">E-mail do responsável *</span>
+          <input name="responsavelEmail" type="email" required className="rounded-xl border border-border px-4 py-3" />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-muted">WhatsApp do responsável *</span>
+          <input
+            name="responsavelWhatsapp"
+            required
+            placeholder="(11) 99999-9999"
+            className="rounded-xl border border-border px-4 py-3"
+          />
+        </label>
+      </div>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-bold text-muted">E-mail do responsável *</span>
-        <input name="responsavelEmail" type="email" required className="rounded-xl border border-border px-4 py-3" />
+        <span className="text-sm font-bold text-muted">Chave Pix da igreja *</span>
+        <input
+          name="chavePix"
+          required
+          placeholder="CNPJ, e-mail, telefone ou chave aleatória"
+          className="rounded-xl border border-border px-4 py-3"
+        />
+        <span className="text-xs text-muted">É pra essa chave que o Pix dos fiéis vai direto — o Dizipay nunca recebe esse valor.</span>
       </label>
 
       {estado.erro && (

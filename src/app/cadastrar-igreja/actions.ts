@@ -16,10 +16,12 @@ export async function cadastrarIgrejaAction(
   const cnpj = String(formData.get("cnpj") ?? "").trim();
   const responsavelNome = String(formData.get("responsavelNome") ?? "").trim();
   const responsavelEmail = String(formData.get("responsavelEmail") ?? "").trim();
+  const responsavelWhatsapp = String(formData.get("responsavelWhatsapp") ?? "").trim();
   const cidade = String(formData.get("cidade") ?? "").trim();
   const uf = String(formData.get("uf") ?? "").trim().toUpperCase();
+  const chavePix = String(formData.get("chavePix") ?? "").trim();
 
-  if (!nome || !responsavelNome || !responsavelEmail || !cidade || !uf) {
+  if (!nome || !responsavelNome || !responsavelEmail || !responsavelWhatsapp || !cidade || !uf || !chavePix) {
     return { erro: "Preencha todos os campos obrigatórios." };
   }
 
@@ -28,7 +30,16 @@ export async function cadastrarIgrejaAction(
     return { erro: "Informe um CNPJ válido (14 dígitos) — é obrigatório para operar na plataforma." };
   }
 
-  const igreja = criarIgreja({ nome, cnpj, responsavelNome, responsavelEmail, cidade, uf });
+  const igreja = criarIgreja({
+    nome,
+    cnpj,
+    responsavelNome,
+    responsavelEmail,
+    responsavelWhatsapp,
+    cidade,
+    uf,
+    chavePix,
+  });
   const usuario = criarUsuarioIgreja({
     igrejaId: igreja.id,
     nome: responsavelNome,

@@ -6,6 +6,12 @@ export type MeioPagamento = "pix" | "cartao" | "boleto";
 
 export type TipoArrecadacao = "dizimo" | "oferta" | "campanha" | "evento" | "livre";
 
+export interface LinkExtra {
+  id: string;
+  rotulo: string;
+  url: string;
+}
+
 export interface Igreja {
   id: string;
   slug: string;
@@ -13,9 +19,16 @@ export interface Igreja {
   cnpj: string;
   responsavelNome: string;
   responsavelEmail: string;
+  responsavelWhatsapp: string;
   cidade: string;
   uf: string;
   logoEmoji: string;
+  // Foto de perfil da igreja, exibida na página pública. Sem foto cadastrada,
+  // a página cai no emoji como placeholder.
+  fotoUrl?: string;
+  // Links extras que a igreja escolhe mostrar na própria página pública —
+  // Instagram, site, campanha específica etc.
+  linksExtras: LinkExtra[];
   statusOnboarding: StatusOnboarding;
   // Chave Pix da própria igreja, cadastrada no banco dela — é pra onde o Pix
   // do fiel vai direto. O Dizipay nunca custodia esse valor.

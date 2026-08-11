@@ -8,6 +8,7 @@ import type {
   Evento,
   Fiel,
   Igreja,
+  LinkExtra,
   LinkPagamento,
   NotificacaoFiel,
   UsuarioIgreja,
@@ -25,9 +26,14 @@ export const igrejas: Igreja[] = [
     cnpj: "12.345.678/0001-90",
     responsavelNome: "Pr. José Andrade",
     responsavelEmail: "pastor.jose@novavida.org.br",
+    responsavelWhatsapp: "(19) 99100-2233",
     cidade: "Campinas",
     uf: "SP",
     logoEmoji: "⛪",
+    linksExtras: [
+      { id: "link-extra-1", rotulo: "Instagram", url: "https://instagram.com/novavidabatista" },
+      { id: "link-extra-2", rotulo: "Site da igreja", url: "https://novavida.org.br" },
+    ],
     statusOnboarding: "aprovado",
     chavePix: "financeiro@novavida.org.br",
     criadaEm: "2026-05-10",
@@ -284,8 +290,10 @@ export function getLinksDaIgreja(igrejaId: string): LinkPagamento[] {
   return linksPagamento.filter((l) => l.igrejaId === igrejaId);
 }
 
+// Mais nova primeiro — a campanha recém-criada é a que deve aparecer em
+// destaque, tanto pra igreja gerenciar quanto pro fiel ver.
 export function getCampanhasDaIgreja(igrejaId: string): Campanha[] {
-  return campanhas.filter((c) => c.igrejaId === igrejaId);
+  return campanhas.filter((c) => c.igrejaId === igrejaId).sort((a, b) => (a.criadaEm < b.criadaEm ? 1 : -1));
 }
 
 export function getCampanha(campanhaId: string): Campanha | undefined {
@@ -480,8 +488,10 @@ export function criarIgreja(input: {
   cnpj: string;
   responsavelNome: string;
   responsavelEmail: string;
+  responsavelWhatsapp: string;
   cidade: string;
   uf: string;
+  chavePix: string;
 }): Igreja {
   const nova: Igreja = {
     id: `igreja-${proximoIdIgreja++}`,
@@ -490,13 +500,13 @@ export function criarIgreja(input: {
     cnpj: input.cnpj,
     responsavelNome: input.responsavelNome,
     responsavelEmail: input.responsavelEmail,
+    responsavelWhatsapp: input.responsavelWhatsapp,
     cidade: input.cidade,
     uf: input.uf,
     logoEmoji: "⛪",
+    linksExtras: [],
     statusOnboarding: "em_analise",
-    // A igreja informa a própria chave Pix depois, na aprovação — usamos o
-    // e-mail do responsável como valor inicial pra nunca ficar vazia.
-    chavePix: input.responsavelEmail,
+    chavePix: input.chavePix,
     criadaEm: new Date().toISOString().slice(0, 10),
   };
   igrejas.push(nova);
@@ -523,6 +533,45 @@ export function criarUsuarioIgreja(input: {
 export function atualizarStatusIgreja(igrejaId: string, status: Igreja["statusOnboarding"]): void {
   const igreja = igrejas.find((i) => i.id === igrejaId);
   if (igreja) igreja.statusOnboarding = status;
+}
+
+// Dados cadastrais que a própria igreja pode alterar depois, na área de
+// perfil — nunca o slug nem o status de aprovação, que são controlados à
+// parte (URL pública e aprovação do superadmin).
+export function atualizarPerfilIgreja(
+  igrejaId: string,
+  input: {
+    nome: string;
+    cnpj: string;
+    responsavelNome: string;
+    responsavelEmail: string;
+    responsavelWhatsapp: string;
+    cidade: string;
+    uf: string;
+    chavePix: string;
+    fotoUrl?: string;
+  }
+): Igreja | undefined {
+  const igreja = igrejas.find((i) => i.id === igrejaId);
+  if (!igreja) return undefined;
+  Object.assign(igreja, input);
+  return igreja;
+}
+
+let proximoIdLinkExtra = 1;
+
+export function adicionarLinkExtra(igrejaId: string, input: { rotulo: string; url: string }): LinkExtra | undefined {
+  const igreja = igrejas.find((i) => i.id === igrejaId);
+  if (!igreja) return undefined;
+  const novo: LinkExtra = { id: `link-extra-${proximoIdLinkExtra++}`, rotulo: input.rotulo, url: input.url };
+  igreja.linksExtras.push(novo);
+  return novo;
+}
+
+export function removerLinkExtra(igrejaId: string, linkExtraId: string): void {
+  const igreja = igrejas.find((i) => i.id === igrejaId);
+  if (!igreja) return;
+  igreja.linksExtras = igreja.linksExtras.filter((l) => l.id !== linkExtraId);
 }
 
 let proximoIdFiel = 1;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import {
   getArrecadadoCampanha,
@@ -7,7 +8,7 @@ import {
   getLinksDaIgreja,
 } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
-import { Button, Card, ProgressBar } from "@/components/ui";
+import { Badge, Button, Card, ProgressBar } from "@/components/ui";
 import { Logo } from "@/components/logo";
 
 const ROTULO_TIPO: Record<string, string> = {
@@ -28,11 +29,19 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-6 py-10">
-      <div className="mb-2 flex justify-center">
-        <Logo height={22} />
-      </div>
       <div className="mb-8 text-center">
-        <div className="mb-2 text-5xl">{igreja.logoEmoji}</div>
+        {igreja.fotoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- URL arbitrária cadastrada pela igreja, domínio não é conhecido de antemão pro otimizador do Next.
+          <img
+            src={igreja.fotoUrl}
+            alt={igreja.nome}
+            width={80}
+            height={80}
+            className="mx-auto mb-3 h-20 w-20 rounded-full border border-border object-cover"
+          />
+        ) : (
+          <div className="mb-2 text-5xl">{igreja.logoEmoji}</div>
+        )}
         <h1 className="text-xl font-bold">{igreja.nome}</h1>
         <p className="text-sm text-muted">
           {igreja.cidade}/{igreja.uf}
@@ -70,10 +79,10 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
       )}
 
       {campanhas.length > 0 && (
-        <div>
+        <div className={links.length > 0 || igreja.linksExtras.length > 0 ? "mb-8" : undefined}>
           <h2 className="mb-3 text-lg font-bold">Campanhas em captação</h2>
           <div className="space-y-3">
-            {campanhas.map((c) => {
+            {campanhas.map((c, i) => {
               const arrecadado = getArrecadadoCampanha(c.id);
               const pct = (arrecadado / c.meta) * 100;
               return (
@@ -82,6 +91,7 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
                     <div className="mb-2 flex items-center gap-2">
                       <span className="text-xl">{c.imagemEmoji}</span>
                       <p className="font-bold">{c.titulo}</p>
+                      {i === 0 && <Badge tone="accent">Destaque</Badge>}
                     </div>
                     <ProgressBar percentual={pct} />
                     <p className="mt-2 text-sm text-muted">
@@ -95,9 +105,28 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
         </div>
       )}
 
-      <p className="mt-10 text-center text-xs text-muted">
-        Página oficial de {igreja.nome} no Dizipay — dclubigreja.com/{slug}
-      </p>
+      {igreja.linksExtras.length > 0 && (
+        <div>
+          <h2 className="mb-3 text-lg font-bold">Mais sobre a igreja</h2>
+          <div className="space-y-3">
+            {igreja.linksExtras.map((link) => (
+              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer">
+                <Card className="flex items-center justify-between hover:border-primary">
+                  <p className="font-bold">{link.rotulo}</p>
+                  <ExternalLink size={16} className="shrink-0 text-primary" />
+                </Card>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-10 flex flex-col items-center gap-2">
+        <Logo height={16} />
+        <p className="text-center text-xs text-muted">
+          Página oficial de {igreja.nome} — dclubigreja.com/{slug}
+        </p>
+      </div>
     </div>
   );
 }

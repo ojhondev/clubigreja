@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getCampanha, criarFielConvidado } from "@/lib/mock-db";
+import { getSessao } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarCampanhaPublicoAction(formData: FormData) {
@@ -9,17 +10,22 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
   const campanha = getCampanha(campanhaId);
   if (!campanha) return;
 
-  const nome = String(formData.get("nome") ?? "").trim();
   const valorBruto = Number(formData.get("valor"));
   const cartaoNumero = formData.get("cartaoNumero");
   const cartaoNome = formData.get("cartaoNome");
   if (!valorBruto || valorBruto <= 0) return;
 
-  const fielConvidado = criarFielConvidado(campanha.igrejaId, nome);
+  // Fiel já logado: usa a própria conta, sem pedir nome nem recriar um
+  // registro de convidado.
+  const sessao = await getSessao();
+  const fielId =
+    sessao?.papel === "fiel"
+      ? sessao.usuarioId
+      : criarFielConvidado(campanha.igrejaId, String(formData.get("nome") ?? "").trim()).id;
 
   const dados = await gateway.iniciarContribuicao({
     igrejaId: campanha.igrejaId,
-    fielId: fielConvidado.id,
+    fielId,
     tipo: "campanha",
     campanhaId: campanha.id,
     valorBruto,

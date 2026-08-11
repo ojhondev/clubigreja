@@ -49,11 +49,18 @@ export function ProgressBar({ percentual }: { percentual: number }) {
   );
 }
 
-export function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "success" | "warning" }) {
+export function Badge({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "neutral" | "success" | "warning" | "accent";
+}) {
   const tones: Record<string, string> = {
     neutral: "bg-black/5 text-muted",
     success: "bg-green-100 text-success",
     warning: "bg-amber-100 text-amber-700",
+    accent: "bg-[#EAF6FF] text-primary",
   };
   return (
     <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${tones[tone]}`}>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
 import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/mock-db";
 import { formatarMoeda } from "@/lib/comissao";
-import { Button, Card, PageHeader, ProgressBar } from "@/components/ui";
+import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
 
 export default async function CampanhasFielPage() {
   const sessao = await getSessao();
@@ -12,7 +12,7 @@ export default async function CampanhasFielPage() {
     <div>
       <PageHeader title="Campanhas em captação" />
       <div className="space-y-4">
-        {campanhas.map((c) => {
+        {campanhas.map((c, i) => {
           const arrecadado = getArrecadadoCampanha(c.id);
           const pct = (arrecadado / c.meta) * 100;
           return (
@@ -20,6 +20,7 @@ export default async function CampanhasFielPage() {
               <div className="mb-2 flex items-center gap-2">
                 <span className="text-2xl">{c.imagemEmoji}</span>
                 <p className="font-bold">{c.titulo}</p>
+                {i === 0 && <Badge tone="accent">Destaque</Badge>}
               </div>
               <p className="mb-3 text-sm text-muted">{c.descricao}</p>
               <ProgressBar percentual={pct} />

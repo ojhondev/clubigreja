@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getIgreja, linksPagamento } from "@/lib/mock-db";
+import { getFiel, getIgreja, linksPagamento } from "@/lib/mock-db";
+import { getSessao } from "@/lib/auth/session";
 import { Card } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
@@ -21,6 +22,9 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
 
   const igreja = getIgreja(link.igrejaId)!;
 
+  const sessao = await getSessao();
+  const fielLogado = sessao?.papel === "fiel" ? getFiel(sessao.usuarioId) : undefined;
+
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-10">
       <div className="mb-6 text-center">
@@ -34,19 +38,21 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
         <form action={doarPublicoAction} className="space-y-5">
           <input type="hidden" name="linkId" value={link.id} />
 
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-muted">Seu nome</span>
-            <input
-              name="nome"
-              required
-              placeholder="Como podemos te chamar?"
-              className="rounded-xl border border-border px-4 py-3"
-            />
-          </label>
+          {!fielLogado && (
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-medium text-muted">Seu nome</span>
+              <input
+                name="nome"
+                required
+                placeholder="Como podemos te chamar?"
+                className="rounded-xl border border-border px-4 py-3"
+              />
+            </label>
+          )}
 
           <SeletorValor valorInicial={link.valorSugerido ?? undefined} tipo={link.tipo} />
 
-          <CartaoTaxa />
+          <CartaoTaxa cartaoSalvo={fielLogado?.cartaoSalvo} />
 
           <BotaoContinuarPix />
         </form>

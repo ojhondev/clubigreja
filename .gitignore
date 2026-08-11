@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# banco local (Drizzle/SQLite) — gerado, não é código-fonte; as migrations
+# em /drizzle continuam versionadas normalmente
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
