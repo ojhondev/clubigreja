@@ -15,7 +15,7 @@ export default async function PagarDoacaoPublicoPage({ params }: { params: Promi
         confirmarAction={confirmarPagamentoPublicoAction}
         caminhoComprovanteBase="/doar/comprovante"
       />
-      <p className="mt-4 text-center text-xs text-muted">Processado com segurança pelo Club Igreja — dclubigreja.com</p>
+      <p className="mt-4 text-center text-xs text-muted">Processado com segurança pelo Dizipay — dclubigreja.com</p>
     </div>
   );
 }

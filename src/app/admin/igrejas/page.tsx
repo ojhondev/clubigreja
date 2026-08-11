@@ -31,7 +31,7 @@ export default function IgrejasAdminPage() {
           <p className="mt-1 text-2xl font-bold">{formatarMoeda(gmvTotal)}</p>
         </Card>
         <Card>
-          <p className="text-sm text-muted">Receita do Club Igreja</p>
+          <p className="text-sm text-muted">Receita do Dizipay</p>
           <p className="mt-1 text-2xl font-bold text-success">{formatarMoeda(receitaTotal)}</p>
         </Card>
       </div>

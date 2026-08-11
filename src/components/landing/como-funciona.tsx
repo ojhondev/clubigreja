@@ -15,7 +15,7 @@ export function ComoFunciona({ qrDataUrl }: { qrDataUrl: string }) {
         <div className="mb-10 text-center">
           <span className="text-sm font-bold text-primary">Como funciona</span>
           <h2 className="font-display mt-2 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
-            Veja o Club Igreja funcionando, na prática.
+            Veja o Dizipay funcionando, na prática.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
             Dois lados, um único fluxo: como a igreja lança uma campanha e como o fiel contribui em

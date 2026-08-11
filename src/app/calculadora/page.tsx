@@ -5,7 +5,7 @@ import { CalculadoraArrecadacao } from "@/components/landing/calculadora-arrecad
 import { Button } from "@/components/ui";
 
 export const metadata = {
-  title: "Calculadora de arrecadação — Club Igreja",
+  title: "Calculadora de arrecadação — Dizipay",
   description:
     "Veja quanto a sua comunidade pode arrecadar a mais por mês ao ativar o canal digital de dízimos, ofertas e campanhas.",
 };
@@ -39,7 +39,7 @@ export default function CalculadoraPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-md text-lg text-muted">
               Cadastre sua igreja gratuitamente e comece a receber dízimos, ofertas e campanhas pelo
-              Club Igreja.
+              Dizipay.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link href="/cadastrar-igreja">

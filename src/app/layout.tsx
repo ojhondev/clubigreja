@@ -17,18 +17,18 @@ const baloo = Baloo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Club Igreja",
+  title: "Dizipay",
   description: "Dízimo, ofertas e campanhas da sua igreja em um só lugar.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
+    icon: "/dizipay-icon.png",
+    shortcut: "/dizipay-icon.png",
+    apple: "/dizipay-icon.png",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Club Igreja",
+    title: "Dizipay",
   },
 };
 

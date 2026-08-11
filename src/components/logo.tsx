@@ -1,12 +1,12 @@
 import Image from "next/image";
 
-const ASPECT = 918 / 241;
+const ASPECT = 1412 / 328;
 
 export function Logo({ height = 28, className = "" }: { height?: number; className?: string }) {
   return (
     <Image
-      src="/logo-club.png"
-      alt="Club Igreja"
+      src="/dizipay-logo.png"
+      alt="Dizipay"
       width={Math.round(height * ASPECT)}
       height={height}
       className={className}

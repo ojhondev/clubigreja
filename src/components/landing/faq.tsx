@@ -7,7 +7,7 @@ const PERGUNTAS = [
   {
     pergunta: "O dinheiro da minha igreja está seguro?",
     resposta:
-      "Sim. O Club Igreja nunca guarda nem movimenta o dinheiro da sua igreja — cada contribuição é um Pix direto pra chave Pix da própria igreja, sem passar pela nossa conta em nenhum momento. A igreja recebe 100% do que for arrecadado.",
+      "Sim. O Dizipay nunca guarda nem movimenta o dinheiro da sua igreja — cada contribuição é um Pix direto pra chave Pix da própria igreja, sem passar pela nossa conta em nenhum momento. A igreja recebe 100% do que for arrecadado.",
   },
   {
     pergunta: "Isso é legal? Precisamos de alguma autorização?",
@@ -22,7 +22,7 @@ const PERGUNTAS = [
   {
     pergunta: "Quanto tempo até o dinheiro cair na conta da igreja?",
     resposta:
-      "Na hora. A contribuição é um Pix direto pra chave Pix da própria igreja — não existe prazo de repasse porque o Club Igreja nunca chega a receber esse dinheiro.",
+      "Na hora. A contribuição é um Pix direto pra chave Pix da própria igreja — não existe prazo de repasse porque o Dizipay nunca chega a receber esse dinheiro.",
   },
   {
     pergunta: "Podemos cancelar a qualquer momento?",
@@ -37,7 +37,7 @@ const PERGUNTAS = [
   {
     pergunta: "Isso substitui o dízimo entregue em espécie durante o culto?",
     resposta:
-      "Não, complementa. Quem preferir continuar contribuindo em espécie ou no envelope físico continua podendo — o Club Igreja é um canal a mais, não uma obrigação.",
+      "Não, complementa. Quem preferir continuar contribuindo em espécie ou no envelope físico continua podendo — o Dizipay é um canal a mais, não uma obrigação.",
   },
   {
     pergunta: "E se tivermos alguma dúvida ou problema?",

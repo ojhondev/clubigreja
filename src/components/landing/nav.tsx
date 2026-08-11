@@ -35,7 +35,7 @@ export function LandingNav() {
       <div className="flex w-full items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Link href="/" className="flex shrink-0 items-center">
           {rolado ? (
-            <Image src="/icon.png" alt="Club Igreja" width={34} height={34} priority />
+            <Image src="/dizipay-icon.png" alt="Dizipay" width={34} height={34} priority />
           ) : (
             <Logo height={30} />
           )}

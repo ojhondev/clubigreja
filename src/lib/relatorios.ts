@@ -50,7 +50,7 @@ export function getContribuicoesPorTipo(igrejaId: string): Record<Contribuicao["
 }
 
 // O dízimo/oferta/campanha vai direto via Pix pra chave da própria igreja —
-// não existe mais um ciclo de repasse (o Club Igreja nunca custodia esse
+// não existe mais um ciclo de repasse (o Dizipay nunca custodia esse
 // valor). Isso mede quanto os fiéis pagaram de taxa de processamento no mês,
 // como informação de transparência pra igreja (não afeta o que ela recebeu).
 export function getTaxasFieisMesAtual(igrejaId: string): number {

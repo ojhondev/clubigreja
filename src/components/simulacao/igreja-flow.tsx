@@ -142,7 +142,7 @@ export function IgrejaFlow({ qrDataUrl }: { qrDataUrl: string }) {
       render: () => <TelaFormulario />,
     },
     {
-      titulo: "O Club gera o link e o QR Code na hora",
+      titulo: "O Dizipay gera o link e o QR Code na hora",
       descricao:
         "Cada campanha ganha um link próprio e um QR Code pronto para imprimir, sem custo e sem esperar ninguém configurar nada.",
       render: () => <TelaQrCode qrDataUrl={qrDataUrl} />,

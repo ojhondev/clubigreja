@@ -36,7 +36,7 @@ export async function entrarComoSuperadmin() {
   await criarSessao({
     papel: "superadmin",
     usuarioId: "superadmin-1",
-    nome: "Equipe Club Igreja",
+    nome: "Equipe Dizipay",
   });
   redirect("/admin/igrejas");
 }

@@ -11,7 +11,7 @@ export default async function ComprovantePublicoPage({ params }: { params: Promi
       <div className="mt-6 flex w-full flex-col gap-3">
         <Link href="/entrar">
           <Button variant="secondary" className="w-full">
-            Acompanhar sua igreja no Club Igreja
+            Acompanhar sua igreja no Dizipay
           </Button>
         </Link>
       </div>

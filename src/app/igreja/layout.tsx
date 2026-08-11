@@ -42,7 +42,7 @@ export default async function IgrejaLayout({ children }: { children: React.React
             </h1>
             <p className="text-muted">
               {reprovada
-                ? "Não foi possível aprovar o cadastro da sua igreja. Entre em contato com o suporte do Club Igreja para entender o motivo."
+                ? "Não foi possível aprovar o cadastro da sua igreja. Entre em contato com o suporte do Dizipay para entender o motivo."
                 : "Estamos validando os dados enviados. Assim que aprovarmos, seu painel de arrecadação é liberado automaticamente — normalmente isso leva poucas horas."}
             </p>
           </Card>

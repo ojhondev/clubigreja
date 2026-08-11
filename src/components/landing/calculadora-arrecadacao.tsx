@@ -86,7 +86,7 @@ export function CalculadoraArrecadacao() {
         </div>
 
         <p className="mt-5 text-xs font-bold uppercase tracking-wide text-accent">
-          Projeção com o Club Igreja
+          Projeção com o Dizipay
         </p>
         <p className="font-display mt-1 text-4xl font-bold sm:text-5xl">
           {formatarMoedaInteira(projecaoComClub)}

@@ -13,7 +13,7 @@ export function Hero() {
           Aplicativo de Campanhas e Dízimo Recorrente para Igrejas
         </h1>
         <p className="mx-auto mt-6 max-w-lg text-lg text-muted">
-          Por meio do Club, sua igreja recebe dízimos, ofertas e campanhas em um único lugar,
+          Por meio do Dizipay, sua igreja recebe dízimos, ofertas e campanhas em um único lugar,
           enquanto o fiel contribui e acompanha tudo em poucos toques, de qualquer lugar.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

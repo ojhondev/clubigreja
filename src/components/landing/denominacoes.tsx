@@ -23,7 +23,7 @@ export function Denominacoes() {
           Feito para a realidade católica e evangélica.
         </h2>
         <p className="mt-4 text-lg text-muted">
-          O jeito de arrecadar muda de igreja para igreja — o Club Igreja se adapta à sua.
+          O jeito de arrecadar muda de igreja para igreja — o Dizipay se adapta à sua.
         </p>
       </div>
 

@@ -1,13 +1,13 @@
 self.addEventListener("push", (event) => {
   const dados = event.data ? event.data.json() : {};
-  const titulo = dados.titulo || "Club Igreja";
-  const corpo = dados.corpo || "Você tem uma novidade no Club Igreja.";
+  const titulo = dados.titulo || "Dizipay";
+  const corpo = dados.corpo || "Você tem uma novidade no Dizipay.";
 
   event.waitUntil(
     self.registration.showNotification(titulo, {
       body: corpo,
-      icon: "/icon.png",
-      badge: "/icon.png",
+      icon: "/dizipay-icon.png",
+      badge: "/dizipay-icon.png",
       data: { url: dados.url || "/fiel/inicio" },
     })
   );

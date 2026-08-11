@@ -41,13 +41,13 @@ export interface ConfirmacaoPagamento {
 // a implementação usada em index.ts, sem tocar nas telas que chamam o gateway.
 //
 // Modelo: a doação em si é um Pix direto pra chave da própria igreja — nunca
-// passa pela conta do Club Igreja, então não há split nem subconta. Por isso
+// passa pela conta do Dizipay, então não há split nem subconta. Por isso
 // o fluxo tem duas etapas reais, não uma:
 //   1. iniciarContribuicao — registra a intenção e devolve os dados de
 //      pagamento (chave Pix + copia-e-cola). Nenhuma cobrança acontece aqui.
 //   2. confirmarPagamento — chamado só depois que o fiel volta e confirma
 //      que já pagou o Pix. É esse clique que dispara a segunda cobrança,
-//      independente, no cartão salvo do fiel — que cai na conta do Club Igreja.
+//      independente, no cartão salvo do fiel — que cai na conta do Dizipay.
 export interface PaymentGateway {
   iniciarContribuicao(input: IniciarContribuicaoInput): Promise<DadosParaPagamento>;
   confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento>;

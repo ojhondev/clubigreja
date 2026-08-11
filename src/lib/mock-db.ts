@@ -127,7 +127,7 @@ export const comunicadosMural: ComunicadoMural[] = [
   {
     id: "comunicado-1",
     igrejaId: "igreja-1",
-    titulo: "Bem-vindo ao Club Igreja!",
+    titulo: "Bem-vindo ao Dizipay!",
     corpo: "Agora você pode acompanhar tudo por aqui: mural, campanhas e sua contribuição, tudo em um só lugar.",
     emoji: "👋",
     publicadoEm: "2026-07-20",

@@ -68,9 +68,9 @@ export function LandingFooter() {
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
           <div className="flex items-center gap-2">
-            <Image src="/icon.png" alt="" width={20} height={20} />
+            <Image src="/dizipay-icon.png" alt="" width={20} height={20} />
             <p className="text-xs text-muted">
-              © {new Date().getFullYear()} Club Igreja. Todos os direitos reservados.
+              © {new Date().getFullYear()} Dizipay. Todos os direitos reservados.
             </p>
           </div>
           <p className="text-xs text-muted">dclubigreja.com</p>

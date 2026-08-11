@@ -33,7 +33,7 @@ export function gerarPixCopiaECola(input: {
   valor: number;
   txId: string;
 }): string {
-  const nome = semAcentos(input.nomeRecebedor).toUpperCase().slice(0, 25) || "CLUB IGREJA";
+  const nome = semAcentos(input.nomeRecebedor).toUpperCase().slice(0, 25) || "DIZIPAY";
   const cidade = semAcentos(input.cidade).toUpperCase().slice(0, 15) || "SAO PAULO";
   const txId = semAcentos(input.txId).replace(/[^A-Za-z0-9]/g, "").slice(0, 25) || "***";
 

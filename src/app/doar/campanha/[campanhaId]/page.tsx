@@ -57,7 +57,7 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
       </Card>
 
       <p className="mt-4 text-center text-xs text-muted">
-        Processado com segurança pelo Club Igreja — dclubigreja.com
+        Processado com segurança pelo Dizipay — dclubigreja.com
       </p>
     </div>
   );

@@ -18,7 +18,7 @@ export function PorQueUsar() {
   return (
     <section id="por-que-usar" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto mb-14 max-w-2xl text-center">
-        <span className="text-sm font-bold text-primary">Por que usar o Club Igreja</span>
+        <span className="text-sm font-bold text-primary">Por que usar o Dizipay</span>
         <h2 className="font-display mt-2 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
           Do jeito antigo para o jeito simples.
         </h2>
@@ -26,7 +26,7 @@ export function PorQueUsar() {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="rounded-3xl border border-border bg-white p-8">
-          <p className="font-display mb-5 text-lg font-bold text-muted">Sem o Club Igreja</p>
+          <p className="font-display mb-5 text-lg font-bold text-muted">Sem o Dizipay</p>
           <ul className="space-y-4">
             {ANTES.map((item) => (
               <li key={item} className="flex items-start gap-3">
@@ -40,7 +40,7 @@ export function PorQueUsar() {
         </div>
 
         <div className="rounded-3xl border-2 border-primary bg-[#EAF6FF] p-8">
-          <p className="font-display mb-5 text-lg font-bold text-primary">Com o Club Igreja</p>
+          <p className="font-display mb-5 text-lg font-bold text-primary">Com o Dizipay</p>
           <ul className="space-y-4">
             {DEPOIS.map((item) => (
               <li key={item} className="flex items-start gap-3">

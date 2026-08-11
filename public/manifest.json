@@ -1,6 +1,6 @@
 {
-  "name": "Club Igreja",
-  "short_name": "Club Igreja",
+  "name": "Dizipay",
+  "short_name": "Dizipay",
   "description": "Dízimo, ofertas e campanhas da sua igreja em um só lugar.",
   "start_url": "/",
   "display": "standalone",
@@ -8,6 +8,6 @@
   "theme_color": "#002991",
   "orientation": "portrait",
   "icons": [
-    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/dizipay-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

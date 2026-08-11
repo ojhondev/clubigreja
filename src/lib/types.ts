@@ -18,7 +18,7 @@ export interface Igreja {
   logoEmoji: string;
   statusOnboarding: StatusOnboarding;
   // Chave Pix da própria igreja, cadastrada no banco dela — é pra onde o Pix
-  // do fiel vai direto. O Club Igreja nunca custodia esse valor.
+  // do fiel vai direto. O Dizipay nunca custodia esse valor.
   chavePix: string;
   criadaEm: string;
 }

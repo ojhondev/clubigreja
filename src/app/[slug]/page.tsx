@@ -96,7 +96,7 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
       )}
 
       <p className="mt-10 text-center text-xs text-muted">
-        Página oficial de {igreja.nome} no Club Igreja — dclubigreja.com/{slug}
+        Página oficial de {igreja.nome} no Dizipay — dclubigreja.com/{slug}
       </p>
     </div>
   );

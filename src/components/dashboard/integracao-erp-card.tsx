@@ -16,7 +16,7 @@ export function IntegracaoErpCard() {
         </div>
       </div>
       <a href="mailto:contato@dclubigreja.com?subject=Integração%20com%20ERP" className="shrink-0">
-        <Button variant="secondary">Falar com o time do Club</Button>
+        <Button variant="secondary">Falar com o time do Dizipay</Button>
       </a>
     </Card>
   );

@@ -98,7 +98,7 @@ export default function LoginPage() {
               type="submit"
               className="flex w-full items-center justify-between rounded-xl border border-border px-4 py-3 text-left hover:bg-[#EAF6FF]"
             >
-              <span className="font-medium">Equipe Club Igreja (superadmin)</span>
+              <span className="font-medium">Equipe Dizipay (superadmin)</span>
               <span className="text-primary">→</span>
             </button>
           </form>
