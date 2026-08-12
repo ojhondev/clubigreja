@@ -1,5 +1,6 @@
 import { CreditCard } from "lucide-react";
 import type { CartaoSalvo } from "@/lib/types";
+import { InputValidadeCartao } from "./input-validade-cartao";
 
 export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
   if (cartaoSalvo) {
@@ -21,6 +22,7 @@ export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
         <input
           name="cartaoNumero"
           required
+          autoComplete="cc-number"
           inputMode="numeric"
           placeholder="0000 0000 0000 0000"
           className="rounded-xl border border-border px-4 py-3"
@@ -28,16 +30,30 @@ export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-xs text-muted">Nome no cartão</span>
-        <input name="cartaoNome" required placeholder="Como está impresso no cartão" className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="cartaoNome"
+          required
+          autoComplete="cc-name"
+          placeholder="Como está impresso no cartão"
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
           <span className="text-xs text-muted">Validade</span>
-          <input name="cartaoValidade" required placeholder="MM/AA" className="rounded-xl border border-border px-4 py-3" />
+          <InputValidadeCartao />
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-xs text-muted">CVV</span>
-          <input name="cartaoCvv" required inputMode="numeric" placeholder="123" className="rounded-xl border border-border px-4 py-3" />
+          <input
+            name="cartaoCvv"
+            required
+            autoComplete="cc-csc"
+            inputMode="numeric"
+            maxLength={4}
+            placeholder="123"
+            className="rounded-xl border border-border px-4 py-3"
+          />
         </label>
       </div>
     </fieldset>

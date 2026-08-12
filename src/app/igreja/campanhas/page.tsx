@@ -5,6 +5,7 @@ import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
 import { formatarData } from "@/lib/formato";
+import { InputMoeda } from "@/components/input-moeda";
 import { criarCampanhaAction } from "./actions";
 
 export default async function CampanhasPage() {
@@ -34,7 +35,7 @@ export default async function CampanhasPage() {
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-muted">Meta (R$)</span>
-            <input name="meta" type="number" min="1" step="0.01" required className="rounded-xl border border-border px-4 py-3" />
+            <InputMoeda name="meta" required placeholder="10.000" className="rounded-xl border border-border px-4 py-3" />
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-muted">Prazo</span>

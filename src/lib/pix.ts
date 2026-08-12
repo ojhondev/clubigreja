@@ -37,7 +37,11 @@ export function gerarPixCopiaECola(input: {
   const cidade = semAcentos(input.cidade).toUpperCase().slice(0, 15) || "SAO PAULO";
   const txId = semAcentos(input.txId).replace(/[^A-Za-z0-9]/g, "").slice(0, 25) || "***";
 
-  const contaPix = tlv("00", "BR.GOV.BCB.PIX") + tlv("01", input.chave);
+  // O GUI precisa ser exatamente "br.gov.bcb.pix" em minúsculas — é assim que
+  // apps de banco (Nubank incluso) reconhecem que o Copia e Cola é um Pix.
+  // Em maiúsculas o payload continua "válido" no formato EMV, mas alguns
+  // bancos não casam a string e rejeitam a leitura.
+  const contaPix = tlv("00", "br.gov.bcb.pix") + tlv("01", input.chave);
 
   const payloadSemCrc =
     tlv("00", "01") +
