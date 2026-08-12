@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { adicionarLinkExtra, atualizarPerfilIgreja, removerLinkExtra } from "@/lib/db/repo";
+import { podeGerenciarPagamentos, webmasterOrigemDaImpersonacao } from "@/lib/auth/permissoes";
+import { adicionarLinkExtra, atualizarPerfilIgreja, getIgreja, removerLinkExtra } from "@/lib/db/repo";
 
 export interface EstadoPerfilIgreja {
   erro?: string;
@@ -28,6 +29,17 @@ export async function atualizarPerfilAction(
 
   if (!nome || !responsavelNome || !responsavelEmail || !responsavelWhatsapp || !cidade || !uf || !chavePix) {
     return { erro: "Preencha todos os campos obrigatórios." };
+  }
+
+  // Se quem está editando é um webmaster "Acessando como" essa igreja (não a
+  // própria igreja), a mudança de chave Pix só vale se ele tiver a permissão
+  // de gerenciar pagamentos — igrejas de verdade nunca passam por essa checagem.
+  const webmasterOrigem = await webmasterOrigemDaImpersonacao();
+  if (webmasterOrigem && !podeGerenciarPagamentos(webmasterOrigem)) {
+    const atual = await getIgreja(sessao.igrejaId);
+    if (atual && atual.chavePix !== chavePix) {
+      return { erro: "Você não tem permissão para alterar a chave Pix. Peça ao Master Primário." };
+    }
   }
 
   const igreja = await atualizarPerfilIgreja(sessao.igrejaId, {

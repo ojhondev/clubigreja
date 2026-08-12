@@ -5,6 +5,7 @@ import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 import { PillNav, IconSidebar } from "@/components/igreja-nav";
 import { Card } from "@/components/ui";
+import { BannerAcessoWebmaster } from "@/components/banner-acesso-webmaster";
 
 function iniciais(nome: string): string {
   return nome
@@ -24,6 +25,7 @@ export default async function IgrejaLayout({ children }: { children: React.React
     const reprovada = igreja.statusOnboarding === "reprovado";
     return (
       <div className="flex min-h-full flex-col">
+        <BannerAcessoWebmaster />
         <header className="border-b border-border bg-card">
           <div className="flex items-center justify-between px-6 py-4">
             <Logo />
@@ -53,6 +55,7 @@ export default async function IgrejaLayout({ children }: { children: React.React
 
   return (
     <div className="flex min-h-full flex-col">
+      <BannerAcessoWebmaster />
       <header className="border-b border-border bg-card print:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
           <Logo height={26} />

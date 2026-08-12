@@ -1,27 +1,14 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getSessao } from "@/lib/auth/session";
-import { atualizarStatusIgreja, atualizarChavePixIgreja, getWebmasterPorId } from "@/lib/db/repo";
-import type { Webmaster } from "@/lib/types";
-
-async function webmasterDaSessao(): Promise<Webmaster | null> {
-  const sessao = await getSessao();
-  if (sessao?.papel !== "webmaster") return null;
-  return (await getWebmasterPorId(sessao.usuarioId)) ?? null;
-}
-
-async function podeAprovarIgrejas(webmaster: Webmaster): Promise<boolean> {
-  return webmaster.nivel === "primario" || webmaster.podeAprovarIgrejas;
-}
-
-async function podeGerenciarPagamentos(webmaster: Webmaster): Promise<boolean> {
-  return webmaster.nivel === "primario" || webmaster.podeGerenciarPagamentos;
-}
+import { iniciarAcessoComo } from "@/lib/auth/session";
+import { podeAprovarIgrejas, podeGerenciarPagamentos, webmasterDaSessao } from "@/lib/auth/permissoes";
+import { atualizarStatusIgreja, atualizarChavePixIgreja, getUsuariosDaIgreja } from "@/lib/db/repo";
 
 export async function aprovarIgrejaAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
-  if (!webmaster || !(await podeAprovarIgrejas(webmaster))) return;
+  if (!webmaster || !podeAprovarIgrejas(webmaster)) return;
 
   const igrejaId = String(formData.get("igrejaId"));
   await atualizarStatusIgreja(igrejaId, "aprovado");
@@ -30,7 +17,7 @@ export async function aprovarIgrejaAction(formData: FormData) {
 
 export async function reprovarIgrejaAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
-  if (!webmaster || !(await podeAprovarIgrejas(webmaster))) return;
+  if (!webmaster || !podeAprovarIgrejas(webmaster)) return;
 
   const igrejaId = String(formData.get("igrejaId"));
   await atualizarStatusIgreja(igrejaId, "reprovado");
@@ -39,7 +26,7 @@ export async function reprovarIgrejaAction(formData: FormData) {
 
 export async function editarChavePixAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
-  if (!webmaster || !(await podeGerenciarPagamentos(webmaster))) return;
+  if (!webmaster || !podeGerenciarPagamentos(webmaster)) return;
 
   const igrejaId = String(formData.get("igrejaId"));
   const chavePix = String(formData.get("chavePix") ?? "").trim();
@@ -47,4 +34,24 @@ export async function editarChavePixAction(formData: FormData) {
 
   await atualizarChavePixIgreja(igrejaId, chavePix);
   revalidatePath("/admin/igrejas");
+}
+
+// "Acessar como": entra no painel da igreja usando o usuário administrador
+// dela — dá pra ver exatamente as mesmas telas que a igreja vê.
+export async function acessarComoIgrejaAction(formData: FormData) {
+  const webmaster = await webmasterDaSessao();
+  if (!webmaster) return;
+
+  const igrejaId = String(formData.get("igrejaId"));
+  if (!igrejaId) return;
+
+  const usuarios = await getUsuariosDaIgreja(igrejaId);
+  const usuario = usuarios[0];
+  if (!usuario) return;
+
+  await iniciarAcessoComo(
+    { papel: "igreja", usuarioId: usuario.id, igrejaId, nome: usuario.nome },
+    { webmasterId: webmaster.id, webmasterNome: webmaster.nome }
+  );
+  redirect("/igreja/dashboard");
 }

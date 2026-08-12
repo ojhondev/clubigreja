@@ -1,8 +1,18 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { COOKIE_SESSAO, codificarSessao, decodificarSessao, type Papel, type Sessao } from "./cookie";
+import {
+  COOKIE_ORIGEM_WEBMASTER,
+  COOKIE_SESSAO,
+  codificarOrigemWebmaster,
+  codificarSessao,
+  decodificarOrigemWebmaster,
+  decodificarSessao,
+  type OrigemWebmaster,
+  type Papel,
+  type Sessao,
+} from "./cookie";
 
-export type { Papel, Sessao };
+export type { OrigemWebmaster, Papel, Sessao };
 
 export async function getSessao(): Promise<Sessao | null> {
   const store = await cookies();
@@ -25,4 +35,41 @@ export async function criarSessao(sessao: Sessao): Promise<void> {
 export async function encerrarSessao(): Promise<void> {
   const store = await cookies();
   store.delete(COOKIE_SESSAO);
+  store.delete(COOKIE_ORIGEM_WEBMASTER);
+}
+
+// "Acessar como": webmaster troca a sessão ativa pra a de uma igreja/fiel
+// específicos, mas guarda quem ele é de verdade em um cookie separado — dá
+// pra restaurar a sessão de webmaster depois, e pra aplicar a restrição de
+// pagamentos mesmo durante o acesso.
+export async function getOrigemWebmaster(): Promise<OrigemWebmaster | null> {
+  const store = await cookies();
+  const raw = store.get(COOKIE_ORIGEM_WEBMASTER)?.value;
+  if (!raw) return null;
+  return decodificarOrigemWebmaster(raw);
+}
+
+export async function iniciarAcessoComo(sessaoAlvo: Sessao, origem: OrigemWebmaster): Promise<void> {
+  const store = await cookies();
+  const opcoes = {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  };
+  store.set(COOKIE_SESSAO, codificarSessao(sessaoAlvo), opcoes);
+  store.set(COOKIE_ORIGEM_WEBMASTER, codificarOrigemWebmaster(origem), opcoes);
+}
+
+export async function encerrarAcessoComo(): Promise<void> {
+  const origem = await getOrigemWebmaster();
+  const store = await cookies();
+  if (!origem) {
+    store.delete(COOKIE_SESSAO);
+    store.delete(COOKIE_ORIGEM_WEBMASTER);
+    return;
+  }
+  await criarSessao({ papel: "webmaster", usuarioId: origem.webmasterId, nome: origem.webmasterNome });
+  store.delete(COOKIE_ORIGEM_WEBMASTER);
 }

@@ -5,6 +5,7 @@ import { getIgreja, getNotificacoesDoFiel } from "@/lib/db/repo";
 import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 import { BottomNav } from "@/components/fiel-nav";
+import { BannerAcessoWebmaster } from "@/components/banner-acesso-webmaster";
 
 export default async function FielLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
@@ -13,6 +14,7 @@ export default async function FielLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-full flex-col">
+      <BannerAcessoWebmaster />
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
           <div>

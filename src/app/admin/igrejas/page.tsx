@@ -3,7 +3,7 @@ import { getTodasIgrejas, getWebmasterPorId } from "@/lib/db/repo";
 import { getResumoFinanceiro } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, PageHeader, SectionLabel } from "@/components/ui";
-import { aprovarIgrejaAction, editarChavePixAction, reprovarIgrejaAction } from "./actions";
+import { acessarComoIgrejaAction, aprovarIgrejaAction, editarChavePixAction, reprovarIgrejaAction } from "./actions";
 
 const ROTULO_STATUS: Record<string, string> = {
   pendente: "Pendente",
@@ -63,22 +63,30 @@ export default async function IgrejasAdminPage() {
                       </p>
                     </div>
                   </div>
-                  {podeAprovar && (
-                    <div className="flex gap-2">
-                      <form action={reprovarIgrejaAction} className="flex-1 sm:flex-none">
-                        <input type="hidden" name="igrejaId" value={igreja.id} />
-                        <Button type="submit" variant="secondary" className="w-full">
-                          Reprovar
-                        </Button>
-                      </form>
-                      <form action={aprovarIgrejaAction} className="flex-1 sm:flex-none">
-                        <input type="hidden" name="igrejaId" value={igreja.id} />
-                        <Button type="submit" className="w-full">
-                          Aprovar
-                        </Button>
-                      </form>
-                    </div>
-                  )}
+                  <div className="flex gap-2">
+                    <form action={acessarComoIgrejaAction} className="flex-1 sm:flex-none">
+                      <input type="hidden" name="igrejaId" value={igreja.id} />
+                      <Button type="submit" variant="secondary" className="w-full">
+                        Acessar como igreja
+                      </Button>
+                    </form>
+                    {podeAprovar && (
+                      <>
+                        <form action={reprovarIgrejaAction} className="flex-1 sm:flex-none">
+                          <input type="hidden" name="igrejaId" value={igreja.id} />
+                          <Button type="submit" variant="secondary" className="w-full">
+                            Reprovar
+                          </Button>
+                        </form>
+                        <form action={aprovarIgrejaAction} className="flex-1 sm:flex-none">
+                          <input type="hidden" name="igrejaId" value={igreja.id} />
+                          <Button type="submit" className="w-full">
+                            Aprovar
+                          </Button>
+                        </form>
+                      </>
+                    )}
+                  </div>
                 </div>
                 {podeGerenciarPagamentos && <FormChavePix igrejaId={igreja.id} chavePix={igreja.chavePix} />}
               </Card>
@@ -102,11 +110,19 @@ export default async function IgrejasAdminPage() {
                     </p>
                   </div>
                 </div>
-                <div className="sm:text-right">
-                  <Badge tone={igreja.statusOnboarding === "aprovado" ? "success" : "warning"}>
-                    {ROTULO_STATUS[igreja.statusOnboarding]}
-                  </Badge>
-                  <p className="mt-1 text-sm font-medium">{formatarMoeda(resumo.totalBruto)} arrecadados</p>
+                <div className="flex flex-col items-start gap-2 sm:items-end">
+                  <div className="sm:text-right">
+                    <Badge tone={igreja.statusOnboarding === "aprovado" ? "success" : "warning"}>
+                      {ROTULO_STATUS[igreja.statusOnboarding]}
+                    </Badge>
+                    <p className="mt-1 text-sm font-medium">{formatarMoeda(resumo.totalBruto)} arrecadados</p>
+                  </div>
+                  <form action={acessarComoIgrejaAction}>
+                    <input type="hidden" name="igrejaId" value={igreja.id} />
+                    <Button type="submit" variant="secondary">
+                      Acessar como igreja
+                    </Button>
+                  </form>
                 </div>
               </div>
               {podeGerenciarPagamentos && <FormChavePix igrejaId={igreja.id} chavePix={igreja.chavePix} />}

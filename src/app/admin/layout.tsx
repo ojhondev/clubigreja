@@ -26,6 +26,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin/igrejas" className="hover:text-primary">
                 Igrejas
               </Link>
+              <Link href="/admin/fieis" className="hover:text-primary">
+                Fiéis
+              </Link>
               {webmaster.nivel === "primario" && (
                 <Link href="/admin/equipe" className="hover:text-primary">
                   Equipe
@@ -47,6 +50,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <nav className="flex gap-4 border-t border-border px-6 py-2 text-sm font-bold text-muted sm:hidden">
           <Link href="/admin/igrejas" className="hover:text-primary">
             Igrejas
+          </Link>
+          <Link href="/admin/fieis" className="hover:text-primary">
+            Fiéis
           </Link>
           {webmaster.nivel === "primario" && (
             <Link href="/admin/equipe" className="hover:text-primary">
