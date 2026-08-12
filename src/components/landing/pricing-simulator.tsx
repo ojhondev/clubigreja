@@ -50,7 +50,7 @@ function ColunaSimulador({
           </div>
         </div>
         <div>
-          <p className="text-sm text-muted">Taxa dos fiéis</p>
+          <p className="text-sm text-muted">Taxa de Processamento</p>
           <div className="mt-1 rounded-xl bg-[#F7FAFF] px-3 py-3">
             <p className="text-xl font-bold text-foreground sm:text-2xl">
               {formatarMoeda(taxa)}
@@ -60,8 +60,7 @@ function ColunaSimulador({
       </div>
 
       <p className="mt-3 text-sm text-muted">
-        {(Math.round(taxaPercentual * 1000) / 10).toString().replace(".", ",")}% por pagamento, cobrado do
-        fiel — nunca descontado da igreja.
+        {(Math.round(taxaPercentual * 1000) / 10).toString().replace(".", ",")}% por processamento.
       </p>
     </div>
   );
