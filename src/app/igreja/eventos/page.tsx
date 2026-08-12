@@ -1,12 +1,12 @@
 import { getSessao } from "@/lib/auth/session";
-import { getEventosDaIgreja } from "@/lib/mock-db";
+import { getEventosDaIgreja } from "@/lib/db/repo";
 import { Badge, Button, Card, PageHeader } from "@/components/ui";
 import { formatarData } from "@/lib/formato";
 import { criarEventoAction } from "./actions";
 
 export default async function EventosPage() {
   const sessao = await getSessao();
-  const eventos = getEventosDaIgreja(sessao!.igrejaId!);
+  const eventos = await getEventosDaIgreja(sessao!.igrejaId!);
 
   return (
     <div>

@@ -1,13 +1,13 @@
 import { Trash2 } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
-import { getIgreja } from "@/lib/mock-db";
+import { getIgreja } from "@/lib/db/repo";
 import { Button, Card, PageHeader } from "@/components/ui";
 import { FormPerfilIgreja } from "./form";
 import { adicionarLinkExtraAction, removerLinkExtraAction } from "./actions";
 
 export default async function PerfilIgrejaPage() {
   const sessao = await getSessao();
-  const igreja = getIgreja(sessao!.igrejaId!)!;
+  const igreja = (await getIgreja(sessao!.igrejaId!))!;
 
   return (
     <div>

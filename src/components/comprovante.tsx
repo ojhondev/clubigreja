@@ -1,4 +1,4 @@
-import { getCampanha, getContribuicao, getFiel, getIgreja } from "@/lib/mock-db";
+import { getCampanha, getContribuicao, getFiel, getIgreja } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
 import { Card } from "@/components/ui";
@@ -12,22 +12,22 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Contribuição livre",
 };
 
-export function Comprovante({
+export async function Comprovante({
   contribuicaoId,
   caminhoPagarBase = "/doar/pagar",
 }: {
   contribuicaoId: string;
   caminhoPagarBase?: string;
 }) {
-  const contribuicao = getContribuicao(contribuicaoId);
+  const contribuicao = await getContribuicao(contribuicaoId);
   if (!contribuicao) notFound();
   // Só existe comprovante pra Pix já confirmado — se o fiel chegou aqui sem
   // confirmar (ex: voltou no navegador), manda de volta pra tela de pagamento.
   if (contribuicao.status !== "confirmado") redirect(`${caminhoPagarBase}/${contribuicaoId}`);
 
-  const igreja = getIgreja(contribuicao.igrejaId);
-  const campanha = contribuicao.campanhaId ? getCampanha(contribuicao.campanhaId) : undefined;
-  const fiel = getFiel(contribuicao.fielId);
+  const igreja = await getIgreja(contribuicao.igrejaId);
+  const campanha = contribuicao.campanhaId ? await getCampanha(contribuicao.campanhaId) : undefined;
+  const fiel = await getFiel(contribuicao.fielId);
 
   const taxaRotulo =
     contribuicao.taxaCobradaVia === "cartao_salvo" && fiel?.cartaoSalvo

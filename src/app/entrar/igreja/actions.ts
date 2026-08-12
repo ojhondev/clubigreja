@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getUsuarioIgrejaPorEmail } from "@/lib/mock-db";
+import { getUsuarioIgrejaPorEmail } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoLoginIgreja {
@@ -18,7 +18,7 @@ export async function entrarIgrejaEmailAction(
   const email = String(formData.get("email") ?? "").trim();
   if (!email) return { erro: "Informe seu e-mail." };
 
-  const usuario = getUsuarioIgrejaPorEmail(email);
+  const usuario = await getUsuarioIgrejaPorEmail(email);
   if (!usuario) {
     return { erro: "Não encontramos essa conta. Verifique o e-mail ou cadastre sua igreja." };
   }

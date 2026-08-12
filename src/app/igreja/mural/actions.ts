@@ -2,9 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { comunicadosMural, notificarFieisDaIgreja } from "@/lib/mock-db";
-
-let proximoId = comunicadosMural.length + 1;
+import { criarComunicado, notificarFieisDaIgreja } from "@/lib/db/repo";
 
 export async function publicarComunicado(formData: FormData) {
   const sessao = await getSessao();
@@ -16,16 +14,9 @@ export async function publicarComunicado(formData: FormData) {
 
   if (!titulo || !corpo) return;
 
-  comunicadosMural.unshift({
-    id: `comunicado-${proximoId++}`,
-    igrejaId: sessao.igrejaId,
-    titulo,
-    corpo,
-    emoji,
-    publicadoEm: new Date().toISOString().slice(0, 10),
-  });
+  await criarComunicado({ igrejaId: sessao.igrejaId, titulo, corpo, emoji });
 
-  notificarFieisDaIgreja(sessao.igrejaId, { tipo: "comunicado", titulo: "Novo comunicado no mural", corpo: titulo });
+  await notificarFieisDaIgreja(sessao.igrejaId, { tipo: "comunicado", titulo: "Novo comunicado no mural", corpo: titulo });
 
   revalidatePath("/igreja/mural");
   revalidatePath("/fiel/inicio");

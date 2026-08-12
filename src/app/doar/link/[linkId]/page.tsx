@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getFiel, getIgreja, linksPagamento } from "@/lib/mock-db";
+import { getFiel, getIgreja, getLinkPagamento } from "@/lib/db/repo";
 import { getSessao } from "@/lib/auth/session";
 import { Card } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
@@ -17,13 +17,13 @@ const ROTULO_TIPO: Record<string, string> = {
 
 export default async function LinkPublicoPage({ params }: { params: Promise<{ linkId: string }> }) {
   const { linkId } = await params;
-  const link = linksPagamento.find((l) => l.id === linkId && l.ativo);
-  if (!link) notFound();
+  const link = await getLinkPagamento(linkId);
+  if (!link || !link.ativo) notFound();
 
-  const igreja = getIgreja(link.igrejaId)!;
+  const igreja = (await getIgreja(link.igrejaId))!;
 
   const sessao = await getSessao();
-  const fielLogado = sessao?.papel === "fiel" ? getFiel(sessao.usuarioId) : undefined;
+  const fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-10">

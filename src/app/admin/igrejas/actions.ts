@@ -1,16 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { atualizarStatusIgreja } from "@/lib/mock-db";
+import { atualizarStatusIgreja } from "@/lib/db/repo";
 
 export async function aprovarIgrejaAction(formData: FormData) {
   const igrejaId = String(formData.get("igrejaId"));
-  atualizarStatusIgreja(igrejaId, "aprovado");
+  await atualizarStatusIgreja(igrejaId, "aprovado");
   revalidatePath("/admin/igrejas");
 }
 
 export async function reprovarIgrejaAction(formData: FormData) {
   const igrejaId = String(formData.get("igrejaId"));
-  atualizarStatusIgreja(igrejaId, "reprovado");
+  await atualizarStatusIgreja(igrejaId, "reprovado");
   revalidatePath("/admin/igrejas");
 }

@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getCampanha, getContribuicao, getIgreja } from "@/lib/mock-db";
+import { getCampanha, getContribuicao, getIgreja } from "@/lib/db/repo";
 import { gerarPixCopiaECola } from "@/lib/pix";
 import { gerarQrCodeDataUrl } from "@/lib/qrcode";
 import { formatarMoeda } from "@/lib/comissao";
@@ -27,14 +27,14 @@ export async function PagamentoPix({
   confirmarAction: (formData: FormData) => Promise<void>;
   caminhoComprovanteBase: string;
 }) {
-  const contribuicao = getContribuicao(contribuicaoId);
+  const contribuicao = await getContribuicao(contribuicaoId);
   if (!contribuicao) notFound();
   if (contribuicao.status === "confirmado") {
     redirect(`${caminhoComprovanteBase}/${contribuicaoId}`);
   }
 
-  const igreja = getIgreja(contribuicao.igrejaId)!;
-  const campanha = contribuicao.campanhaId ? getCampanha(contribuicao.campanhaId) : undefined;
+  const igreja = (await getIgreja(contribuicao.igrejaId))!;
+  const campanha = contribuicao.campanhaId ? await getCampanha(contribuicao.campanhaId) : undefined;
 
   const copiaECola = gerarPixCopiaECola({
     chave: igreja.chavePix,

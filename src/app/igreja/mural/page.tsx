@@ -1,12 +1,12 @@
 import { getSessao } from "@/lib/auth/session";
-import { getMuralDaIgreja } from "@/lib/mock-db";
+import { getMuralDaIgreja } from "@/lib/db/repo";
 import { Button, Card, PageHeader } from "@/components/ui";
 import { formatarData } from "@/lib/formato";
 import { publicarComunicado } from "./actions";
 
 export default async function MuralIgrejaPage() {
   const sessao = await getSessao();
-  const comunicados = getMuralDaIgreja(sessao!.igrejaId!);
+  const comunicados = await getMuralDaIgreja(sessao!.igrejaId!);
 
   return (
     <div>

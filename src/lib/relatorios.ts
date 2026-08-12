@@ -1,12 +1,13 @@
-import { getContribuicoesDaIgreja as getTodasContribuicoesDaIgreja, getFiel } from "./mock-db";
+import { getContribuicoesDaIgreja as getTodasContribuicoesDaIgreja, getFiel } from "./db/repo";
 import { mesAno, hoje } from "./hoje";
 import type { Contribuicao } from "./types";
 
 // Todo cálculo financeiro deste arquivo considera só Pix já confirmado pelo
 // fiel — enquanto ele não volta pra confirmar, esse dinheiro ainda não foi
 // de fato recebido pela igreja.
-function getContribuicoesDaIgreja(igrejaId: string): Contribuicao[] {
-  return getTodasContribuicoesDaIgreja(igrejaId).filter((c) => c.status === "confirmado");
+async function getContribuicoesDaIgreja(igrejaId: string): Promise<Contribuicao[]> {
+  const todas = await getTodasContribuicoesDaIgreja(igrejaId);
+  return todas.filter((c) => c.status === "confirmado");
 }
 
 // A igreja recebe 100% do valorBruto — a taxa de processamento é paga pelo
@@ -20,8 +21,8 @@ export interface ResumoFinanceiro {
   quantidadeContribuicoes: number;
 }
 
-export function getResumoFinanceiro(igrejaId: string): ResumoFinanceiro {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getResumoFinanceiro(igrejaId: string): Promise<ResumoFinanceiro> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const mesAtual = mesAno(hoje());
 
   return contribuicoes.reduce<ResumoFinanceiro>(
@@ -36,8 +37,8 @@ export function getResumoFinanceiro(igrejaId: string): ResumoFinanceiro {
   );
 }
 
-export function getContribuicoesPorTipo(igrejaId: string): Record<Contribuicao["tipo"], number> {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getContribuicoesPorTipo(igrejaId: string): Promise<Record<Contribuicao["tipo"], number>> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const base: Record<Contribuicao["tipo"], number> = {
     dizimo: 0,
     oferta: 0,
@@ -53,8 +54,8 @@ export function getContribuicoesPorTipo(igrejaId: string): Record<Contribuicao["
 // não existe mais um ciclo de repasse (o Dizipay nunca custodia esse
 // valor). Isso mede quanto os fiéis pagaram de taxa de processamento no mês,
 // como informação de transparência pra igreja (não afeta o que ela recebeu).
-export function getTaxasFieisMesAtual(igrejaId: string): number {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getTaxasFieisMesAtual(igrejaId: string): Promise<number> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const mesAtual = mesAno(hoje());
 
   return contribuicoes
@@ -73,8 +74,8 @@ const NOMES_MES_ABREV = [
   "jul", "ago", "set", "out", "nov", "dez",
 ];
 
-export function getTotaisPorMes(igrejaId: string, meses = 6): TotalMensal[] {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getTotaisPorMes(igrejaId: string, meses = 6): Promise<TotalMensal[]> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
 
   const janela: TotalMensal[] = [];
@@ -102,8 +103,8 @@ export interface TotalMensalDetalhado {
 
 // Mesma janela de getTotaisPorMes, mas quebrada por finalidade — alimenta o
 // gráfico de barras empilhadas do dashboard.
-export function getTotaisPorMesDetalhado(igrejaId: string, meses = 6): TotalMensalDetalhado[] {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getTotaisPorMesDetalhado(igrejaId: string, meses = 6): Promise<TotalMensalDetalhado[]> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
 
   const janela: TotalMensalDetalhado[] = [];
@@ -132,8 +133,8 @@ export interface CrescimentoMensal {
 
 // Compara a arrecadação bruta do mês corrente com a do mês anterior — para o
 // selo de "crescimento" no dashboard.
-export function getCrescimentoMensal(igrejaId: string): CrescimentoMensal {
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId);
+export async function getCrescimentoMensal(igrejaId: string): Promise<CrescimentoMensal> {
+  const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
   const mesAtualStr = mesAno(referencia);
   const mesAnteriorStr = mesAno(new Date(referencia.getFullYear(), referencia.getMonth() - 1, 1));
@@ -159,16 +160,19 @@ export interface ContribuicaoRecente {
   criadaEm: string;
 }
 
-export function getUltimasContribuicoes(igrejaId: string, limite = 5): ContribuicaoRecente[] {
-  return getContribuicoesDaIgreja(igrejaId)
+export async function getUltimasContribuicoes(igrejaId: string, limite = 5): Promise<ContribuicaoRecente[]> {
+  const recentes = (await getContribuicoesDaIgreja(igrejaId))
     .sort((a, b) => (a.criadaEm < b.criadaEm ? 1 : -1))
-    .slice(0, limite)
-    .map((c) => ({
+    .slice(0, limite);
+
+  return Promise.all(
+    recentes.map(async (c) => ({
       id: c.id,
-      fielNome: getFiel(c.fielId)?.nome ?? "Doador",
+      fielNome: (await getFiel(c.fielId))?.nome ?? "Doador",
       tipo: c.tipo,
       meio: c.meio,
       valorBruto: c.valorBruto,
       criadaEm: c.criadaEm,
-    }));
+    }))
+  );
 }

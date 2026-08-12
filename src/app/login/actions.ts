@@ -2,11 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { criarSessao } from "@/lib/auth/session";
-import { fieis, usuariosIgreja } from "@/lib/mock-db";
+import { getFiel, getUsuarioIgrejaPorId } from "@/lib/db/repo";
 
 export async function entrarComoIgreja(formData: FormData) {
   const usuarioId = String(formData.get("usuarioId"));
-  const usuario = usuariosIgreja.find((u) => u.id === usuarioId);
+  const usuario = await getUsuarioIgrejaPorId(usuarioId);
   if (!usuario) return;
 
   await criarSessao({
@@ -20,7 +20,7 @@ export async function entrarComoIgreja(formData: FormData) {
 
 export async function entrarComoFiel(formData: FormData) {
   const fielId = String(formData.get("fielId"));
-  const fiel = fieis.find((f) => f.id === fielId);
+  const fiel = await getFiel(fielId);
   if (!fiel) return;
 
   await criarSessao({

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
-import { getArrecadadoCampanha, getCampanhasDaIgreja, getIgreja } from "@/lib/mock-db";
+import { getArrecadadoCampanha, getCampanhasDaIgreja, getIgreja } from "@/lib/db/repo";
 import {
   getContribuicoesPorTipo,
   getCrescimentoMensal,
@@ -19,14 +19,17 @@ import { Sparkles, TrendingDown, TrendingUp } from "lucide-react";
 export default async function DashboardIgrejaPage() {
   const sessao = await getSessao();
   const igrejaId = sessao!.igrejaId!;
-  const igreja = getIgreja(igrejaId)!;
-  const resumo = getResumoFinanceiro(igrejaId);
-  const taxasFieisMes = getTaxasFieisMesAtual(igrejaId);
-  const porTipo = getContribuicoesPorTipo(igrejaId);
-  const totaisMensais = getTotaisPorMesDetalhado(igrejaId);
-  const crescimento = getCrescimentoMensal(igrejaId);
-  const ultimas = getUltimasContribuicoes(igrejaId, 5);
-  const campanhas = getCampanhasDaIgreja(igrejaId).filter((c) => !c.encerrada);
+  const igreja = (await getIgreja(igrejaId))!;
+  const resumo = await getResumoFinanceiro(igrejaId);
+  const taxasFieisMes = await getTaxasFieisMesAtual(igrejaId);
+  const porTipo = await getContribuicoesPorTipo(igrejaId);
+  const totaisMensais = await getTotaisPorMesDetalhado(igrejaId);
+  const crescimento = await getCrescimentoMensal(igrejaId);
+  const ultimas = await getUltimasContribuicoes(igrejaId, 5);
+  const campanhasAtivas = (await getCampanhasDaIgreja(igrejaId)).filter((c) => !c.encerrada);
+  const campanhas = await Promise.all(
+    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+  );
 
   const dadosPizza = [
     { nome: "Dízimo", valor: porTipo.dizimo },
@@ -122,7 +125,7 @@ export default async function DashboardIgrejaPage() {
         {campanhas.length === 0 && <p className="text-muted">Nenhuma campanha ativa no momento.</p>}
         <div className="grid gap-4 sm:grid-cols-2">
           {campanhas.map((c) => {
-            const arrecadado = getArrecadadoCampanha(c.id);
+            const arrecadado = c.arrecadado;
             const pct = (arrecadado / c.meta) * 100;
             return (
               <Card key={c.id}>

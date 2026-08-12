@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getFielPorTelefone } from "@/lib/mock-db";
+import { getFielPorTelefone } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoLoginFiel {
@@ -18,7 +18,7 @@ export async function entrarFielTelefoneAction(
   const telefone = String(formData.get("telefone") ?? "").trim();
   if (!telefone) return { erro: "Informe seu celular." };
 
-  const fiel = getFielPorTelefone(telefone);
+  const fiel = await getFielPorTelefone(telefone);
   if (!fiel) {
     return { erro: "Não encontramos esse número. Cadastre-se para começar." };
   }

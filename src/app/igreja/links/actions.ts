@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { criarLinkPagamento } from "@/lib/mock-db";
+import { criarLinkPagamento } from "@/lib/db/repo";
 import type { TipoArrecadacao } from "@/lib/types";
 
 export async function criarLink(formData: FormData) {
@@ -16,6 +16,6 @@ export async function criarLink(formData: FormData) {
 
   if (!titulo) return;
 
-  criarLinkPagamento({ igrejaId: sessao.igrejaId, titulo, tipo, valorSugerido });
+  await criarLinkPagamento({ igrejaId: sessao.igrejaId, titulo, tipo, valorSugerido });
   revalidatePath("/igreja/links");
 }

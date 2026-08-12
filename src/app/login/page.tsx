@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fieis, usuariosIgreja, igrejas, getIgreja } from "@/lib/mock-db";
+import { getTodosFieis, getTodosUsuariosIgreja, getTodasIgrejas } from "@/lib/db/repo";
 import { Badge, Card } from "@/components/ui";
 import { Logo } from "@/components/logo";
 import { BotaoVoltarSite } from "@/components/botao-voltar-site";
@@ -12,7 +12,14 @@ const ROTULO_STATUS: Record<string, string> = {
   reprovado: "Reprovado",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const [usuariosIgreja, fieis, igrejas] = await Promise.all([
+    getTodosUsuariosIgreja(),
+    getTodosFieis(),
+    getTodasIgrejas(),
+  ]);
+  const igrejaPorId = new Map(igrejas.map((i) => [i.id, i]));
+
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-12 pb-24 sm:pb-12">
       <BotaoVoltarSite />
@@ -38,7 +45,7 @@ export default function LoginPage() {
           </div>
           <div className="space-y-2">
             {usuariosIgreja.map((u) => {
-              const igreja = getIgreja(u.igrejaId);
+              const igreja = igrejaPorId.get(u.igrejaId);
               return (
                 <form key={u.id} action={entrarComoIgreja}>
                   <input type="hidden" name="usuarioId" value={u.id} />
@@ -82,7 +89,7 @@ export default function LoginPage() {
                 >
                   <span>
                     <span className="block font-medium">{f.nome}</span>
-                    <span className="block text-xs text-muted">{getIgreja(f.igrejaId)?.nome}</span>
+                    <span className="block text-xs text-muted">{igrejaPorId.get(f.igrejaId)?.nome}</span>
                   </span>
                   <span className="text-primary">→</span>
                 </button>

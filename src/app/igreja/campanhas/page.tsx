@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
-import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/mock-db";
+import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
 import { formatarData } from "@/lib/formato";
@@ -9,7 +9,10 @@ import { criarCampanhaAction } from "./actions";
 
 export default async function CampanhasPage() {
   const sessao = await getSessao();
-  const campanhas = getCampanhasDaIgreja(sessao!.igrejaId!);
+  const campanhasBrutas = await getCampanhasDaIgreja(sessao!.igrejaId!);
+  const campanhas = await Promise.all(
+    campanhasBrutas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+  );
 
   return (
     <div>
@@ -49,7 +52,7 @@ export default async function CampanhasPage() {
 
       <div className="space-y-4">
         {campanhas.map((c) => {
-          const arrecadado = getArrecadadoCampanha(c.id);
+          const arrecadado = c.arrecadado;
           const pct = (arrecadado / c.meta) * 100;
           return (
             <Card key={c.id}>

@@ -1,5 +1,5 @@
 import { getSessao } from "@/lib/auth/session";
-import { getCampanha, getCampanhasDaIgreja, getFiel } from "@/lib/mock-db";
+import { getCampanha, getCampanhasDaIgreja, getFiel } from "@/lib/db/repo";
 import { Card, PageHeader } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CampoFinalidadeEValor } from "@/components/campo-finalidade-valor";
@@ -16,11 +16,11 @@ export default async function DoarPage({
   const { tipo: tipoParam, campanhaId } = await searchParams;
   const sessao = await getSessao();
   const igrejaId = sessao!.igrejaId!;
-  const fiel = getFiel(sessao!.usuarioId);
+  const fiel = await getFiel(sessao!.usuarioId);
 
-  const campanha = campanhaId ? getCampanha(campanhaId) : undefined;
+  const campanha = campanhaId ? await getCampanha(campanhaId) : undefined;
   const tipo: TipoArrecadacao = campanha ? "campanha" : (tipoParam as TipoArrecadacao) || "dizimo";
-  const campanhas = getCampanhasDaIgreja(igrejaId).filter((c) => !c.encerrada);
+  const campanhas = (await getCampanhasDaIgreja(igrejaId)).filter((c) => !c.encerrada);
 
   return (
     <div>

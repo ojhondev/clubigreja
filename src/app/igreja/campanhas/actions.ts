@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { criarCampanha } from "@/lib/mock-db";
+import { criarCampanha } from "@/lib/db/repo";
 
 export async function criarCampanhaAction(formData: FormData) {
   const sessao = await getSessao();
@@ -16,7 +16,7 @@ export async function criarCampanhaAction(formData: FormData) {
 
   if (!titulo || !meta || !prazo) return;
 
-  criarCampanha({ igrejaId: sessao.igrejaId, titulo, descricao, meta, prazo, imagemEmoji });
+  await criarCampanha({ igrejaId: sessao.igrejaId, titulo, descricao, meta, prazo, imagemEmoji });
   revalidatePath("/igreja/campanhas");
   revalidatePath("/igreja/dashboard");
 }

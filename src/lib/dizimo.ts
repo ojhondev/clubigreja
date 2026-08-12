@@ -1,4 +1,4 @@
-import { getContribuicoesDoFiel } from "./mock-db";
+import { getContribuicoesDoFiel } from "./db/repo";
 import { dataLocal, hoje, mesAno } from "./hoje";
 
 export interface StatusDizimo {
@@ -7,10 +7,9 @@ export interface StatusDizimo {
   mesesSemContribuir: number;
 }
 
-export function getStatusDizimo(fielId: string): StatusDizimo {
-  const contribuicoesDizimo = getContribuicoesDoFiel(fielId).filter(
-    (c) => c.tipo === "dizimo" && c.status === "confirmado"
-  );
+export async function getStatusDizimo(fielId: string): Promise<StatusDizimo> {
+  const todas = await getContribuicoesDoFiel(fielId);
+  const contribuicoesDizimo = todas.filter((c) => c.tipo === "dizimo" && c.status === "confirmado");
 
   if (contribuicoesDizimo.length === 0) {
     return { contribuiuEsteMes: false, ultimaContribuicaoEm: null, mesesSemContribuir: 1 };

@@ -6,7 +6,7 @@ import {
   getCampanhasDaIgreja,
   getIgrejaPorSlug,
   getLinksDaIgreja,
-} from "@/lib/mock-db";
+} from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, ProgressBar } from "@/components/ui";
 import { Logo } from "@/components/logo";
@@ -21,11 +21,14 @@ const ROTULO_TIPO: Record<string, string> = {
 
 export default async function IgrejaPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const igreja = getIgrejaPorSlug(slug);
+  const igreja = await getIgrejaPorSlug(slug);
   if (!igreja || igreja.statusOnboarding !== "aprovado") notFound();
 
-  const links = getLinksDaIgreja(igreja.id).filter((l) => l.ativo);
-  const campanhas = getCampanhasDaIgreja(igreja.id).filter((c) => !c.encerrada);
+  const links = (await getLinksDaIgreja(igreja.id)).filter((l) => l.ativo);
+  const campanhasAtivas = (await getCampanhasDaIgreja(igreja.id)).filter((c) => !c.encerrada);
+  const campanhas = await Promise.all(
+    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+  );
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-6 py-10">
@@ -83,7 +86,7 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
           <h2 className="mb-3 text-lg font-bold">Campanhas em captação</h2>
           <div className="space-y-3">
             {campanhas.map((c, i) => {
-              const arrecadado = getArrecadadoCampanha(c.id);
+              const arrecadado = c.arrecadado;
               const pct = (arrecadado / c.meta) * 100;
               return (
                 <Link key={c.id} href={`/doar/campanha/${c.id}`}>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { adicionarLinkExtra, atualizarPerfilIgreja, getIgreja, removerLinkExtra } from "@/lib/mock-db";
+import { adicionarLinkExtra, atualizarPerfilIgreja, removerLinkExtra } from "@/lib/db/repo";
 
 export interface EstadoPerfilIgreja {
   erro?: string;
@@ -30,7 +30,7 @@ export async function atualizarPerfilAction(
     return { erro: "Preencha todos os campos obrigatórios." };
   }
 
-  const igreja = atualizarPerfilIgreja(sessao.igrejaId, {
+  const igreja = await atualizarPerfilIgreja(sessao.igrejaId, {
     nome,
     cnpj,
     responsavelNome,
@@ -55,7 +55,7 @@ export async function adicionarLinkExtraAction(formData: FormData) {
   const url = String(formData.get("url") ?? "").trim();
   if (!rotulo || !url) return;
 
-  adicionarLinkExtra(sessao.igrejaId, { rotulo, url });
+  await adicionarLinkExtra(sessao.igrejaId, { rotulo, url });
   revalidatePath("/igreja/perfil");
 }
 
@@ -66,6 +66,6 @@ export async function removerLinkExtraAction(formData: FormData) {
   const linkExtraId = String(formData.get("linkExtraId") ?? "");
   if (!linkExtraId) return;
 
-  removerLinkExtra(sessao.igrejaId, linkExtraId);
+  await removerLinkExtra(sessao.igrejaId, linkExtraId);
   revalidatePath("/igreja/perfil");
 }

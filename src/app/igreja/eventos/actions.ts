@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { criarEvento } from "@/lib/mock-db";
+import { criarEvento } from "@/lib/db/repo";
 
 export async function criarEventoAction(formData: FormData) {
   const sessao = await getSessao();
@@ -16,6 +16,6 @@ export async function criarEventoAction(formData: FormData) {
 
   if (!titulo || !data || !local) return;
 
-  criarEvento({ igrejaId: sessao.igrejaId, titulo, data, local, descricao, arrecadacaoVinculada });
+  await criarEvento({ igrejaId: sessao.igrejaId, titulo, data, local, descricao, arrecadacaoVinculada });
   revalidatePath("/igreja/eventos");
 }

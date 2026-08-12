@@ -1,5 +1,5 @@
 import { getSessao } from "@/lib/auth/session";
-import { getIgreja, getContribuicoesDaIgreja, getFiel } from "@/lib/mock-db";
+import { getIgreja, getContribuicoesDaIgreja, getFiel } from "@/lib/db/repo";
 import { getContribuicoesPorTipo, getResumoFinanceiro } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
@@ -18,16 +18,19 @@ const ROTULO_TIPO: Record<string, string> = {
 export default async function RelatoriosPage() {
   const sessao = await getSessao();
   const igrejaId = sessao!.igrejaId!;
-  const igreja = getIgreja(igrejaId)!;
-  const resumo = getResumoFinanceiro(igrejaId);
-  const porTipo = getContribuicoesPorTipo(igrejaId);
-  const contribuicoes = getContribuicoesDaIgreja(igrejaId).sort((a, b) =>
+  const igreja = (await getIgreja(igrejaId))!;
+  const resumo = await getResumoFinanceiro(igrejaId);
+  const porTipo = await getContribuicoesPorTipo(igrejaId);
+  const contribuicoesBrutas = (await getContribuicoesDaIgreja(igrejaId)).sort((a, b) =>
     a.criadaEm < b.criadaEm ? 1 : -1
+  );
+  const contribuicoes = await Promise.all(
+    contribuicoesBrutas.map(async (c) => ({ ...c, fielNome: (await getFiel(c.fielId))?.nome ?? "—" }))
   );
 
   const linhasCsv: LinhaExportavel[] = contribuicoes.map((c) => ({
     data: formatarData(c.criadaEm),
-    fiel: getFiel(c.fielId)?.nome ?? "—",
+    fiel: c.fielNome,
     finalidade: ROTULO_TIPO[c.tipo],
     valorIgreja: c.valorBruto,
     taxaFiel: c.taxaValor,
@@ -91,7 +94,7 @@ export default async function RelatoriosPage() {
             {contribuicoes.map((c) => (
               <tr key={c.id} className="border-b border-border last:border-0">
                 <td className="py-2 pr-4">{formatarData(c.criadaEm)}</td>
-                <td className="py-2 pr-4">{getFiel(c.fielId)?.nome ?? "—"}</td>
+                <td className="py-2 pr-4">{c.fielNome}</td>
                 <td className="py-2 pr-4">{ROTULO_TIPO[c.tipo]}</td>
                 <td className="py-2 pr-4 text-right font-medium text-success">{formatarMoeda(c.valorBruto)}</td>
                 <td className="py-2 pr-4 text-right text-muted">

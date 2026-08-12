@@ -1,5 +1,5 @@
 import { getSessao } from "@/lib/auth/session";
-import { getArrecadadoCampanha, getCampanhasDaIgreja, getIgreja } from "@/lib/mock-db";
+import { getArrecadadoCampanha, getCampanhasDaIgreja, getIgreja } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { urlAbsoluta } from "@/lib/qrcode";
 import { Card, PageHeader, ProgressBar } from "@/components/ui";
@@ -7,9 +7,12 @@ import { CompartilharCampanha } from "@/components/compartilhar-campanha";
 
 export default async function CompartilharPage() {
   const sessao = await getSessao();
-  const igreja = getIgreja(sessao!.igrejaId!)!;
-  const campanhas = getCampanhasDaIgreja(igreja.id).filter((c) => !c.encerrada);
+  const igreja = (await getIgreja(sessao!.igrejaId!))!;
+  const campanhasAtivas = (await getCampanhasDaIgreja(igreja.id)).filter((c) => !c.encerrada);
   const origem = await urlAbsoluta("");
+  const campanhas = await Promise.all(
+    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+  );
 
   return (
     <div>
@@ -19,7 +22,7 @@ export default async function CompartilharPage() {
       />
       <div className="space-y-4">
         {campanhas.map((c) => {
-          const arrecadado = getArrecadadoCampanha(c.id);
+          const arrecadado = c.arrecadado;
           const pct = (arrecadado / c.meta) * 100;
           const url = `${origem}/doar/campanha/${c.id}`;
           return (

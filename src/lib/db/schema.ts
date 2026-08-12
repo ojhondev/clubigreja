@@ -1,12 +1,10 @@
-import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, text, real, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // Schema completo do projeto — espelha 1:1 os tipos de src/lib/types.ts.
-// Dialeto: SQLite (via libsql), que funciona tanto com um arquivo local
-// (dev) quanto com um banco Turso remoto (produção), só trocando a
-// DATABASE_URL — sem mudar nenhuma linha de código daqui.
+// Dialeto: PostgreSQL (via Neon, serverless-friendly).
 
-export const igrejas = sqliteTable("igrejas", {
+export const igrejas = pgTable("igrejas", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   nome: text("nome").notNull(),
@@ -29,7 +27,7 @@ export const igrejas = sqliteTable("igrejas", {
   criadaEm: text("criada_em").notNull(),
 });
 
-export const usuariosIgreja = sqliteTable("usuarios_igreja", {
+export const usuariosIgreja = pgTable("usuarios_igreja", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -39,7 +37,7 @@ export const usuariosIgreja = sqliteTable("usuarios_igreja", {
   papel: text("papel", { enum: ["administrador", "tesoureiro", "secretario"] }).notNull(),
 });
 
-export const fieis = sqliteTable("fieis", {
+export const fieis = pgTable("fieis", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -54,7 +52,7 @@ export const fieis = sqliteTable("fieis", {
   cartaoTokenFake: text("cartao_token_fake"),
 });
 
-export const linksPagamento = sqliteTable("links_pagamento", {
+export const linksPagamento = pgTable("links_pagamento", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -62,11 +60,11 @@ export const linksPagamento = sqliteTable("links_pagamento", {
   titulo: text("titulo").notNull(),
   tipo: text("tipo", { enum: ["dizimo", "oferta", "campanha", "evento", "livre"] }).notNull(),
   valorSugerido: real("valor_sugerido"),
-  ativo: integer("ativo", { mode: "boolean" }).notNull().default(true),
+  ativo: boolean("ativo").notNull().default(true),
   criadoEm: text("criado_em").notNull(),
 });
 
-export const campanhas = sqliteTable("campanhas", {
+export const campanhas = pgTable("campanhas", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -76,11 +74,11 @@ export const campanhas = sqliteTable("campanhas", {
   meta: real("meta").notNull(),
   prazo: text("prazo").notNull(),
   imagemEmoji: text("imagem_emoji").notNull().default("🙏"),
-  encerrada: integer("encerrada", { mode: "boolean" }).notNull().default(false),
+  encerrada: boolean("encerrada").notNull().default(false),
   criadaEm: text("criada_em").notNull(),
 });
 
-export const eventos = sqliteTable("eventos", {
+export const eventos = pgTable("eventos", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -89,10 +87,10 @@ export const eventos = sqliteTable("eventos", {
   data: text("data").notNull(),
   local: text("local").notNull(),
   descricao: text("descricao").notNull(),
-  arrecadacaoVinculada: integer("arrecadacao_vinculada", { mode: "boolean" }).notNull().default(false),
+  arrecadacaoVinculada: boolean("arrecadacao_vinculada").notNull().default(false),
 });
 
-export const comunicadosMural = sqliteTable("comunicados_mural", {
+export const comunicadosMural = pgTable("comunicados_mural", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -106,7 +104,7 @@ export const comunicadosMural = sqliteTable("comunicados_mural", {
 // Status do Pix: aguardando_pix = fiel escolheu o valor mas ainda não
 // confirmou o pagamento; confirmado = fiel confirmou e a taxa já foi
 // cobrada. Ver src/lib/payments/gateway.ts pro fluxo completo.
-export const contribuicoes = sqliteTable("contribuicoes", {
+export const contribuicoes = pgTable("contribuicoes", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()
@@ -128,7 +126,7 @@ export const contribuicoes = sqliteTable("contribuicoes", {
   criadaEm: text("criada_em").notNull(),
 });
 
-export const notificacoesFiel = sqliteTable("notificacoes_fiel", {
+export const notificacoesFiel = pgTable("notificacoes_fiel", {
   id: text("id").primaryKey(),
   fielId: text("fiel_id")
     .notNull()
@@ -139,13 +137,13 @@ export const notificacoesFiel = sqliteTable("notificacoes_fiel", {
   tipo: text("tipo", { enum: ["lembrete_dizimo", "comunicado", "campanha"] }).notNull(),
   titulo: text("titulo").notNull(),
   corpo: text("corpo").notNull(),
-  lida: integer("lida", { mode: "boolean" }).notNull().default(false),
+  lida: boolean("lida").notNull().default(false),
   criadaEm: text("criada_em").notNull(),
 });
 
 // Links extras que a igreja escolhe mostrar na própria página pública —
 // Instagram, site, uma campanha específica etc.
-export const linksExtras = sqliteTable("links_extras", {
+export const linksExtras = pgTable("links_extras", {
   id: text("id").primaryKey(),
   igrejaId: text("igreja_id")
     .notNull()

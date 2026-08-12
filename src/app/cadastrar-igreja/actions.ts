@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { criarIgreja, criarUsuarioIgreja } from "@/lib/mock-db";
+import { criarIgreja, criarUsuarioIgreja } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoCadastroIgreja {
@@ -30,7 +30,7 @@ export async function cadastrarIgrejaAction(
     return { erro: "Informe um CNPJ válido (14 dígitos) — é obrigatório para operar na plataforma." };
   }
 
-  const igreja = criarIgreja({
+  const igreja = await criarIgreja({
     nome,
     cnpj,
     responsavelNome,
@@ -40,7 +40,7 @@ export async function cadastrarIgrejaAction(
     uf,
     chavePix,
   });
-  const usuario = criarUsuarioIgreja({
+  const usuario = await criarUsuarioIgreja({
     igrejaId: igreja.id,
     nome: responsavelNome,
     email: responsavelEmail,

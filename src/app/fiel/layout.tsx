@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
-import { getIgreja, getNotificacoesDoFiel } from "@/lib/mock-db";
+import { getIgreja, getNotificacoesDoFiel } from "@/lib/db/repo";
 import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 import { BottomNav } from "@/components/fiel-nav";
 
 export default async function FielLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
-  const igreja = sessao?.igrejaId ? getIgreja(sessao.igrejaId) : undefined;
-  const naoLidas = sessao ? getNotificacoesDoFiel(sessao.usuarioId).filter((n) => !n.lida).length : 0;
+  const igreja = sessao?.igrejaId ? await getIgreja(sessao.igrejaId) : undefined;
+  const naoLidas = sessao ? (await getNotificacoesDoFiel(sessao.usuarioId)).filter((n) => !n.lida).length : 0;
 
   return (
     <div className="flex min-h-full flex-col">

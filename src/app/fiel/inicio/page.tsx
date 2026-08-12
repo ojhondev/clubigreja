@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
-import { getMuralDaIgreja } from "@/lib/mock-db";
+import { getMuralDaIgreja } from "@/lib/db/repo";
 import { getStatusDizimo, nomeMesAtual } from "@/lib/dizimo";
 import { Button, Card } from "@/components/ui";
 import { AtivarNotificacoes } from "@/components/ativar-notificacoes";
@@ -11,8 +11,8 @@ export default async function InicioFielPage() {
   const sessao = await getSessao();
   const igrejaId = sessao!.igrejaId!;
   const fielId = sessao!.usuarioId;
-  const mural = getMuralDaIgreja(igrejaId);
-  const statusDizimo = getStatusDizimo(fielId);
+  const mural = await getMuralDaIgreja(igrejaId);
+  const statusDizimo = await getStatusDizimo(fielId);
 
   return (
     <div className="space-y-6">

@@ -1,13 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getCampanha, criarFielConvidado } from "@/lib/mock-db";
+import { getCampanha, criarFielConvidado } from "@/lib/db/repo";
 import { getSessao } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarCampanhaPublicoAction(formData: FormData) {
   const campanhaId = String(formData.get("campanhaId"));
-  const campanha = getCampanha(campanhaId);
+  const campanha = await getCampanha(campanhaId);
   if (!campanha) return;
 
   const valorBruto = Number(formData.get("valor"));
@@ -21,7 +21,7 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
   const fielId =
     sessao?.papel === "fiel"
       ? sessao.usuarioId
-      : criarFielConvidado(campanha.igrejaId, String(formData.get("nome") ?? "").trim()).id;
+      : (await criarFielConvidado(campanha.igrejaId, String(formData.get("nome") ?? "").trim())).id;
 
   const dados = await gateway.iniciarContribuicao({
     igrejaId: campanha.igrejaId,

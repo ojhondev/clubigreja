@@ -1,5 +1,5 @@
 import { getSessao } from "@/lib/auth/session";
-import { getNotificacoesDoFiel } from "@/lib/mock-db";
+import { getNotificacoesDoFiel } from "@/lib/db/repo";
 import { formatarData } from "@/lib/formato";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { Megaphone, Target, HandCoins, Bell } from "lucide-react";
@@ -13,7 +13,7 @@ const ICONE_TIPO: Record<string, typeof Bell> = {
 
 export default async function NotificacoesPage() {
   const sessao = await getSessao();
-  const notificacoes = getNotificacoesDoFiel(sessao!.usuarioId);
+  const notificacoes = await getNotificacoesDoFiel(sessao!.usuarioId);
 
   return (
     <div>

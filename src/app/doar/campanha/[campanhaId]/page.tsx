@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getArrecadadoCampanha, getCampanha, getFiel, getIgreja } from "@/lib/mock-db";
+import { getArrecadadoCampanha, getCampanha, getFiel, getIgreja } from "@/lib/db/repo";
 import { getSessao } from "@/lib/auth/session";
 import { formatarMoeda } from "@/lib/comissao";
 import { Card, ProgressBar } from "@/components/ui";
@@ -10,17 +10,17 @@ import { doarCampanhaPublicoAction } from "./actions";
 
 export default async function CampanhaPublicaPage({ params }: { params: Promise<{ campanhaId: string }> }) {
   const { campanhaId } = await params;
-  const campanha = getCampanha(campanhaId);
+  const campanha = await getCampanha(campanhaId);
   if (!campanha || campanha.encerrada) notFound();
 
-  const igreja = getIgreja(campanha.igrejaId)!;
-  const arrecadado = getArrecadadoCampanha(campanha.id);
+  const igreja = (await getIgreja(campanha.igrejaId))!;
+  const arrecadado = await getArrecadadoCampanha(campanha.id);
   const pct = (arrecadado / campanha.meta) * 100;
 
   // Se o fiel já está logado, ele não precisa dizer quem é nem recadastrar
   // cartão — já sabemos e já temos o cartão salvo dele.
   const sessao = await getSessao();
-  const fielLogado = sessao?.papel === "fiel" ? getFiel(sessao.usuarioId) : undefined;
+  const fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-10">

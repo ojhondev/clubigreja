@@ -1,4 +1,4 @@
-import { igrejas } from "@/lib/mock-db";
+import { getTodasIgrejas } from "@/lib/db/repo";
 import { getResumoFinanceiro } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, PageHeader, SectionLabel } from "@/components/ui";
@@ -11,11 +11,15 @@ const ROTULO_STATUS: Record<string, string> = {
   reprovado: "Reprovado",
 };
 
-export default function IgrejasAdminPage() {
-  const gmvTotal = igrejas.reduce((soma, i) => soma + getResumoFinanceiro(i.id).totalBruto, 0);
-  const receitaTotal = igrejas.reduce((soma, i) => soma + getResumoFinanceiro(i.id).totalTaxasFieis, 0);
+export default async function IgrejasAdminPage() {
+  const igrejas = await getTodasIgrejas();
+  const resumoPorIgreja = new Map(await Promise.all(igrejas.map(async (i) => [i.id, await getResumoFinanceiro(i.id)] as const)));
+  const gmvTotal = [...resumoPorIgreja.values()].reduce((soma, r) => soma + r.totalBruto, 0);
+  const receitaTotal = [...resumoPorIgreja.values()].reduce((soma, r) => soma + r.totalTaxasFieis, 0);
   const pendentes = igrejas.filter((i) => i.statusOnboarding === "em_analise" || i.statusOnboarding === "pendente");
-  const demais = igrejas.filter((i) => i.statusOnboarding === "aprovado" || i.statusOnboarding === "reprovado");
+  const demais = igrejas
+    .filter((i) => i.statusOnboarding === "aprovado" || i.statusOnboarding === "reprovado")
+    .map((igreja) => ({ igreja, resumo: resumoPorIgreja.get(igreja.id)! }));
 
   return (
     <div>
@@ -74,8 +78,7 @@ export default function IgrejasAdminPage() {
 
       <SectionLabel>Todas as igrejas</SectionLabel>
       <div className="space-y-3">
-        {demais.map((igreja) => {
-          const resumo = getResumoFinanceiro(igreja.id);
+        {demais.map(({ igreja, resumo }) => {
           return (
             <Card key={igreja.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">

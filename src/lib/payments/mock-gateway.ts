@@ -1,4 +1,4 @@
-import { confirmarContribuicao, getFiel, getIgreja, iniciarContribuicao, salvarCartaoFiel } from "../mock-db";
+import { confirmarContribuicao, getFiel, getIgreja, iniciarContribuicao, salvarCartaoFiel } from "../db/repo";
 import { gerarPixCopiaECola } from "../pix";
 import type { ConfirmacaoPagamento, DadosParaPagamento, IniciarContribuicaoInput, PaymentGateway } from "./gateway";
 
@@ -18,11 +18,11 @@ export class MockPaymentGateway implements PaymentGateway {
     await simularLatenciaDeRede();
 
     if (input.novoCartao) {
-      salvarCartaoFiel(input.fielId, tokenizarCartaoFake(input.novoCartao.numero));
+      await salvarCartaoFiel(input.fielId, tokenizarCartaoFake(input.novoCartao.numero));
     }
 
-    const igreja = getIgreja(input.igrejaId)!;
-    const contribuicao = iniciarContribuicao({
+    const igreja = (await getIgreja(input.igrejaId))!;
+    const contribuicao = await iniciarContribuicao({
       fielId: input.fielId,
       igrejaId: input.igrejaId,
       tipo: input.tipo,
@@ -52,7 +52,7 @@ export class MockPaymentGateway implements PaymentGateway {
   async confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento> {
     await simularLatenciaDeRede();
 
-    const contribuicao = confirmarContribuicao(contribuicaoId);
+    const contribuicao = await confirmarContribuicao(contribuicaoId);
     if (!contribuicao) throw new Error("Contribuição não encontrada");
 
     return {
@@ -62,7 +62,7 @@ export class MockPaymentGateway implements PaymentGateway {
       taxaValor: contribuicao.taxaValor,
       valorTotalFiel: contribuicao.valorTotalFiel,
       taxaCobradaVia: contribuicao.taxaCobradaVia,
-      cartaoSalvo: getFiel(contribuicao.fielId)?.cartaoSalvo,
+      cartaoSalvo: (await getFiel(contribuicao.fielId))?.cartaoSalvo,
       criadaEm: contribuicao.criadaEm,
     };
   }

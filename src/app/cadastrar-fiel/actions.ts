@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { criarFiel, getIgreja } from "@/lib/mock-db";
+import { criarFiel, getIgreja } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoCadastroFiel {
@@ -20,11 +20,11 @@ export async function cadastrarFielAction(
     return { erro: "Preencha nome, telefone e selecione sua igreja." };
   }
 
-  if (!getIgreja(igrejaId)) {
+  if (!(await getIgreja(igrejaId))) {
     return { erro: "Igreja inválida." };
   }
 
-  const fiel = criarFiel({ igrejaId, nome, telefone });
+  const fiel = await criarFiel({ igrejaId, nome, telefone });
 
   await criarSessao({
     papel: "fiel",

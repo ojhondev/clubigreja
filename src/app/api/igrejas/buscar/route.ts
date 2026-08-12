@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { buscarIgrejasAprovadas } from "@/lib/mock-db";
+import { buscarIgrejasAprovadas } from "@/lib/db/repo";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q") ?? "";
 
-  const resultados = buscarIgrejasAprovadas(q).map((i) => ({
+  const resultados = (await buscarIgrejasAprovadas(q)).map((i) => ({
     id: i.id,
     nome: i.nome,
     cidade: i.cidade,

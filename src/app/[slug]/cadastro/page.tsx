@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getIgrejaPorSlug } from "@/lib/mock-db";
+import { getIgrejaPorSlug } from "@/lib/db/repo";
 import { Card } from "@/components/ui";
 import { Logo } from "@/components/logo";
 import { FormCadastroFiel } from "@/app/cadastrar-fiel/form";
 
 export default async function CadastroFielEscopadoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const igreja = getIgrejaPorSlug(slug);
+  const igreja = await getIgrejaPorSlug(slug);
   if (!igreja || igreja.statusOnboarding !== "aprovado") notFound();
 
   return (

@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { marcarNotificacaoLida } from "@/lib/mock-db";
+import { marcarNotificacaoLida } from "@/lib/db/repo";
 
 export async function marcarLidaAction(formData: FormData) {
   const notificacaoId = String(formData.get("notificacaoId"));
-  marcarNotificacaoLida(notificacaoId);
+  await marcarNotificacaoLida(notificacaoId);
   revalidatePath("/fiel/notificacoes");
 }

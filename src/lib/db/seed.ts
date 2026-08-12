@@ -1,4 +1,4 @@
-// Popula o banco Drizzle com os mesmos dados de demonstração do mock-db.ts,
+// Popula o banco Drizzle com os dados de demonstração de seed-data.ts,
 // pra ter algo pra ver assim que o banco existe. Roda com `npm run db:seed`.
 import { db } from "./client";
 import * as schema from "./schema";
@@ -12,7 +12,7 @@ import {
   comunicadosMural,
   contribuicoes,
   notificacoes,
-} from "../mock-db";
+} from "./seed-data";
 
 async function seed() {
   await db.insert(schema.igrejas).values(

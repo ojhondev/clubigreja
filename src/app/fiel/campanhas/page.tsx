@@ -1,19 +1,22 @@
 import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
-import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/mock-db";
+import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
 
 export default async function CampanhasFielPage() {
   const sessao = await getSessao();
-  const campanhas = getCampanhasDaIgreja(sessao!.igrejaId!).filter((c) => !c.encerrada);
+  const campanhasAtivas = (await getCampanhasDaIgreja(sessao!.igrejaId!)).filter((c) => !c.encerrada);
+  const campanhas = await Promise.all(
+    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+  );
 
   return (
     <div>
       <PageHeader title="Campanhas em captação" />
       <div className="space-y-4">
         {campanhas.map((c, i) => {
-          const arrecadado = getArrecadadoCampanha(c.id);
+          const arrecadado = c.arrecadado;
           const pct = (arrecadado / c.meta) * 100;
           return (
             <Card key={c.id}>

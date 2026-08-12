@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
-import { getIgreja, getLinksDaIgreja } from "@/lib/mock-db";
+import { getIgreja, getLinksDaIgreja } from "@/lib/db/repo";
 import { Badge, Button, Card, PageHeader } from "@/components/ui";
 import { criarLink } from "./actions";
 
@@ -15,8 +15,8 @@ const ROTULO_TIPO: Record<string, string> = {
 
 export default async function LinksPagamentoPage() {
   const sessao = await getSessao();
-  const links = getLinksDaIgreja(sessao!.igrejaId!);
-  const igreja = getIgreja(sessao!.igrejaId!)!;
+  const links = await getLinksDaIgreja(sessao!.igrejaId!);
+  const igreja = (await getIgreja(sessao!.igrejaId!))!;
 
   return (
     <div>

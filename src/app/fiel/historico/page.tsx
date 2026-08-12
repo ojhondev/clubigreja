@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
-import { getCampanha, getContribuicoesDoFiel } from "@/lib/mock-db";
+import { getCampanha, getContribuicoesDoFiel } from "@/lib/db/repo";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
 import { Badge, Button, Card, PageHeader } from "@/components/ui";
@@ -17,15 +17,21 @@ const ROTULO_MEIO: Record<string, string> = { pix: "Pix", cartao: "Cartão", bol
 
 export default async function HistoricoPage() {
   const sessao = await getSessao();
-  const contribuicoes = getContribuicoesDoFiel(sessao!.usuarioId);
-  const total = contribuicoes.filter((c) => c.status === "confirmado").reduce((s, c) => s + c.valorBruto, 0);
+  const contribuicoesBrutas = await getContribuicoesDoFiel(sessao!.usuarioId);
+  const total = contribuicoesBrutas.filter((c) => c.status === "confirmado").reduce((s, c) => s + c.valorBruto, 0);
+  const contribuicoes = await Promise.all(
+    contribuicoesBrutas.map(async (c) => ({
+      ...c,
+      campanha: c.campanhaId ? await getCampanha(c.campanhaId) : undefined,
+    }))
+  );
 
   return (
     <div>
       <PageHeader title="Seu histórico" subtitle={`Total contribuído: ${formatarMoeda(total)}`} />
       <div className="space-y-3">
         {contribuicoes.map((c) => {
-          const campanha = c.campanhaId ? getCampanha(c.campanhaId) : undefined;
+          const campanha = c.campanha;
           const pendente = c.status === "aguardando_pix";
           return (
             <Card key={c.id} className={pendente ? "border-amber-300" : undefined}>

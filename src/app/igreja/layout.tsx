@@ -1,6 +1,6 @@
 import { LogOut } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
-import { getIgreja } from "@/lib/mock-db";
+import { getIgreja } from "@/lib/db/repo";
 import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 import { PillNav, IconSidebar } from "@/components/igreja-nav";
@@ -18,7 +18,7 @@ function iniciais(nome: string): string {
 
 export default async function IgrejaLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
-  const igreja = sessao?.igrejaId ? getIgreja(sessao.igrejaId) : undefined;
+  const igreja = sessao?.igrejaId ? await getIgreja(sessao.igrejaId) : undefined;
 
   if (igreja && igreja.statusOnboarding !== "aprovado") {
     const reprovada = igreja.statusOnboarding === "reprovado";

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getIgreja, linksPagamento } from "@/lib/mock-db";
+import { getIgreja, getLinkPagamento } from "@/lib/db/repo";
 import { urlAbsoluta } from "@/lib/qrcode";
 import { QrPoster } from "@/components/qr-poster";
 
@@ -13,10 +13,10 @@ const ROTULO_TIPO: Record<string, string> = {
 
 export default async function LinkQrCodePage({ params }: { params: Promise<{ linkId: string }> }) {
   const { linkId } = await params;
-  const link = linksPagamento.find((l) => l.id === linkId);
+  const link = await getLinkPagamento(linkId);
   if (!link) notFound();
 
-  const igreja = getIgreja(link.igrejaId)!;
+  const igreja = (await getIgreja(link.igrejaId))!;
   const url = await urlAbsoluta(`/doar/link/${link.id}`);
 
   return (

@@ -13,7 +13,7 @@
     "db:seed": "tsx src/lib/db/seed.ts"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.4",
+    "@neondatabase/serverless": "^1.1.0",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^13.0.0",
     "lucide-react": "^1.28.0",
