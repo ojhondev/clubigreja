@@ -158,6 +158,25 @@ export const linksExtras = pgTable("links_extras", {
   url: text("url").notNull(),
 });
 
+// Equipe interna Dizipay ("WebMaster"). O Master Primário (nivel="primario")
+// sempre tem acesso total, ignorando as colunas de permissão — essas colunas
+// só valem pra masters secundários, e só o Primário pode alterá-las ou
+// convidar novos membros. Contas convidadas ficam com senhaHash nula e um
+// token pendente até aceitarem o convite e definirem a própria senha.
+export const webmasters = pgTable("webmasters", {
+  id: text("id").primaryKey(),
+  nome: text("nome").notNull(),
+  email: text("email").notNull().unique(),
+  senhaHash: text("senha_hash"),
+  nivel: text("nivel", { enum: ["primario", "secundario"] }).notNull().default("secundario"),
+  podeGerenciarPagamentos: boolean("pode_gerenciar_pagamentos").notNull().default(false),
+  podeAprovarIgrejas: boolean("pode_aprovar_igrejas").notNull().default(false),
+  conviteToken: text("convite_token"),
+  conviteExpiraEm: text("convite_expira_em"),
+  convidadoPorId: text("convidado_por_id"),
+  criadoEm: text("criado_em").notNull(),
+});
+
 export const igrejasRelations = relations(igrejas, ({ many }) => ({
   usuarios: many(usuariosIgreja),
   fieis: many(fieis),

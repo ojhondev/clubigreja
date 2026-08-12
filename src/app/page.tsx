@@ -7,7 +7,7 @@ export default async function Home() {
 
   if (sessao?.papel === "igreja") redirect("/igreja/dashboard");
   if (sessao?.papel === "fiel") redirect("/fiel/inicio");
-  if (sessao?.papel === "superadmin") redirect("/admin/igrejas");
+  if (sessao?.papel === "webmaster") redirect("/admin/igrejas");
 
   return <LandingPage />;
 }

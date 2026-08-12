@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID, randomBytes } from "node:crypto";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { calcularTaxaProcessamento } from "../comissao";
 import { slugify } from "../slug";
@@ -9,14 +9,17 @@ import type {
   CartaoSalvo,
   Campanha,
   ComunicadoMural,
+  ConviteWebmaster,
   Contribuicao,
   Evento,
   Fiel,
   Igreja,
   LinkExtra,
   LinkPagamento,
+  MembroWebmasterListagem,
   NotificacaoFiel,
   UsuarioIgreja,
+  Webmaster,
 } from "../types";
 
 // Camada de dados real, sobre Drizzle/SQLite (libsql) — substitui o antigo
@@ -640,4 +643,168 @@ export async function notificarFieisDaIgreja(
 
 export async function marcarNotificacaoLida(notificacaoId: string): Promise<void> {
   await db.update(schema.notificacoesFiel).set({ lida: true }).where(eq(schema.notificacoesFiel.id, notificacaoId));
+}
+
+// --- Equipe interna (WebMaster) ---------------------------------------
+
+function rowParaWebmaster(row: typeof schema.webmasters.$inferSelect): Webmaster {
+  return {
+    id: row.id,
+    nome: row.nome,
+    email: row.email,
+    nivel: row.nivel,
+    podeGerenciarPagamentos: row.podeGerenciarPagamentos,
+    podeAprovarIgrejas: row.podeAprovarIgrejas,
+    criadoEm: row.criadoEm,
+  };
+}
+
+const DURACAO_CONVITE_DIAS = 7;
+
+function gerarTokenConvite(): string {
+  return randomBytes(24).toString("base64url");
+}
+
+export async function existeWebmaster(): Promise<boolean> {
+  const [row] = await db.select({ id: schema.webmasters.id }).from(schema.webmasters).limit(1);
+  return !!row;
+}
+
+// Bootstrap: cria o Master Primário — só funciona a primeira vez (nenhum
+// webmaster ainda cadastrado). Depois disso, novas contas só entram por
+// convite do Master Primário.
+export async function criarWebmasterPrimario(input: { nome: string; email: string; senha: string }): Promise<Webmaster | null> {
+  if (await existeWebmaster()) return null;
+  const senhaHash = await hashSenha(input.senha);
+  const [row] = await db
+    .insert(schema.webmasters)
+    .values({
+      id: gerarId("webmaster"),
+      nome: input.nome,
+      email: input.email.trim().toLowerCase(),
+      senhaHash,
+      nivel: "primario",
+      podeGerenciarPagamentos: true,
+      podeAprovarIgrejas: true,
+      criadoEm: hoje(),
+    })
+    .returning();
+  return rowParaWebmaster(row);
+}
+
+// Só o Master Primário chama isso (a checagem de quem pode convidar fica na
+// action/página que envolve a autorização de sessão).
+export async function gerarConviteWebmaster(input: {
+  nome: string;
+  email: string;
+  podeGerenciarPagamentos: boolean;
+  podeAprovarIgrejas: boolean;
+  convidadoPorId: string;
+}): Promise<ConviteWebmaster> {
+  const expira = new Date();
+  expira.setDate(expira.getDate() + DURACAO_CONVITE_DIAS);
+  const [row] = await db
+    .insert(schema.webmasters)
+    .values({
+      id: gerarId("webmaster"),
+      nome: input.nome,
+      email: input.email.trim().toLowerCase(),
+      nivel: "secundario",
+      podeGerenciarPagamentos: input.podeGerenciarPagamentos,
+      podeAprovarIgrejas: input.podeAprovarIgrejas,
+      conviteToken: gerarTokenConvite(),
+      conviteExpiraEm: expira.toISOString(),
+      convidadoPorId: input.convidadoPorId,
+      criadoEm: hoje(),
+    })
+    .returning();
+  return {
+    id: row.id,
+    nome: row.nome,
+    email: row.email,
+    nivel: row.nivel,
+    podeGerenciarPagamentos: row.podeGerenciarPagamentos,
+    podeAprovarIgrejas: row.podeAprovarIgrejas,
+    conviteToken: row.conviteToken!,
+    conviteExpiraEm: row.conviteExpiraEm!,
+  };
+}
+
+export async function getConviteWebmasterPorToken(token: string): Promise<ConviteWebmaster | undefined> {
+  const [row] = await db.select().from(schema.webmasters).where(eq(schema.webmasters.conviteToken, token));
+  if (!row || !row.conviteToken || !row.conviteExpiraEm) return undefined;
+  if (new Date(row.conviteExpiraEm).getTime() < Date.now()) return undefined;
+  return {
+    id: row.id,
+    nome: row.nome,
+    email: row.email,
+    nivel: row.nivel,
+    podeGerenciarPagamentos: row.podeGerenciarPagamentos,
+    podeAprovarIgrejas: row.podeAprovarIgrejas,
+    conviteToken: row.conviteToken,
+    conviteExpiraEm: row.conviteExpiraEm,
+  };
+}
+
+export async function aceitarConviteWebmaster(token: string, senha: string): Promise<Webmaster | null> {
+  const convite = await getConviteWebmasterPorToken(token);
+  if (!convite) return null;
+  const senhaHash = await hashSenha(senha);
+  const [row] = await db
+    .update(schema.webmasters)
+    .set({ senhaHash, conviteToken: null, conviteExpiraEm: null })
+    .where(eq(schema.webmasters.id, convite.id))
+    .returning();
+  return rowParaWebmaster(row);
+}
+
+export async function autenticarWebmaster(email: string, senha: string): Promise<Webmaster | null> {
+  const alvo = email.trim().toLowerCase();
+  const [row] = await db.select().from(schema.webmasters).where(sql`lower(${schema.webmasters.email}) = ${alvo}`);
+  if (!row || !row.senhaHash) return null;
+  const ok = await verificarSenha(senha, row.senhaHash);
+  if (!ok) return null;
+  return rowParaWebmaster(row);
+}
+
+export async function getWebmasterPorId(id: string): Promise<Webmaster | undefined> {
+  const [row] = await db.select().from(schema.webmasters).where(eq(schema.webmasters.id, id));
+  return row ? rowParaWebmaster(row) : undefined;
+}
+
+export async function getTodosMembrosWebmaster(): Promise<MembroWebmasterListagem[]> {
+  const rows = await db.select().from(schema.webmasters).orderBy(schema.webmasters.criadoEm);
+  return rows.map((row) => ({
+    id: row.id,
+    nome: row.nome,
+    email: row.email,
+    nivel: row.nivel,
+    podeGerenciarPagamentos: row.podeGerenciarPagamentos,
+    podeAprovarIgrejas: row.podeAprovarIgrejas,
+    criadoEm: row.criadoEm,
+    pendente: !row.senhaHash,
+    conviteToken: row.senhaHash ? undefined : (row.conviteToken ?? undefined),
+  }));
+}
+
+// Nunca mexe no nível nem no Master Primário — só o Primário chama isso, e
+// só pra ajustar as permissões de um secundário.
+export async function atualizarPermissoesWebmaster(
+  id: string,
+  input: { podeGerenciarPagamentos: boolean; podeAprovarIgrejas: boolean }
+): Promise<void> {
+  await db
+    .update(schema.webmasters)
+    .set({
+      podeGerenciarPagamentos: input.podeGerenciarPagamentos,
+      podeAprovarIgrejas: input.podeAprovarIgrejas,
+    })
+    .where(and(eq(schema.webmasters.id, id), eq(schema.webmasters.nivel, "secundario")));
+}
+
+// Ação sensível gatilhada pela permissão podeGerenciarPagamentos — permite à
+// equipe interna corrigir a chave Pix de uma igreja (ex.: suporte a pedido
+// da própria igreja), sem que a igreja precise ter acesso ao próprio painel.
+export async function atualizarChavePixIgreja(igrejaId: string, chavePix: string): Promise<void> {
+  await db.update(schema.igrejas).set({ chavePix }).where(eq(schema.igrejas.id, igrejaId));
 }

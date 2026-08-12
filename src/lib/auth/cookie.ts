@@ -5,7 +5,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 // proxy.ts (roda fora do request lifecycle do App Router, lê o cookie cru
 // do NextRequest). Extraído aqui pra não duplicar a lógica de assinatura.
 
-export type Papel = "igreja" | "fiel" | "superadmin";
+export type Papel = "igreja" | "fiel" | "webmaster";
 
 export interface Sessao {
   papel: Papel;

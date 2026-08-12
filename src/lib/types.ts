@@ -132,3 +132,42 @@ export interface NotificacaoFiel {
   lida: boolean;
   criadaEm: string;
 }
+
+export type NivelWebmaster = "primario" | "secundario";
+
+// Equipe interna Dizipay. O Master Primário sempre tem acesso total — as
+// colunas pode* só têm efeito prático para masters secundários.
+export interface Webmaster {
+  id: string;
+  nome: string;
+  email: string;
+  nivel: NivelWebmaster;
+  podeGerenciarPagamentos: boolean;
+  podeAprovarIgrejas: boolean;
+  criadoEm: string;
+}
+
+// Convite pendente — mesma linha da tabela webmasters, mas ainda sem senha.
+export interface ConviteWebmaster {
+  id: string;
+  nome: string;
+  email: string;
+  nivel: NivelWebmaster;
+  podeGerenciarPagamentos: boolean;
+  podeAprovarIgrejas: boolean;
+  conviteToken: string;
+  conviteExpiraEm: string;
+}
+
+// Linha da tela "Equipe" — um Webmaster ativo ou um convite ainda pendente.
+export interface MembroWebmasterListagem {
+  id: string;
+  nome: string;
+  email: string;
+  nivel: NivelWebmaster;
+  podeGerenciarPagamentos: boolean;
+  podeAprovarIgrejas: boolean;
+  criadoEm: string;
+  pendente: boolean;
+  conviteToken?: string;
+}

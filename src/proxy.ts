@@ -4,7 +4,7 @@ import { COOKIE_SESSAO, decodificarSessao } from "./lib/auth/cookie";
 const PREFIXO_PAPEL: Record<string, string> = {
   "/igreja": "igreja",
   "/fiel": "fiel",
-  "/admin": "superadmin",
+  "/admin": "webmaster",
 };
 
 export function proxy(request: NextRequest) {

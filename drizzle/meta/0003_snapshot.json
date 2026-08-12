@@ -1,6 +1,6 @@
 {
-  "id": "6d43d6d4-1e11-440e-a2b8-5d1783bf01bb",
-  "prevId": "b78be9a0-8d77-4704-a33a-5f914fde0eed",
+  "id": "cd9e46e5-a115-42a1-a549-7c076e54313a",
+  "prevId": "6d43d6d4-1e11-440e-a2b8-5d1783bf01bb",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -811,6 +811,96 @@
       "uniqueConstraints": {
         "usuarios_igreja_email_unique": {
           "name": "usuarios_igreja_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.webmasters": {
+      "name": "webmasters",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "senha_hash": {
+          "name": "senha_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nivel": {
+          "name": "nivel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'secundario'"
+        },
+        "pode_gerenciar_pagamentos": {
+          "name": "pode_gerenciar_pagamentos",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "pode_aprovar_igrejas": {
+          "name": "pode_aprovar_igrejas",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "convite_token": {
+          "name": "convite_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "convite_expira_em": {
+          "name": "convite_expira_em",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "convidado_por_id": {
+          "name": "convidado_por_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "webmasters_email_unique": {
+          "name": "webmasters_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
