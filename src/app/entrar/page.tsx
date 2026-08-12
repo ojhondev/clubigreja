@@ -44,12 +44,6 @@ export default function EntrarPage() {
         </Link>
       </div>
 
-      <p className="mt-10 text-center text-sm text-muted">
-        Testando o produto?{" "}
-        <Link href="/login" className="font-bold text-primary">
-          Acesso master (entrar como qualquer usuário)
-        </Link>
-      </p>
     </div>
   );
 }

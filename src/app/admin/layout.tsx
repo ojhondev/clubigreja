@@ -1,9 +1,13 @@
+import { redirect } from "next/navigation";
 import { getSessao } from "@/lib/auth/session";
 import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
+  if (sessao?.papel !== "superadmin") {
+    redirect("/login");
+  }
 
   return (
     <div className="flex min-h-full flex-col">

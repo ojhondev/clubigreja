@@ -1,26 +1,24 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getFielPorTelefone } from "@/lib/db/repo";
+import { autenticarFiel } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoLoginFiel {
   erro?: string;
 }
 
-// O código de verificação ainda não é enviado/checado de verdade — não há
-// provedor de SMS conectado. A etapa já existe na tela para o fluxo ficar
-// completo assim que plugarmos um envio real.
 export async function entrarFielTelefoneAction(
   _estadoAnterior: EstadoLoginFiel,
   formData: FormData
 ): Promise<EstadoLoginFiel> {
   const telefone = String(formData.get("telefone") ?? "").trim();
-  if (!telefone) return { erro: "Informe seu celular." };
+  const senha = String(formData.get("senha") ?? "");
+  if (!telefone || !senha) return { erro: "Informe seu celular e senha." };
 
-  const fiel = await getFielPorTelefone(telefone);
+  const fiel = await autenticarFiel(telefone, senha);
   if (!fiel) {
-    return { erro: "Não encontramos esse número. Cadastre-se para começar." };
+    return { erro: "Celular ou senha incorretos." };
   }
 
   await criarSessao({

@@ -2,6 +2,7 @@
 // pra ter algo pra ver assim que o banco existe. Roda com `npm run db:seed`.
 import { db } from "./client";
 import * as schema from "./schema";
+import { hashSenha } from "../auth/senha";
 import {
   igrejas,
   usuariosIgreja,
@@ -14,7 +15,12 @@ import {
   notificacoes,
 } from "./seed-data";
 
+// Senha padrão de todas as contas de demonstração — só pra popular o banco
+// local/preview, nunca usada em conta real.
+const SENHA_DEMO = "dizipay123";
+
 async function seed() {
+  const senhaHashDemo = await hashSenha(SENHA_DEMO);
   await db.insert(schema.igrejas).values(
     igrejas.map((i) => ({
       id: i.id,
@@ -34,7 +40,9 @@ async function seed() {
     }))
   );
 
-  await db.insert(schema.usuariosIgreja).values(usuariosIgreja);
+  await db.insert(schema.usuariosIgreja).values(
+    usuariosIgreja.map((u) => ({ ...u, senhaHash: senhaHashDemo }))
+  );
 
   await db.insert(schema.fieis).values(
     fieis.map((f) => ({
@@ -42,6 +50,7 @@ async function seed() {
       igrejaId: f.igrejaId,
       nome: f.nome,
       telefone: f.telefone,
+      senhaHash: senhaHashDemo,
       criadoEm: f.criadoEm,
       cartaoBandeira: f.cartaoSalvo?.bandeira,
       cartaoUltimosDigitos: f.cartaoSalvo?.ultimosDigitos,

@@ -34,6 +34,9 @@ export const usuariosIgreja = pgTable("usuarios_igreja", {
     .references(() => igrejas.id, { onDelete: "cascade" }),
   nome: text("nome").notNull(),
   email: text("email").notNull().unique(),
+  // "salt:hash" via scrypt — ver src/lib/auth/senha.ts. Nunca exposto fora
+  // das funções de autenticação em repo.ts.
+  senhaHash: text("senha_hash").notNull(),
   papel: text("papel", { enum: ["administrador", "tesoureiro", "secretario"] }).notNull(),
 });
 
@@ -44,6 +47,9 @@ export const fieis = pgTable("fieis", {
     .references(() => igrejas.id, { onDelete: "cascade" }),
   nome: text("nome").notNull(),
   telefone: text("telefone").notNull(),
+  // Nula pra fiéis criados por doação avulsa (convidado, sem conta própria)
+  // — esses nunca fazem login, só existem pra manter o histórico.
+  senhaHash: text("senha_hash"),
   criadoEm: text("criado_em").notNull(),
   // Cartão salvo pra cobrança da taxa de processamento — tokenizado, nunca
   // guarda o número real do cartão.

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { calcularTaxaProcessamento } from "../comissao";
 import { slugify } from "../slug";
+import { hashSenha, verificarSenha } from "../auth/senha";
 import { db } from "./client";
 import * as schema from "./schema";
 import type {
@@ -50,6 +51,16 @@ function rowParaFiel(row: typeof schema.fieis.$inferSelect): Fiel {
       : undefined,
   };
 }
+
+// Colunas seguras de usuarios_igreja pra qualquer leitura que não seja
+// autenticação — nunca inclui senha_hash, nem por engano.
+const COLUNAS_USUARIO_IGREJA = {
+  id: schema.usuariosIgreja.id,
+  igrejaId: schema.usuariosIgreja.igrejaId,
+  nome: schema.usuariosIgreja.nome,
+  email: schema.usuariosIgreja.email,
+  papel: schema.usuariosIgreja.papel,
+};
 
 // Junta cada linha de igreja com os próprios linksExtras — numa query só,
 // mesmo pra várias igrejas de uma vez, pra nunca cair em N+1.
@@ -114,11 +125,14 @@ export async function getTodosFieis(): Promise<Fiel[]> {
 }
 
 export async function getTodosUsuariosIgreja(): Promise<UsuarioIgreja[]> {
-  return db.select().from(schema.usuariosIgreja);
+  return db.select(COLUNAS_USUARIO_IGREJA).from(schema.usuariosIgreja);
 }
 
 export async function getUsuarioIgrejaPorId(usuarioId: string): Promise<UsuarioIgreja | undefined> {
-  const [row] = await db.select().from(schema.usuariosIgreja).where(eq(schema.usuariosIgreja.id, usuarioId));
+  const [row] = await db
+    .select(COLUNAS_USUARIO_IGREJA)
+    .from(schema.usuariosIgreja)
+    .where(eq(schema.usuariosIgreja.id, usuarioId));
   return row;
 }
 
@@ -251,16 +265,49 @@ export async function getArrecadadoCampanha(campanhaId: string): Promise<number>
 }
 
 export async function getUsuariosDaIgreja(igrejaId: string): Promise<UsuarioIgreja[]> {
-  return db.select().from(schema.usuariosIgreja).where(eq(schema.usuariosIgreja.igrejaId, igrejaId));
+  return db
+    .select(COLUNAS_USUARIO_IGREJA)
+    .from(schema.usuariosIgreja)
+    .where(eq(schema.usuariosIgreja.igrejaId, igrejaId));
 }
 
 export async function getUsuarioIgrejaPorEmail(email: string): Promise<UsuarioIgreja | undefined> {
   const alvo = email.trim().toLowerCase();
   const [row] = await db
-    .select()
+    .select(COLUNAS_USUARIO_IGREJA)
     .from(schema.usuariosIgreja)
     .where(sql`lower(${schema.usuariosIgreja.email}) = ${alvo}`);
   return row;
+}
+
+// Confere e-mail + senha. Só essa função (e o cadastro) toca em senha_hash —
+// todo o resto do app usa os getters acima, que nunca selecionam a coluna.
+export async function autenticarIgreja(email: string, senha: string): Promise<UsuarioIgreja | null> {
+  const alvo = email.trim().toLowerCase();
+  const [row] = await db
+    .select()
+    .from(schema.usuariosIgreja)
+    .where(sql`lower(${schema.usuariosIgreja.email}) = ${alvo}`);
+  if (!row) return null;
+
+  const ok = await verificarSenha(senha, row.senhaHash);
+  if (!ok) return null;
+
+  return { id: row.id, igrejaId: row.igrejaId, nome: row.nome, email: row.email, papel: row.papel };
+}
+
+// Idem para o fiel, por telefone — mesmo esquema "salt:hash" via scrypt.
+export async function autenticarFiel(telefone: string, senha: string): Promise<Fiel | null> {
+  const alvo = normalizarTelefone(telefone);
+  if (!alvo) return null;
+  const rows = await db.select().from(schema.fieis);
+  const row = rows.find((f) => normalizarTelefone(f.telefone) === alvo);
+  if (!row || !row.senhaHash) return null;
+
+  const ok = await verificarSenha(senha, row.senhaHash);
+  if (!ok) return null;
+
+  return rowParaFiel(row);
 }
 
 export async function getNotificacoesDoFiel(fielId: string): Promise<NotificacaoFiel[]> {
@@ -450,12 +497,21 @@ export async function criarUsuarioIgreja(input: {
   igrejaId: string;
   nome: string;
   email: string;
+  senha: string;
   papel: UsuarioIgreja["papel"];
 }): Promise<UsuarioIgreja> {
+  const senhaHash = await hashSenha(input.senha);
   const [row] = await db
     .insert(schema.usuariosIgreja)
-    .values({ id: gerarId("user-igreja"), igrejaId: input.igrejaId, nome: input.nome, email: input.email, papel: input.papel })
-    .returning();
+    .values({
+      id: gerarId("user-igreja"),
+      igrejaId: input.igrejaId,
+      nome: input.nome,
+      email: input.email,
+      senhaHash,
+      papel: input.papel,
+    })
+    .returning(COLUNAS_USUARIO_IGREJA);
   return row;
 }
 
@@ -518,10 +574,23 @@ export async function removerLinkExtra(igrejaId: string, linkExtraId: string): P
     .where(and(eq(schema.linksExtras.id, linkExtraId), eq(schema.linksExtras.igrejaId, igrejaId)));
 }
 
-export async function criarFiel(input: { igrejaId: string; nome: string; telefone: string }): Promise<Fiel> {
+export async function criarFiel(input: {
+  igrejaId: string;
+  nome: string;
+  telefone: string;
+  senha: string;
+}): Promise<Fiel> {
+  const senhaHash = await hashSenha(input.senha);
   const [row] = await db
     .insert(schema.fieis)
-    .values({ id: gerarId("fiel"), igrejaId: input.igrejaId, nome: input.nome, telefone: input.telefone, criadoEm: hoje() })
+    .values({
+      id: gerarId("fiel"),
+      igrejaId: input.igrejaId,
+      nome: input.nome,
+      telefone: input.telefone,
+      senhaHash,
+      criadoEm: hoje(),
+    })
     .returning();
   return rowParaFiel(row);
 }

@@ -58,6 +58,23 @@ export function FormCadastroIgreja() {
         />
         <span className="text-xs text-muted">É pra essa chave que o Pix dos fiéis vai direto — o Dizipay nunca recebe esse valor.</span>
       </label>
+      <div className="grid grid-cols-2 gap-4">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-muted">Senha *</span>
+          <input
+            name="senha"
+            type="password"
+            required
+            minLength={6}
+            placeholder="Mínimo 6 caracteres"
+            className="rounded-xl border border-border px-4 py-3"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-muted">Confirmar senha *</span>
+          <input name="confirmarSenha" type="password" required minLength={6} className="rounded-xl border border-border px-4 py-3" />
+        </label>
+      </div>
 
       {estado.erro && (
         <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{estado.erro}</p>

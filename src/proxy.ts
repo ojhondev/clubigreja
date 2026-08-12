@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { COOKIE_SESSAO, decodificarSessao } from "./lib/auth/cookie";
 
 const PREFIXO_PAPEL: Record<string, string> = {
   "/igreja": "igreja",
@@ -14,17 +15,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const raw = request.cookies.get("cig_sessao")?.value;
-  if (!raw) {
-    return NextResponse.redirect(new URL("/entrar", request.url));
-  }
+  const raw = request.cookies.get(COOKIE_SESSAO)?.value;
+  const sessao = raw ? decodificarSessao(raw) : null;
 
-  try {
-    const sessao = JSON.parse(raw) as { papel: string };
-    if (sessao.papel !== PREFIXO_PAPEL[prefixoProtegido]) {
-      return NextResponse.redirect(new URL("/entrar", request.url));
-    }
-  } catch {
+  if (!sessao || sessao.papel !== PREFIXO_PAPEL[prefixoProtegido]) {
     return NextResponse.redirect(new URL("/entrar", request.url));
   }
 

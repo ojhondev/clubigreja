@@ -1,38 +1,34 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { criarSessao } from "@/lib/auth/session";
-import { getFiel, getUsuarioIgrejaPorId } from "@/lib/db/repo";
 
-export async function entrarComoIgreja(formData: FormData) {
-  const usuarioId = String(formData.get("usuarioId"));
-  const usuario = await getUsuarioIgrejaPorId(usuarioId);
-  if (!usuario) return;
-
-  await criarSessao({
-    papel: "igreja",
-    usuarioId: usuario.id,
-    igrejaId: usuario.igrejaId,
-    nome: usuario.nome,
-  });
-  redirect("/igreja/dashboard");
+export interface EstadoLoginSuperadmin {
+  erro?: string;
 }
 
-export async function entrarComoFiel(formData: FormData) {
-  const fielId = String(formData.get("fielId"));
-  const fiel = await getFiel(fielId);
-  if (!fiel) return;
+const SENHA_SUPERADMIN = process.env.SUPERADMIN_SENHA;
 
-  await criarSessao({
-    papel: "fiel",
-    usuarioId: fiel.id,
-    igrejaId: fiel.igrejaId,
-    nome: fiel.nome,
-  });
-  redirect("/fiel/inicio");
+function senhaConfere(digitada: string): boolean {
+  if (!SENHA_SUPERADMIN) return false;
+  // Mesmo esquema de comparação em tempo constante do cookie de sessão —
+  // evita vazar informação por tempo de resposta.
+  const bufA = createHmac("sha256", "cmp").update(digitada).digest();
+  const bufB = createHmac("sha256", "cmp").update(SENHA_SUPERADMIN).digest();
+  return timingSafeEqual(bufA, bufB);
 }
 
-export async function entrarComoSuperadmin() {
+export async function entrarComoSuperadmin(
+  _estadoAnterior: EstadoLoginSuperadmin,
+  formData: FormData
+): Promise<EstadoLoginSuperadmin> {
+  const senha = String(formData.get("senha") ?? "");
+
+  if (!senhaConfere(senha)) {
+    return { erro: "Senha incorreta." };
+  }
+
   await criarSessao({
     papel: "superadmin",
     usuarioId: "superadmin-1",

@@ -43,6 +43,21 @@ export function FormCadastroFiel({ igrejaFixa }: { igrejaFixa?: IgrejaResumo }) 
         <span className="text-sm font-bold text-muted">Seu celular</span>
         <input name="telefone" required placeholder="(11) 99999-9999" className="rounded-xl border border-border px-4 py-3" />
       </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-bold text-muted">Crie uma senha</span>
+        <input
+          name="senha"
+          type="password"
+          required
+          minLength={6}
+          placeholder="Mínimo 6 caracteres"
+          className="rounded-xl border border-border px-4 py-3"
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-bold text-muted">Confirme a senha</span>
+        <input name="confirmarSenha" type="password" required minLength={6} className="rounded-xl border border-border px-4 py-3" />
+      </label>
 
       {estado.erro && (
         <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{estado.erro}</p>

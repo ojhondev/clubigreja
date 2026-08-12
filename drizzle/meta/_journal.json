@@ -8,6 +8,20 @@
       "when": 1786538187335,
       "tag": "0000_new_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786546300016,
+      "tag": "0001_simple_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786548127452,
+      "tag": "0002_senha_hash_not_null",
+      "breakpoints": true
     }
   ]
 }

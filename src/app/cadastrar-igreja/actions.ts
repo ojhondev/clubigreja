@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { criarIgreja, criarUsuarioIgreja } from "@/lib/db/repo";
+import { criarIgreja, criarUsuarioIgreja, getUsuarioIgrejaPorEmail } from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoCadastroIgreja {
@@ -20,14 +20,28 @@ export async function cadastrarIgrejaAction(
   const cidade = String(formData.get("cidade") ?? "").trim();
   const uf = String(formData.get("uf") ?? "").trim().toUpperCase();
   const chavePix = String(formData.get("chavePix") ?? "").trim();
+  const senha = String(formData.get("senha") ?? "");
+  const confirmarSenha = String(formData.get("confirmarSenha") ?? "");
 
-  if (!nome || !responsavelNome || !responsavelEmail || !responsavelWhatsapp || !cidade || !uf || !chavePix) {
+  if (!nome || !responsavelNome || !responsavelEmail || !responsavelWhatsapp || !cidade || !uf || !chavePix || !senha) {
     return { erro: "Preencha todos os campos obrigatórios." };
+  }
+
+  if (senha.length < 6) {
+    return { erro: "A senha precisa ter pelo menos 6 caracteres." };
+  }
+  if (senha !== confirmarSenha) {
+    return { erro: "As senhas não coincidem." };
   }
 
   const cnpjDigitos = cnpj.replace(/\D/g, "");
   if (cnpjDigitos.length !== 14) {
     return { erro: "Informe um CNPJ válido (14 dígitos) — é obrigatório para operar na plataforma." };
+  }
+
+  const usuarioExistente = await getUsuarioIgrejaPorEmail(responsavelEmail);
+  if (usuarioExistente) {
+    return { erro: "Já existe uma conta com esse e-mail." };
   }
 
   const igreja = await criarIgreja({
@@ -44,6 +58,7 @@ export async function cadastrarIgrejaAction(
     igrejaId: igreja.id,
     nome: responsavelNome,
     email: responsavelEmail,
+    senha,
     papel: "administrador",
   });
 
