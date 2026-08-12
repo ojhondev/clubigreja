@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getFiel, getIgreja, getLinkPagamento } from "@/lib/db/repo";
-import { getSessao } from "@/lib/auth/session";
+import { getFielConvidadoId, getSessao } from "@/lib/auth/session";
 import { Card } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
 import { CartaoTaxa } from "@/components/cartao-taxa";
@@ -23,7 +23,12 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
   const igreja = (await getIgreja(link.igrejaId))!;
 
   const sessao = await getSessao();
-  const fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  let fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  if (!fielLogado) {
+    const convidadoId = await getFielConvidadoId();
+    const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
+    if (convidado?.igrejaId === link.igrejaId) fielLogado = convidado;
+  }
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-10">

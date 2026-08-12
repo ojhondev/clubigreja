@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getCampanha, criarFielConvidado } from "@/lib/db/repo";
-import { getSessao } from "@/lib/auth/session";
+import { getCampanha, getFiel, criarFielConvidado } from "@/lib/db/repo";
+import { getFielConvidadoId, getSessao, lembrarFielConvidado } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarCampanhaPublicoAction(formData: FormData) {
@@ -15,13 +15,21 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
   const cartaoNome = formData.get("cartaoNome");
   if (!valorBruto || valorBruto <= 0) return;
 
-  // Fiel já logado: usa a própria conta, sem pedir nome nem recriar um
-  // registro de convidado.
+  // Fiel já logado: usa a própria conta. Sem login, reaproveita o mesmo
+  // registro de convidado se o navegador já é reconhecido (mesma igreja) —
+  // só cria um novo convidado na primeira vez.
   const sessao = await getSessao();
-  const fielId =
-    sessao?.papel === "fiel"
-      ? sessao.usuarioId
-      : (await criarFielConvidado(campanha.igrejaId, String(formData.get("nome") ?? "").trim())).id;
+  let fielId: string;
+  if (sessao?.papel === "fiel") {
+    fielId = sessao.usuarioId;
+  } else {
+    const convidadoId = await getFielConvidadoId();
+    const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
+    fielId =
+      convidado?.igrejaId === campanha.igrejaId
+        ? convidado.id
+        : (await criarFielConvidado(campanha.igrejaId, String(formData.get("nome") ?? "").trim())).id;
+  }
 
   const dados = await gateway.iniciarContribuicao({
     igrejaId: campanha.igrejaId,
@@ -32,6 +40,10 @@ export async function doarCampanhaPublicoAction(formData: FormData) {
     novoCartao:
       cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
+
+  if (sessao?.papel !== "fiel") {
+    await lembrarFielConvidado(fielId);
+  }
 
   redirect(`/doar/pagar/${dados.contribuicaoId}`);
 }

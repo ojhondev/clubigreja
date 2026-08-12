@@ -23,8 +23,19 @@ export interface OrigemWebmaster {
   webmasterNome: string;
 }
 
+// Presente no navegador de um doador avulso (link público, sem login) que
+// já cadastrou um cartão pra taxa antes — permite reconhecer o mesmo
+// dispositivo numa doação futura e pular o formulário de cartão de novo,
+// igual já acontece pra fiel autenticado. Assinado pelo mesmo motivo da
+// sessão: sem isso, qualquer um poderia forjar o cookie com o fielId de
+// outra pessoa e ter a taxa cobrada no cartão salvo dela.
+export interface ConvidadoInfo {
+  fielId: string;
+}
+
 export const COOKIE_SESSAO = "cig_sessao";
 export const COOKIE_ORIGEM_WEBMASTER = "cig_origem_webmaster";
+export const COOKIE_CONVIDADO = "cig_fiel_convidado";
 
 const SEGREDO = process.env.SESSION_SECRET;
 if (!SEGREDO && process.env.NODE_ENV === "production") {
@@ -71,4 +82,12 @@ export function codificarOrigemWebmaster(origem: OrigemWebmaster): string {
 
 export function decodificarOrigemWebmaster(valor: string): OrigemWebmaster | null {
   return decodificar<OrigemWebmaster>(valor);
+}
+
+export function codificarConvidado(info: ConvidadoInfo): string {
+  return codificar(info);
+}
+
+export function decodificarConvidado(valor: string): ConvidadoInfo | null {
+  return decodificar<ConvidadoInfo>(valor);
 }

@@ -1,11 +1,8 @@
-import Link from "next/link";
-import { QrCode } from "lucide-react";
 import { getSessao } from "@/lib/auth/session";
 import { getArrecadadoCampanha, getCampanhasDaIgreja } from "@/lib/db/repo";
-import { formatarMoeda } from "@/lib/comissao";
-import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
-import { formatarData } from "@/lib/formato";
+import { Button, Card, PageHeader } from "@/components/ui";
 import { InputMoeda } from "@/components/input-moeda";
+import { CampanhaCardIgreja } from "@/components/campanha-card-igreja";
 import { criarCampanhaAction } from "./actions";
 
 export default async function CampanhasPage() {
@@ -52,37 +49,10 @@ export default async function CampanhasPage() {
       </Card>
 
       <div className="space-y-4">
-        {campanhas.map((c) => {
-          const arrecadado = c.arrecadado;
-          const pct = (arrecadado / c.meta) * 100;
-          return (
-            <Card key={c.id}>
-              <div className="mb-2 flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{c.imagemEmoji}</span>
-                  <div>
-                    <p className="font-bold">{c.titulo}</p>
-                    <p className="text-sm text-muted">Prazo: {formatarData(c.prazo)}</p>
-                  </div>
-                </div>
-                {c.encerrada ? <Badge>Encerrada</Badge> : <Badge tone="success">Em captação</Badge>}
-              </div>
-              <p className="mb-3 text-sm text-muted">{c.descricao}</p>
-              <ProgressBar percentual={pct} />
-              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm font-medium">
-                  {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} ({pct.toFixed(0)}%)
-                </p>
-                <Link href={`/igreja/campanhas/${c.id}/qrcode`}>
-                  <Button variant="secondary" className="w-full sm:w-auto">
-                    <QrCode size={18} />
-                    QR Code
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          );
-        })}
+        {campanhas.map((c) => (
+          <CampanhaCardIgreja key={c.id} campanha={c} arrecadado={c.arrecadado} />
+        ))}
+        {campanhas.length === 0 && <p className="text-muted">Nenhuma campanha criada ainda.</p>}
       </div>
     </div>
   );

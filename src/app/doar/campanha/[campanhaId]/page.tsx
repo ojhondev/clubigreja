@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getArrecadadoCampanha, getCampanha, getFiel, getIgreja } from "@/lib/db/repo";
-import { getSessao } from "@/lib/auth/session";
+import { getFielConvidadoId, getSessao } from "@/lib/auth/session";
 import { formatarMoeda } from "@/lib/comissao";
 import { Card, ProgressBar } from "@/components/ui";
 import { SeletorValor } from "@/components/seletor-valor";
@@ -18,9 +18,16 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
   const pct = (arrecadado / campanha.meta) * 100;
 
   // Se o fiel já está logado, ele não precisa dizer quem é nem recadastrar
-  // cartão — já sabemos e já temos o cartão salvo dele.
+  // cartão — já sabemos e já temos o cartão salvo dele. Um doador avulso
+  // (sem login) que já doou desse mesmo navegador antes também é reconhecido
+  // pelo cookie de "convidado lembrado" — mesma lógica, sem precisar de conta.
   const sessao = await getSessao();
-  const fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  let fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  if (!fielLogado) {
+    const convidadoId = await getFielConvidadoId();
+    const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
+    if (convidado?.igrejaId === campanha.igrejaId) fielLogado = convidado;
+  }
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-10">

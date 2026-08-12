@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getLinkPagamento, criarFielConvidado } from "@/lib/db/repo";
-import { getSessao } from "@/lib/auth/session";
+import { getLinkPagamento, getFiel, criarFielConvidado } from "@/lib/db/repo";
+import { getFielConvidadoId, getSessao, lembrarFielConvidado } from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarPublicoAction(formData: FormData) {
@@ -16,10 +16,17 @@ export async function doarPublicoAction(formData: FormData) {
   if (!valorBruto || valorBruto <= 0) return;
 
   const sessao = await getSessao();
-  const fielId =
-    sessao?.papel === "fiel"
-      ? sessao.usuarioId
-      : (await criarFielConvidado(link.igrejaId, String(formData.get("nome") ?? "").trim())).id;
+  let fielId: string;
+  if (sessao?.papel === "fiel") {
+    fielId = sessao.usuarioId;
+  } else {
+    const convidadoId = await getFielConvidadoId();
+    const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
+    fielId =
+      convidado?.igrejaId === link.igrejaId
+        ? convidado.id
+        : (await criarFielConvidado(link.igrejaId, String(formData.get("nome") ?? "").trim())).id;
+  }
 
   const dados = await gateway.iniciarContribuicao({
     igrejaId: link.igrejaId,
@@ -30,6 +37,10 @@ export async function doarPublicoAction(formData: FormData) {
     novoCartao:
       cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
   });
+
+  if (sessao?.papel !== "fiel") {
+    await lembrarFielConvidado(fielId);
+  }
 
   redirect(`/doar/pagar/${dados.contribuicaoId}`);
 }

@@ -427,6 +427,43 @@ export async function criarCampanha(input: {
   return row;
 }
 
+export async function atualizarCampanha(
+  campanhaId: string,
+  igrejaId: string,
+  input: { titulo: string; descricao: string; meta: number; prazo: string; imagemEmoji: string }
+): Promise<Campanha | undefined> {
+  const [row] = await db
+    .update(schema.campanhas)
+    .set({
+      titulo: input.titulo,
+      descricao: input.descricao,
+      meta: input.meta,
+      prazo: input.prazo,
+      imagemEmoji: input.imagemEmoji || "🙏",
+    })
+    .where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)))
+    .returning();
+  return row;
+}
+
+export async function alternarEncerramentoCampanha(
+  campanhaId: string,
+  igrejaId: string,
+  encerrada: boolean
+): Promise<void> {
+  await db
+    .update(schema.campanhas)
+    .set({ encerrada })
+    .where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)));
+}
+
+// Apagar de verdade é seguro no banco (contribuicoes.campanhaId vira NULL via
+// onDelete: "set null" — o histórico de doações não some, só perde o vínculo
+// com a campanha). Ainda assim, escopado à própria igreja.
+export async function removerCampanha(campanhaId: string, igrejaId: string): Promise<void> {
+  await db.delete(schema.campanhas).where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)));
+}
+
 export async function criarEvento(input: {
   igrejaId: string;
   titulo: string;

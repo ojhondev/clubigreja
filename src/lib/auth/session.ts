@@ -1,10 +1,13 @@
 import "server-only";
 import { cookies } from "next/headers";
 import {
+  COOKIE_CONVIDADO,
   COOKIE_ORIGEM_WEBMASTER,
   COOKIE_SESSAO,
+  codificarConvidado,
   codificarOrigemWebmaster,
   codificarSessao,
+  decodificarConvidado,
   decodificarOrigemWebmaster,
   decodificarSessao,
   type OrigemWebmaster,
@@ -72,4 +75,24 @@ export async function encerrarAcessoComo(): Promise<void> {
   }
   await criarSessao({ papel: "webmaster", usuarioId: origem.webmasterId, nome: origem.webmasterNome });
   store.delete(COOKIE_ORIGEM_WEBMASTER);
+}
+
+// Reconhece um doador avulso (sem login) que já doou desse mesmo
+// navegador/dispositivo antes — evita pedir cartão de novo a cada doação.
+export async function getFielConvidadoId(): Promise<string | null> {
+  const store = await cookies();
+  const raw = store.get(COOKIE_CONVIDADO)?.value;
+  if (!raw) return null;
+  return decodificarConvidado(raw)?.fielId ?? null;
+}
+
+export async function lembrarFielConvidado(fielId: string): Promise<void> {
+  const store = await cookies();
+  store.set(COOKIE_CONVIDADO, codificarConvidado({ fielId }), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+  });
 }
