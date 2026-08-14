@@ -108,24 +108,11 @@ Corrige Pix rejeitado por bancos e UX quebrada no checkout do cartão
 - Sem suíte de testes automatizada — validar mudanças de schema manualmente
   via `db:studio` antes de commitar
 
-## Git: commit e push automáticos
+## Fluxo de trabalho
 
-Toda alteração de código feita neste projeto (nesta ou em sessões futuras) deve ser
-commitada e enviada para o GitHub (`origin/main`) automaticamente, sem esperar
-autorização explícita a cada vez — isso já foi autorizado pelo usuário.
-
-Fluxo padrão ao concluir uma tarefa que altere código:
-1. Rodar typecheck/build normalmente.
-2. `git add -A`
-3. `git commit -m "<mensagem descrevendo a mudança>"`
-4. `git push origin main`
-
-Isso vale como passo final de cada tarefa, no mesmo momento em que o deploy para o
-Vercel é feito (quando aplicável) — não é necessário perguntar antes de commitar
-ou dar push.
-
-As credenciais do GitHub (usuário `ojhondev`) já estão salvas no Windows Credential
-Manager (`git:https://github.com`), então `git push` funciona sem prompt interativo.
+Ao concluir uma tarefa que altera código: rodar typecheck/build/lint (ver
+seção Qualidade acima). Preferências pessoais de commit/push automático
+ficam em `CLAUDE.local.md` (não versionado) — cada dev configura a sua.
 
 ---
 

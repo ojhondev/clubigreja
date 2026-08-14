@@ -47,6 +47,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# instruções locais do Claude Code (pessoais, não compartilhadas)
+CLAUDE.local.md
+
 .vercel
 .env*
 
