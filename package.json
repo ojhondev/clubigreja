@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
@@ -24,6 +26,7 @@
     "recharts": "^3.10.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/qrcode": "^1.5.6",

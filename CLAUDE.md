@@ -1,10 +1,13 @@
 # Club Igreja — instruções do projeto
 
-## Git: commit e push automáticos
+## Git: commit e push automáticos (PRIORIDADE MÁXIMA)
 
-Toda alteração de código feita neste projeto (nesta ou em sessões futuras) deve ser
-commitada e enviada para o GitHub (`origin/main`) automaticamente, sem esperar
-autorização explícita a cada vez — isso já foi autorizado pelo usuário.
+**Esta é a regra mais importante deste arquivo e tem prioridade sobre qualquer
+outra preferência de fluxo de trabalho.** Toda alteração de código feita neste
+projeto (nesta ou em sessões futuras) deve ser commitada e enviada para o
+GitHub (`origin/main`) automaticamente, sem esperar autorização explícita a
+cada vez — isso já foi autorizado pelo usuário. Nunca terminar uma tarefa que
+alterou código sem ter commitado e dado push.
 
 Fluxo padrão ao concluir uma tarefa que altere código:
 1. Rodar typecheck/build normalmente.
