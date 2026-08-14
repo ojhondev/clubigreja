@@ -46,18 +46,23 @@ export function LandingFooter() {
           <div>
             <Logo height={28} />
             <p className="mt-3 max-w-xs text-sm text-muted">
-              Facilitador de arrecadação para igrejas — dízimo, ofertas e campanhas em um só
-              lugar.
+              Facilitador de arrecadação para igrejas — dízimo, ofertas e
+              campanhas em um só lugar.
             </p>
           </div>
 
           {COLUNAS.map((col) => (
             <div key={col.titulo}>
-              <p className="mb-3 text-sm font-bold text-foreground">{col.titulo}</p>
+              <p className="mb-3 text-sm font-bold text-foreground">
+                {col.titulo}
+              </p>
               <ul className="space-y-2">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <Link href={l.href} className="text-sm text-muted hover:text-primary">
+                    <Link
+                      href={l.href}
+                      className="text-sm text-muted hover:text-primary"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -71,7 +76,8 @@ export function LandingFooter() {
           <div className="flex items-center gap-2">
             <Image src="/dizipay-icon.png" alt="" width={20} height={20} />
             <p className="text-xs text-muted">
-              © {new Date().getFullYear()} Dizipay. Todos os direitos reservados.
+              © {new Date().getFullYear()} Dizipay. Todos os direitos
+              reservados.
             </p>
           </div>
           <p className="text-xs text-muted">dclubigreja.com</p>

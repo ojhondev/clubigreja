@@ -1,35 +1,48 @@
-import { Zap, ShieldCheck, Wallet, QrCode, FileText, Smartphone } from "lucide-react";
+import {
+  Zap,
+  ShieldCheck,
+  Wallet,
+  QrCode,
+  FileText,
+  Smartphone,
+} from "lucide-react";
 
 const ITENS = [
   {
     icon: Wallet,
     titulo: "Sem mensalidade",
-    descricao: "Sua igreja nunca paga nada pra usar o Dizipay. Nenhum custo fixo, nenhuma surpresa.",
+    descricao:
+      "Sua igreja nunca paga nada pra usar o Dizipay. Nenhum custo fixo, nenhuma surpresa.",
   },
   {
     icon: Zap,
     titulo: "Você recebe 100%",
-    descricao: "Cada contribuição vai direto pro Pix da igreja, na hora — nenhum valor é retido ou repassado depois.",
+    descricao:
+      "Cada contribuição vai direto pro Pix da igreja, na hora — nenhum valor é retido ou repassado depois.",
   },
   {
     icon: ShieldCheck,
     titulo: "Feito para todas as idades",
-    descricao: "Fluxo simples o suficiente para o fiel mais jovem e o mais experiente com tecnologia.",
+    descricao:
+      "Fluxo simples o suficiente para o fiel mais jovem e o mais experiente com tecnologia.",
   },
   {
     icon: QrCode,
     titulo: "QR Code pronto para imprimir",
-    descricao: "Cada campanha e cada link de dízimo gera um QR Code pronto para o mural, panfleto ou adesivo.",
+    descricao:
+      "Cada campanha e cada link de dízimo gera um QR Code pronto para o mural, panfleto ou adesivo.",
   },
   {
     icon: FileText,
     titulo: "Comprovante automático",
-    descricao: "Todo fiel recebe o comprovante da própria contribuição, sem a igreja precisar fazer nada.",
+    descricao:
+      "Todo fiel recebe o comprovante da própria contribuição, sem a igreja precisar fazer nada.",
   },
   {
     icon: Smartphone,
     titulo: "Sem app para baixar",
-    descricao: "O fiel contribui direto pelo link ou QR Code — o cadastro leva menos de um minuto.",
+    descricao:
+      "O fiel contribui direto pelo link ou QR Code — o cadastro leva menos de um minuto.",
   },
 ];
 

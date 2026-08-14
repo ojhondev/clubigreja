@@ -10,7 +10,7 @@ export interface EstadoCadastroFiel {
 
 export async function cadastrarFielAction(
   _estadoAnterior: EstadoCadastroFiel,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoCadastroFiel> {
   const nome = String(formData.get("nome") ?? "").trim();
   const telefone = String(formData.get("telefone") ?? "").trim();

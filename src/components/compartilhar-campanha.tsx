@@ -26,7 +26,11 @@ export function CompartilharCampanha({
         return;
       }
     }
-    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener,noreferrer");
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(texto)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   async function copiarLink() {

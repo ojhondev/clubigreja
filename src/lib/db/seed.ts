@@ -37,12 +37,12 @@ async function seed() {
       statusOnboarding: i.statusOnboarding,
       chavePix: i.chavePix,
       criadaEm: i.criadaEm,
-    }))
+    })),
   );
 
-  await db.insert(schema.usuariosIgreja).values(
-    usuariosIgreja.map((u) => ({ ...u, senhaHash: senhaHashDemo }))
-  );
+  await db
+    .insert(schema.usuariosIgreja)
+    .values(usuariosIgreja.map((u) => ({ ...u, senhaHash: senhaHashDemo })));
 
   await db.insert(schema.fieis).values(
     fieis.map((f) => ({
@@ -55,11 +55,14 @@ async function seed() {
       cartaoBandeira: f.cartaoSalvo?.bandeira,
       cartaoUltimosDigitos: f.cartaoSalvo?.ultimosDigitos,
       cartaoTokenFake: f.cartaoSalvo?.tokenFake,
-    }))
+    })),
   );
 
-  const linksExtras = igrejas.flatMap((i) => i.linksExtras.map((l) => ({ ...l, igrejaId: i.id })));
-  if (linksExtras.length > 0) await db.insert(schema.linksExtras).values(linksExtras);
+  const linksExtras = igrejas.flatMap((i) =>
+    i.linksExtras.map((l) => ({ ...l, igrejaId: i.id })),
+  );
+  if (linksExtras.length > 0)
+    await db.insert(schema.linksExtras).values(linksExtras);
 
   await db.insert(schema.linksPagamento).values(linksPagamento);
   await db.insert(schema.campanhas).values(campanhas);

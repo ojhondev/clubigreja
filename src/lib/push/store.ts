@@ -15,7 +15,11 @@ export function salvarInscricaoPush(fielId: string, subscription: unknown) {
     existente.subscription = subscription;
     return existente;
   }
-  const nova: InscricaoPush = { fielId, subscription, criadaEm: new Date().toISOString() };
+  const nova: InscricaoPush = {
+    fielId,
+    subscription,
+    criadaEm: new Date().toISOString(),
+  };
   inscricoesPush.push(nova);
   return nova;
 }

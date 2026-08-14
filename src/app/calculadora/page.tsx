@@ -23,8 +23,8 @@ export default function CalculadoraPage() {
             Quanto a sua comunidade deixa de arrecadar por mês?
           </h1>
           <p className="mt-4 max-w-xl text-lg text-muted">
-            Ajuste os números da sua realidade e veja a projeção com o canal digital de contribuição
-            ativo.
+            Ajuste os números da sua realidade e veja a projeção com o canal
+            digital de contribuição ativo.
           </p>
         </section>
 
@@ -38,17 +38,23 @@ export default function CalculadoraPage() {
               Pronto para colocar isso em prática?
             </h2>
             <p className="mx-auto mt-3 max-w-md text-lg text-muted">
-              Cadastre sua igreja gratuitamente e comece a receber dízimos, ofertas e campanhas pelo
-              Dizipay.
+              Cadastre sua igreja gratuitamente e comece a receber dízimos,
+              ofertas e campanhas pelo Dizipay.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link href="/cadastrar-igreja">
-                <Button variant="dark" className="w-full font-display sm:w-auto">
+                <Button
+                  variant="dark"
+                  className="w-full font-display sm:w-auto"
+                >
                   Cadastre-se é grátis
                 </Button>
               </Link>
               <a href="mailto:contato@dclubigreja.com">
-                <Button variant="dark-outline" className="w-full font-display sm:w-auto">
+                <Button
+                  variant="dark-outline"
+                  className="w-full font-display sm:w-auto"
+                >
                   Fale com nosso time
                 </Button>
               </a>

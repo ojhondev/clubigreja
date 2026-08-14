@@ -1,7 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { autenticarWebmaster, criarWebmasterPrimario, existeWebmaster } from "@/lib/db/repo";
+import {
+  autenticarWebmaster,
+  criarWebmasterPrimario,
+  existeWebmaster,
+} from "@/lib/db/repo";
 import { criarSessao } from "@/lib/auth/session";
 
 export interface EstadoWebmaster {
@@ -10,7 +14,7 @@ export interface EstadoWebmaster {
 
 export async function entrarWebmasterAction(
   _estadoAnterior: EstadoWebmaster,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoWebmaster> {
   const email = String(formData.get("email") ?? "").trim();
   const senha = String(formData.get("senha") ?? "");
@@ -32,7 +36,7 @@ export async function entrarWebmasterAction(
 
 export async function criarWebmasterPrimarioAction(
   _estadoAnterior: EstadoWebmaster,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoWebmaster> {
   const nome = String(formData.get("nome") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
@@ -52,12 +56,16 @@ export async function criarWebmasterPrimarioAction(
   // Checagem de novo, dentro da action: se alguém já criou o Master Primário
   // entre o carregamento da página e esse submit, não deixa criar outro.
   if (await existeWebmaster()) {
-    return { erro: "O Master Primário já foi configurado. Peça um convite a ele." };
+    return {
+      erro: "O Master Primário já foi configurado. Peça um convite a ele.",
+    };
   }
 
   const webmaster = await criarWebmasterPrimario({ nome, email, senha });
   if (!webmaster) {
-    return { erro: "O Master Primário já foi configurado. Peça um convite a ele." };
+    return {
+      erro: "O Master Primário já foi configurado. Peça um convite a ele.",
+    };
   }
 
   await criarSessao({

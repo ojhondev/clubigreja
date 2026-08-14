@@ -2,8 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { getSessao } from "@/lib/auth/session";
-import { podeGerenciarPagamentos, webmasterOrigemDaImpersonacao } from "@/lib/auth/permissoes";
-import { adicionarLinkExtra, atualizarPerfilIgreja, getIgreja, removerLinkExtra } from "@/lib/db/repo";
+import {
+  podeGerenciarPagamentos,
+  webmasterOrigemDaImpersonacao,
+} from "@/lib/auth/permissoes";
+import {
+  adicionarLinkExtra,
+  atualizarPerfilIgreja,
+  getIgreja,
+  removerLinkExtra,
+} from "@/lib/db/repo";
 
 export interface EstadoPerfilIgreja {
   erro?: string;
@@ -12,7 +20,7 @@ export interface EstadoPerfilIgreja {
 
 export async function atualizarPerfilAction(
   _estadoAnterior: EstadoPerfilIgreja,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoPerfilIgreja> {
   const sessao = await getSessao();
   if (!sessao?.igrejaId) return { erro: "Sessão expirada." };
@@ -20,14 +28,28 @@ export async function atualizarPerfilAction(
   const nome = String(formData.get("nome") ?? "").trim();
   const cnpj = String(formData.get("cnpj") ?? "").trim();
   const responsavelNome = String(formData.get("responsavelNome") ?? "").trim();
-  const responsavelEmail = String(formData.get("responsavelEmail") ?? "").trim();
-  const responsavelWhatsapp = String(formData.get("responsavelWhatsapp") ?? "").trim();
+  const responsavelEmail = String(
+    formData.get("responsavelEmail") ?? "",
+  ).trim();
+  const responsavelWhatsapp = String(
+    formData.get("responsavelWhatsapp") ?? "",
+  ).trim();
   const cidade = String(formData.get("cidade") ?? "").trim();
-  const uf = String(formData.get("uf") ?? "").trim().toUpperCase();
+  const uf = String(formData.get("uf") ?? "")
+    .trim()
+    .toUpperCase();
   const chavePix = String(formData.get("chavePix") ?? "").trim();
   const fotoUrl = String(formData.get("fotoUrl") ?? "").trim();
 
-  if (!nome || !responsavelNome || !responsavelEmail || !responsavelWhatsapp || !cidade || !uf || !chavePix) {
+  if (
+    !nome ||
+    !responsavelNome ||
+    !responsavelEmail ||
+    !responsavelWhatsapp ||
+    !cidade ||
+    !uf ||
+    !chavePix
+  ) {
     return { erro: "Preencha todos os campos obrigatórios." };
   }
 
@@ -38,7 +60,9 @@ export async function atualizarPerfilAction(
   if (webmasterOrigem && !podeGerenciarPagamentos(webmasterOrigem)) {
     const atual = await getIgreja(sessao.igrejaId);
     if (atual && atual.chavePix !== chavePix) {
-      return { erro: "Você não tem permissão para alterar a chave Pix. Peça ao Master Primário." };
+      return {
+        erro: "Você não tem permissão para alterar a chave Pix. Peça ao Master Primário.",
+      };
     }
   }
 

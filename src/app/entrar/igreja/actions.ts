@@ -10,7 +10,7 @@ export interface EstadoLoginIgreja {
 
 export async function entrarIgrejaEmailAction(
   _estadoAnterior: EstadoLoginIgreja,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoLoginIgreja> {
   const email = String(formData.get("email") ?? "").trim();
   const senha = String(formData.get("senha") ?? "");

@@ -10,7 +10,9 @@ const PREFIXO_PAPEL: Record<string, string> = {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const prefixoProtegido = Object.keys(PREFIXO_PAPEL).find((p) => pathname.startsWith(p));
+  const prefixoProtegido = Object.keys(PREFIXO_PAPEL).find((p) =>
+    pathname.startsWith(p),
+  );
   if (!prefixoProtegido) {
     return NextResponse.next();
   }

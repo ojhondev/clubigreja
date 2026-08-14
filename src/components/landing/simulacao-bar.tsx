@@ -23,7 +23,10 @@ export function SimulacaoBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur sm:px-6">
       <div className="mx-auto flex max-w-6xl items-center gap-3 sm:gap-4">
-        <PlayCircle className="hidden shrink-0 text-primary sm:block" size={28} />
+        <PlayCircle
+          className="hidden shrink-0 text-primary sm:block"
+          size={28}
+        />
         <p className="flex-1 text-sm font-bold text-foreground sm:text-base">
           Quer conhecer a plataforma por dentro?
         </p>

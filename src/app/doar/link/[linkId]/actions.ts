@@ -2,7 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { getLinkPagamento, getFiel, criarFielConvidado } from "@/lib/db/repo";
-import { getFielConvidadoId, getSessao, lembrarFielConvidado } from "@/lib/auth/session";
+import {
+  getFielConvidadoId,
+  getSessao,
+  lembrarFielConvidado,
+} from "@/lib/auth/session";
 import { gateway } from "@/lib/payments";
 
 export async function doarPublicoAction(formData: FormData) {
@@ -25,7 +29,12 @@ export async function doarPublicoAction(formData: FormData) {
     fielId =
       convidado?.igrejaId === link.igrejaId
         ? convidado.id
-        : (await criarFielConvidado(link.igrejaId, String(formData.get("nome") ?? "").trim())).id;
+        : (
+            await criarFielConvidado(
+              link.igrejaId,
+              String(formData.get("nome") ?? "").trim(),
+            )
+          ).id;
   }
 
   const dados = await gateway.iniciarContribuicao({
@@ -35,7 +44,9 @@ export async function doarPublicoAction(formData: FormData) {
     campanhaId: null,
     valorBruto,
     novoCartao:
-      cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
+      cartaoNumero && cartaoNome
+        ? { numero: String(cartaoNumero), nome: String(cartaoNome) }
+        : undefined,
   });
 
   if (sessao?.papel !== "fiel") {

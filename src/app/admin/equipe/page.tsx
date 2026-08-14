@@ -8,7 +8,10 @@ import { FormConvidarWebmaster } from "./form";
 
 export default async function EquipeWebmasterPage() {
   const sessao = await getSessao();
-  const webmaster = sessao?.papel === "webmaster" ? await getWebmasterPorId(sessao.usuarioId) : undefined;
+  const webmaster =
+    sessao?.papel === "webmaster"
+      ? await getWebmasterPorId(sessao.usuarioId)
+      : undefined;
   if (!webmaster || webmaster.nivel !== "primario") {
     redirect("/admin/igrejas");
   }
@@ -39,22 +42,37 @@ export default async function EquipeWebmasterPage() {
               <div>
                 <p className="font-bold">
                   {membro.nome}
-                  {membro.id === webmaster.id && <span className="ml-2 text-xs font-normal text-muted">(você)</span>}
+                  {membro.id === webmaster.id && (
+                    <span className="ml-2 text-xs font-normal text-muted">
+                      (você)
+                    </span>
+                  )}
                 </p>
                 <p className="text-sm text-muted">{membro.email}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge tone={membro.nivel === "primario" ? "accent" : "neutral"}>
-                  {membro.nivel === "primario" ? "Master Primário" : "Master Secundário"}
+                <Badge
+                  tone={membro.nivel === "primario" ? "accent" : "neutral"}
+                >
+                  {membro.nivel === "primario"
+                    ? "Master Primário"
+                    : "Master Secundário"}
                 </Badge>
-                {membro.pendente && <Badge tone="warning">Convite pendente</Badge>}
+                {membro.pendente && (
+                  <Badge tone="warning">Convite pendente</Badge>
+                )}
               </div>
             </div>
 
             {membro.nivel === "primario" ? (
-              <p className="text-sm text-muted">Acesso total — não é possível restringir o Master Primário.</p>
+              <p className="text-sm text-muted">
+                Acesso total — não é possível restringir o Master Primário.
+              </p>
             ) : (
-              <form action={atualizarPermissoesWebmasterAction} className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
+              <form
+                action={atualizarPermissoesWebmasterAction}
+                className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <input type="hidden" name="id" value={membro.id} />
                 <div className="flex flex-wrap gap-4 text-sm">
                   <label className="flex items-center gap-2">
@@ -76,7 +94,10 @@ export default async function EquipeWebmasterPage() {
                     Aprovar/reprovar igrejas
                   </label>
                 </div>
-                <button type="submit" className="text-sm font-bold text-primary hover:underline">
+                <button
+                  type="submit"
+                  className="text-sm font-bold text-primary hover:underline"
+                >
                   Salvar
                 </button>
               </form>
@@ -84,7 +105,10 @@ export default async function EquipeWebmasterPage() {
 
             {membro.pendente && membro.conviteToken && (
               <div className="rounded-xl bg-[#EAF6FF] px-3 py-2 text-xs text-muted">
-                Link de convite: <span className="break-all font-mono">{origem}/webmaster/convite/{membro.conviteToken}</span>
+                Link de convite:{" "}
+                <span className="break-all font-mono">
+                  {origem}/webmaster/convite/{membro.conviteToken}
+                </span>
               </div>
             )}
           </Card>

@@ -13,7 +13,9 @@ export function SeletorValor({
   valorInicial?: number;
   tipo?: TipoArrecadacao;
 }) {
-  const [valor, setValor] = useState<string>(valorInicial ? String(valorInicial) : "");
+  const [valor, setValor] = useState<string>(
+    valorInicial ? String(valorInicial) : "",
+  );
   const numero = Number(valor);
   const taxa = numero > 0 ? calcularTaxaProcessamento(tipo, numero) : null;
 
@@ -36,7 +38,9 @@ export function SeletorValor({
         ))}
       </div>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium text-muted">Ou digite outro valor</span>
+        <span className="text-sm font-medium text-muted">
+          Ou digite outro valor
+        </span>
         <input
           name="valor"
           type="number"
@@ -53,8 +57,12 @@ export function SeletorValor({
       {taxa && (
         <div className="mt-3 rounded-xl bg-[#F7FAFF] px-4 py-3">
           <p className="text-sm text-muted">Você vai pagar</p>
-          <p className="text-xl font-bold text-foreground">{formatarMoeda(taxa.valorTotalFiel)}</p>
-          <p className="mt-1 text-xs text-muted">Incluindo taxa de processamento do pagamento.</p>
+          <p className="text-xl font-bold text-foreground">
+            {formatarMoeda(taxa.valorTotalFiel)}
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            Incluindo taxa de processamento do pagamento.
+          </p>
         </div>
       )}
     </div>

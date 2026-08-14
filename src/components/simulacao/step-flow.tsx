@@ -21,7 +21,10 @@ export function StepFlow({ steps }: { steps: Step[] }) {
   // clique manual e deixe o AnimatePresence com dois updates concorrentes.
   useEffect(() => {
     if (pausado) return;
-    const t = setTimeout(() => setIndice((i) => (i + 1) % steps.length), DURACAO_MS);
+    const t = setTimeout(
+      () => setIndice((i) => (i + 1) % steps.length),
+      DURACAO_MS,
+    );
     return () => clearTimeout(t);
   }, [pausado, indice, steps.length]);
 
@@ -43,7 +46,9 @@ export function StepFlow({ steps }: { steps: Step[] }) {
           <span className="text-sm font-bold text-primary">
             Passo {indice + 1} de {steps.length}
           </span>
-          <h3 className="font-display mt-2 text-2xl font-bold text-foreground sm:text-3xl">{step.titulo}</h3>
+          <h3 className="font-display mt-2 text-2xl font-bold text-foreground sm:text-3xl">
+            {step.titulo}
+          </h3>
           <p className="mt-3 max-w-md text-lg text-muted">{step.descricao}</p>
         </motion.div>
 
@@ -51,7 +56,9 @@ export function StepFlow({ steps }: { steps: Step[] }) {
           <button
             type="button"
             aria-label="Passo anterior"
-            onClick={() => setIndice((indice - 1 + steps.length) % steps.length)}
+            onClick={() =>
+              setIndice((indice - 1 + steps.length) % steps.length)
+            }
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground hover:bg-black/5"
           >
             <ChevronLeft size={20} />
@@ -65,7 +72,9 @@ export function StepFlow({ steps }: { steps: Step[] }) {
                 aria-label={`Ir para o passo ${i + 1}`}
                 onClick={() => setIndice(i)}
                 className={`h-2.5 rounded-full transition-all ${
-                  i === indice ? "w-7 bg-primary" : "w-2.5 bg-black/15 hover:bg-black/25"
+                  i === indice
+                    ? "w-7 bg-primary"
+                    : "w-2.5 bg-black/15 hover:bg-black/25"
                 }`}
               />
             ))}

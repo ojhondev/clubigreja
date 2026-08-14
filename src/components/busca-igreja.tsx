@@ -10,7 +10,11 @@ interface ResultadoIgreja {
   logoEmoji: string;
 }
 
-export function BuscaIgreja({ nomeCampo = "igrejaId" }: { nomeCampo?: string }) {
+export function BuscaIgreja({
+  nomeCampo = "igrejaId",
+}: {
+  nomeCampo?: string;
+}) {
   const [texto, setTexto] = useState("");
   const [selecionada, setSelecionada] = useState<ResultadoIgreja | null>(null);
   const [resultados, setResultados] = useState<ResultadoIgreja[]>([]);
@@ -24,7 +28,9 @@ export function BuscaIgreja({ nomeCampo = "igrejaId" }: { nomeCampo?: string }) 
     }
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
-      const resposta = await fetch(`/api/igrejas/buscar?q=${encodeURIComponent(texto)}`);
+      const resposta = await fetch(
+        `/api/igrejas/buscar?q=${encodeURIComponent(texto)}`,
+      );
       const dados = await resposta.json();
       setResultados(dados.resultados);
       setAberto(true);
@@ -38,7 +44,11 @@ export function BuscaIgreja({ nomeCampo = "igrejaId" }: { nomeCampo?: string }) 
     <div className="relative flex flex-col gap-1">
       <span className="text-sm font-bold text-muted">Sua igreja</span>
       <input
-        value={selecionada ? `${selecionada.nome} — ${selecionada.cidade}/${selecionada.uf}` : texto}
+        value={
+          selecionada
+            ? `${selecionada.nome} — ${selecionada.cidade}/${selecionada.uf}`
+            : texto
+        }
         onChange={(e) => {
           setSelecionada(null);
           setTexto(e.target.value);
@@ -49,7 +59,12 @@ export function BuscaIgreja({ nomeCampo = "igrejaId" }: { nomeCampo?: string }) 
         required
         className="rounded-xl border border-border px-4 py-3"
       />
-      <input type="hidden" name={nomeCampo} value={selecionada?.id ?? ""} required />
+      <input
+        type="hidden"
+        name={nomeCampo}
+        value={selecionada?.id ?? ""}
+        required
+      />
 
       {aberto && resultados.length > 0 && (
         <div className="absolute top-full z-10 mt-1 w-full overflow-hidden rounded-xl border border-border bg-card shadow-lg">

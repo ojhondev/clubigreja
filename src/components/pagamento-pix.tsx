@@ -34,7 +34,9 @@ export async function PagamentoPix({
   }
 
   const igreja = (await getIgreja(contribuicao.igrejaId))!;
-  const campanha = contribuicao.campanhaId ? await getCampanha(contribuicao.campanhaId) : undefined;
+  const campanha = contribuicao.campanhaId
+    ? await getCampanha(contribuicao.campanhaId)
+    : undefined;
 
   const copiaECola = gerarPixCopiaECola({
     chave: igreja.chavePix,
@@ -49,16 +51,24 @@ export async function PagamentoPix({
     <div>
       <div className="mb-5 text-center">
         <p className="text-sm text-muted">
-          {campanha ? campanha.titulo : ROTULO_TIPO[contribuicao.tipo]} · {igreja.nome}
+          {campanha ? campanha.titulo : ROTULO_TIPO[contribuicao.tipo]} ·{" "}
+          {igreja.nome}
         </p>
         <p className="mt-2 text-sm text-muted">Pague via Pix o valor abaixo</p>
-        <p className="text-3xl font-bold text-foreground">{formatarMoeda(contribuicao.valorBruto)}</p>
+        <p className="text-3xl font-bold text-foreground">
+          {formatarMoeda(contribuicao.valorBruto)}
+        </p>
       </div>
 
       <Card className="mb-4 flex flex-col items-center gap-4">
-        <img src={qrDataUrl} alt="QR Code Pix" className="h-48 w-48 rounded-xl border border-border" />
+        <img
+          src={qrDataUrl}
+          alt="QR Code Pix"
+          className="h-48 w-48 rounded-xl border border-border"
+        />
         <p className="text-center text-xs text-muted">
-          Escaneie com a câmera do app do seu banco, ou use o Pix Copia e Cola abaixo
+          Escaneie com a câmera do app do seu banco, ou use o Pix Copia e Cola
+          abaixo
         </p>
         <textarea
           readOnly
@@ -71,7 +81,8 @@ export async function PagamentoPix({
 
       <Card className="mb-5 bg-[#F7FAFF]">
         <p className="text-sm text-muted">
-          Ao efetuar o pagamento, toque em <strong>&quot;Já fiz o Pix&quot;</strong> para que façamos o
+          Ao efetuar o pagamento, toque em{" "}
+          <strong>&quot;Já fiz o Pix&quot;</strong> para que façamos o
           processamento do seu pagamento.
         </p>
       </Card>

@@ -8,22 +8,40 @@ import type { Igreja } from "@/lib/types";
 const ESTADO_INICIAL: EstadoPerfilIgreja = {};
 
 export function FormPerfilIgreja({ igreja }: { igreja: Igreja }) {
-  const [estado, action, pending] = useActionState(atualizarPerfilAction, ESTADO_INICIAL);
+  const [estado, action, pending] = useActionState(
+    atualizarPerfilAction,
+    ESTADO_INICIAL,
+  );
 
   return (
     <form action={action} className="space-y-4">
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">Nome da igreja *</span>
-        <input name="nome" required defaultValue={igreja.nome} className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="nome"
+          required
+          defaultValue={igreja.nome}
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">CNPJ *</span>
-        <input name="cnpj" required defaultValue={igreja.cnpj} className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="cnpj"
+          required
+          defaultValue={igreja.cnpj}
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
       <div className="grid grid-cols-2 gap-4">
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-muted">Cidade *</span>
-          <input name="cidade" required defaultValue={igreja.cidade} className="rounded-xl border border-border px-4 py-3" />
+          <input
+            name="cidade"
+            required
+            defaultValue={igreja.cidade}
+            className="rounded-xl border border-border px-4 py-3"
+          />
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-muted">UF *</span>
@@ -37,7 +55,9 @@ export function FormPerfilIgreja({ igreja }: { igreja: Igreja }) {
         </label>
       </div>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-bold text-muted">Nome do responsável *</span>
+        <span className="text-sm font-bold text-muted">
+          Nome do responsável *
+        </span>
         <input
           name="responsavelNome"
           required
@@ -47,7 +67,9 @@ export function FormPerfilIgreja({ igreja }: { igreja: Igreja }) {
       </label>
       <div className="grid grid-cols-2 gap-4">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-muted">E-mail do responsável *</span>
+          <span className="text-sm font-bold text-muted">
+            E-mail do responsável *
+          </span>
           <input
             name="responsavelEmail"
             type="email"
@@ -57,7 +79,9 @@ export function FormPerfilIgreja({ igreja }: { igreja: Igreja }) {
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-muted">WhatsApp do responsável *</span>
+          <span className="text-sm font-bold text-muted">
+            WhatsApp do responsável *
+          </span>
           <input
             name="responsavelWhatsapp"
             required
@@ -67,28 +91,38 @@ export function FormPerfilIgreja({ igreja }: { igreja: Igreja }) {
         </label>
       </div>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-bold text-muted">Chave Pix da igreja *</span>
+        <span className="text-sm font-bold text-muted">
+          Chave Pix da igreja *
+        </span>
         <input
           name="chavePix"
           required
           defaultValue={igreja.chavePix}
           className="rounded-xl border border-border px-4 py-3"
         />
-        <span className="text-xs text-muted">É pra essa chave que o Pix dos fiéis vai direto.</span>
+        <span className="text-xs text-muted">
+          É pra essa chave que o Pix dos fiéis vai direto.
+        </span>
       </label>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-bold text-muted">Foto de perfil (URL)</span>
+        <span className="text-sm font-bold text-muted">
+          Foto de perfil (URL)
+        </span>
         <input
           name="fotoUrl"
           placeholder="https://…"
           defaultValue={igreja.fotoUrl ?? ""}
           className="rounded-xl border border-border px-4 py-3"
         />
-        <span className="text-xs text-muted">Aparece na página pública, no lugar do emoji, quando preenchida.</span>
+        <span className="text-xs text-muted">
+          Aparece na página pública, no lugar do emoji, quando preenchida.
+        </span>
       </label>
 
       {estado.erro && (
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{estado.erro}</p>
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {estado.erro}
+        </p>
       )}
       {estado.sucesso && (
         <p className="rounded-xl bg-green-50 px-4 py-3 text-sm font-medium text-success">

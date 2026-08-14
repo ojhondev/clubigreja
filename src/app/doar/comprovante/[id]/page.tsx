@@ -2,7 +2,11 @@ import Link from "next/link";
 import { Comprovante } from "@/components/comprovante";
 import { Button } from "@/components/ui";
 
-export default async function ComprovantePublicoPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ComprovantePublicoPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   return (

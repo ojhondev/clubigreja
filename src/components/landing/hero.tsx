@@ -13,8 +13,9 @@ export function Hero() {
           Aplicativo de Campanhas e Dízimo Recorrente para Igrejas
         </h1>
         <p className="mx-auto mt-6 max-w-lg text-lg text-muted">
-          Por meio do Dizipay, sua igreja recebe dízimos, ofertas e campanhas em um único lugar,
-          enquanto o fiel contribui e acompanha tudo em poucos toques, de qualquer lugar.
+          Por meio do Dizipay, sua igreja recebe dízimos, ofertas e campanhas em
+          um único lugar, enquanto o fiel contribui e acompanha tudo em poucos
+          toques, de qualquer lugar.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link href="/cadastrar-igreja">
@@ -23,7 +24,10 @@ export function Hero() {
             </Button>
           </Link>
           <a href="mailto:contato@dclubigreja.com">
-            <Button variant="dark-outline" className="w-full font-display sm:w-auto">
+            <Button
+              variant="dark-outline"
+              className="w-full font-display sm:w-auto"
+            >
               Fale com nosso time
             </Button>
           </a>

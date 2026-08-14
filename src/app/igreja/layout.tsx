@@ -17,9 +17,15 @@ function iniciais(nome: string): string {
     .toUpperCase();
 }
 
-export default async function IgrejaLayout({ children }: { children: React.ReactNode }) {
+export default async function IgrejaLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const sessao = await getSessao();
-  const igreja = sessao?.igrejaId ? await getIgreja(sessao.igrejaId) : undefined;
+  const igreja = sessao?.igrejaId
+    ? await getIgreja(sessao.igrejaId)
+    : undefined;
 
   if (igreja && igreja.statusOnboarding !== "aprovado") {
     const reprovada = igreja.statusOnboarding === "reprovado";
@@ -30,7 +36,10 @@ export default async function IgrejaLayout({ children }: { children: React.React
           <div className="flex items-center justify-between px-6 py-4">
             <Logo />
             <form action={sair}>
-              <button type="submit" className="text-sm font-bold text-muted hover:text-primary">
+              <button
+                type="submit"
+                className="text-sm font-bold text-muted hover:text-primary"
+              >
                 Sair
               </button>
             </form>
@@ -40,7 +49,9 @@ export default async function IgrejaLayout({ children }: { children: React.React
           <Card className="max-w-md text-center">
             <div className="mb-3 text-4xl">{reprovada ? "⚠️" : "⏳"}</div>
             <h1 className="mb-2 text-xl font-bold">
-              {reprovada ? "Cadastro não aprovado" : "Sua conta está em análise"}
+              {reprovada
+                ? "Cadastro não aprovado"
+                : "Sua conta está em análise"}
             </h1>
             <p className="text-muted">
               {reprovada
@@ -64,7 +75,9 @@ export default async function IgrejaLayout({ children }: { children: React.React
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden text-right sm:block">
-              <p className="text-sm font-bold leading-tight">{igreja?.nome ?? "Sua igreja"}</p>
+              <p className="text-sm font-bold leading-tight">
+                {igreja?.nome ?? "Sua igreja"}
+              </p>
               <p className="text-xs text-muted leading-tight">{sessao?.nome}</p>
             </div>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white sm:h-10 sm:w-10">

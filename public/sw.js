@@ -9,7 +9,7 @@ self.addEventListener("push", (event) => {
       icon: "/dizipay-icon.png",
       badge: "/dizipay-icon.png",
       data: { url: dados.url || "/fiel/inicio" },
-    })
+    }),
   );
 });
 

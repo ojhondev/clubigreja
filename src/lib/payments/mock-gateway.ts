@@ -1,11 +1,26 @@
-import { confirmarContribuicao, getFiel, getIgreja, iniciarContribuicao, salvarCartaoFiel } from "../db/repo";
+import {
+  confirmarContribuicao,
+  getFiel,
+  getIgreja,
+  iniciarContribuicao,
+  salvarCartaoFiel,
+} from "../db/repo";
 import { gerarPixCopiaECola } from "../pix";
-import type { ConfirmacaoPagamento, DadosParaPagamento, IniciarContribuicaoInput, PaymentGateway } from "./gateway";
+import type {
+  ConfirmacaoPagamento,
+  DadosParaPagamento,
+  IniciarContribuicaoInput,
+  PaymentGateway,
+} from "./gateway";
 
 function tokenizarCartaoFake(numero: string) {
   const digitos = numero.replace(/\D/g, "");
   const ultimosDigitos = digitos.slice(-4) || "0000";
-  const bandeira = digitos.startsWith("4") ? "Visa" : digitos.startsWith("5") ? "Mastercard" : "Cartão";
+  const bandeira = digitos.startsWith("4")
+    ? "Visa"
+    : digitos.startsWith("5")
+      ? "Mastercard"
+      : "Cartão";
   return { bandeira, ultimosDigitos, tokenFake: `tok_fake_${Date.now()}` };
 }
 
@@ -14,11 +29,16 @@ function tokenizarCartaoFake(numero: string) {
 // da taxa só acontece em confirmarPagamento, quando o fiel volta e confirma
 // que já pagou — nunca uma única cobrança dividida entre as duas contas.
 export class MockPaymentGateway implements PaymentGateway {
-  async iniciarContribuicao(input: IniciarContribuicaoInput): Promise<DadosParaPagamento> {
+  async iniciarContribuicao(
+    input: IniciarContribuicaoInput,
+  ): Promise<DadosParaPagamento> {
     await simularLatenciaDeRede();
 
     if (input.novoCartao) {
-      await salvarCartaoFiel(input.fielId, tokenizarCartaoFake(input.novoCartao.numero));
+      await salvarCartaoFiel(
+        input.fielId,
+        tokenizarCartaoFake(input.novoCartao.numero),
+      );
     }
 
     const igreja = (await getIgreja(input.igrejaId))!;
@@ -49,7 +69,9 @@ export class MockPaymentGateway implements PaymentGateway {
     };
   }
 
-  async confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento> {
+  async confirmarPagamento(
+    contribuicaoId: string,
+  ): Promise<ConfirmacaoPagamento> {
     await simularLatenciaDeRede();
 
     const contribuicao = await confirmarContribuicao(contribuicaoId);

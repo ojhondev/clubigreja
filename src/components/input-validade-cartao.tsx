@@ -15,7 +15,11 @@ export function InputValidadeCartao() {
       value={valor}
       onChange={(e) => {
         const digitos = e.target.value.replace(/\D/g, "").slice(0, 4);
-        setValor(digitos.length > 2 ? `${digitos.slice(0, 2)}/${digitos.slice(2)}` : digitos);
+        setValor(
+          digitos.length > 2
+            ? `${digitos.slice(0, 2)}/${digitos.slice(2)}`
+            : digitos,
+        );
       }}
       className="rounded-xl border border-border px-4 py-3"
     />

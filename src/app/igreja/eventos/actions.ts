@@ -16,6 +16,13 @@ export async function criarEventoAction(formData: FormData) {
 
   if (!titulo || !data || !local) return;
 
-  await criarEvento({ igrejaId: sessao.igrejaId, titulo, data, local, descricao, arrecadacaoVinculada });
+  await criarEvento({
+    igrejaId: sessao.igrejaId,
+    titulo,
+    data,
+    local,
+    descricao,
+    arrecadacaoVinculada,
+  });
   revalidatePath("/igreja/eventos");
 }

@@ -30,7 +30,10 @@ export interface CalculoTaxa {
 
 // valorBruto é o que a igreja recebe (100%, sem desconto). taxaValor é
 // somado por cima e pago pelo fiel — valorTotalFiel é o que sai do bolso dele.
-export function calcularTaxaProcessamento(tipo: TipoArrecadacao, valorBruto: number): CalculoTaxa {
+export function calcularTaxaProcessamento(
+  tipo: TipoArrecadacao,
+  valorBruto: number,
+): CalculoTaxa {
   const taxaPercentual = PERCENTUAL_POR_TIPO[tipo];
   const taxaValor = Math.round(valorBruto * taxaPercentual * 100) / 100;
   const valorTotalFiel = Math.round((valorBruto + taxaValor) * 100) / 100;

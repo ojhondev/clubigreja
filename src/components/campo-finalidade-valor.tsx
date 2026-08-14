@@ -13,7 +13,11 @@ const ROTULO_TIPO: Record<"dizimo" | "oferta" | "livre", string> = {
 // Junta o seletor de finalidade com o de valor num único componente porque a
 // taxa de processamento exibida no seletor de valor depende da finalidade
 // escolhida (dízimo/oferta usam uma taxa, contribuição livre usa outra).
-export function CampoFinalidadeEValor({ tipoInicial }: { tipoInicial: TipoArrecadacao }) {
+export function CampoFinalidadeEValor({
+  tipoInicial,
+}: {
+  tipoInicial: TipoArrecadacao;
+}) {
   const [tipo, setTipo] = useState<TipoArrecadacao>(tipoInicial);
 
   return (

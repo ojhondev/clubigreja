@@ -8,6 +8,11 @@
   "theme_color": "#002991",
   "orientation": "portrait",
   "icons": [
-    { "src": "/dizipay-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/dizipay-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

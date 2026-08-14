@@ -16,7 +16,11 @@ export async function publicarComunicado(formData: FormData) {
 
   await criarComunicado({ igrejaId: sessao.igrejaId, titulo, corpo, emoji });
 
-  await notificarFieisDaIgreja(sessao.igrejaId, { tipo: "comunicado", titulo: "Novo comunicado no mural", corpo: titulo });
+  await notificarFieisDaIgreja(sessao.igrejaId, {
+    tipo: "comunicado",
+    titulo: "Novo comunicado no mural",
+    corpo: titulo,
+  });
 
   revalidatePath("/igreja/mural");
   revalidatePath("/fiel/inicio");

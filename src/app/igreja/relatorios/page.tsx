@@ -4,7 +4,10 @@ import { getContribuicoesPorTipo, getResumoFinanceiro } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
 import { formatarData } from "@/lib/formato";
 import { Card, PageHeader } from "@/components/ui";
-import { ExportarCsvButton, type LinhaExportavel } from "@/components/dashboard/exportar-csv-button";
+import {
+  ExportarCsvButton,
+  type LinhaExportavel,
+} from "@/components/dashboard/exportar-csv-button";
 import { IntegracaoErpCard } from "@/components/dashboard/integracao-erp-card";
 
 const ROTULO_TIPO: Record<string, string> = {
@@ -21,11 +24,14 @@ export default async function RelatoriosPage() {
   const igreja = (await getIgreja(igrejaId))!;
   const resumo = await getResumoFinanceiro(igrejaId);
   const porTipo = await getContribuicoesPorTipo(igrejaId);
-  const contribuicoesBrutas = (await getContribuicoesDaIgreja(igrejaId)).sort((a, b) =>
-    a.criadaEm < b.criadaEm ? 1 : -1
+  const contribuicoesBrutas = (await getContribuicoesDaIgreja(igrejaId)).sort(
+    (a, b) => (a.criadaEm < b.criadaEm ? 1 : -1),
   );
   const contribuicoes = await Promise.all(
-    contribuicoesBrutas.map(async (c) => ({ ...c, fielNome: (await getFiel(c.fielId))?.nome ?? "—" }))
+    contribuicoesBrutas.map(async (c) => ({
+      ...c,
+      fielNome: (await getFiel(c.fielId))?.nome ?? "—",
+    })),
   );
 
   const linhasCsv: LinhaExportavel[] = contribuicoes.map((c) => ({
@@ -41,28 +47,40 @@ export default async function RelatoriosPage() {
   return (
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader title="Relatórios financeiros" subtitle="Extrato pronto para prestação de contas à congregação." />
+        <PageHeader
+          title="Relatórios financeiros"
+          subtitle="Extrato pronto para prestação de contas à congregação."
+        />
         <ExportarCsvButton linhas={linhasCsv} nomeArquivo={nomeArquivoCsv} />
       </div>
 
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <Card>
           <p className="text-sm text-muted">Total recebido pela igreja</p>
-          <p className="mt-1 text-xl font-bold text-success">{formatarMoeda(resumo.totalBruto)}</p>
+          <p className="mt-1 text-xl font-bold text-success">
+            {formatarMoeda(resumo.totalBruto)}
+          </p>
         </Card>
         <Card>
           <p className="text-sm text-muted">Contribuições recebidas</p>
-          <p className="mt-1 text-xl font-bold">{resumo.quantidadeContribuicoes}</p>
+          <p className="mt-1 text-xl font-bold">
+            {resumo.quantidadeContribuicoes}
+          </p>
         </Card>
         <Card>
-          <p className="text-sm text-muted">Taxa de processamento paga pelos fiéis</p>
-          <p className="mt-1 text-xl font-bold text-muted">{formatarMoeda(resumo.totalTaxasFieis)}</p>
+          <p className="text-sm text-muted">
+            Taxa de processamento paga pelos fiéis
+          </p>
+          <p className="mt-1 text-xl font-bold text-muted">
+            {formatarMoeda(resumo.totalTaxasFieis)}
+          </p>
         </Card>
       </div>
 
       <p className="mb-8 text-sm text-muted">
-        Sua igreja recebe 100% do valor de cada contribuição — a taxa de processamento é paga à parte, pelo
-        próprio fiel, e nunca é descontada do que a igreja arrecada.
+        Sua igreja recebe 100% do valor de cada contribuição — a taxa de
+        processamento é paga à parte, pelo próprio fiel, e nunca é descontada do
+        que a igreja arrecada.
       </p>
 
       <Card className="mb-8">
@@ -96,11 +114,16 @@ export default async function RelatoriosPage() {
                 <td className="py-2 pr-4">{formatarData(c.criadaEm)}</td>
                 <td className="py-2 pr-4">{c.fielNome}</td>
                 <td className="py-2 pr-4">{ROTULO_TIPO[c.tipo]}</td>
-                <td className="py-2 pr-4 text-right font-medium text-success">{formatarMoeda(c.valorBruto)}</td>
-                <td className="py-2 pr-4 text-right text-muted">
-                  {formatarMoeda(c.taxaValor)} ({(c.taxaPercentual * 100).toFixed(1)}%)
+                <td className="py-2 pr-4 text-right font-medium text-success">
+                  {formatarMoeda(c.valorBruto)}
                 </td>
-                <td className="py-2 text-right font-medium">{formatarMoeda(c.valorTotalFiel)}</td>
+                <td className="py-2 pr-4 text-right text-muted">
+                  {formatarMoeda(c.taxaValor)} (
+                  {(c.taxaPercentual * 100).toFixed(1)}%)
+                </td>
+                <td className="py-2 text-right font-medium">
+                  {formatarMoeda(c.valorTotalFiel)}
+                </td>
               </tr>
             ))}
           </tbody>

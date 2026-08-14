@@ -52,7 +52,10 @@ export async function getOrigemWebmaster(): Promise<OrigemWebmaster | null> {
   return decodificarOrigemWebmaster(raw);
 }
 
-export async function iniciarAcessoComo(sessaoAlvo: Sessao, origem: OrigemWebmaster): Promise<void> {
+export async function iniciarAcessoComo(
+  sessaoAlvo: Sessao,
+  origem: OrigemWebmaster,
+): Promise<void> {
   const store = await cookies();
   const opcoes = {
     httpOnly: true,
@@ -73,7 +76,11 @@ export async function encerrarAcessoComo(): Promise<void> {
     store.delete(COOKIE_ORIGEM_WEBMASTER);
     return;
   }
-  await criarSessao({ papel: "webmaster", usuarioId: origem.webmasterId, nome: origem.webmasterNome });
+  await criarSessao({
+    papel: "webmaster",
+    usuarioId: origem.webmasterId,
+    nome: origem.webmasterNome,
+  });
   store.delete(COOKIE_ORIGEM_WEBMASTER);
 }
 

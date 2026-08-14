@@ -1,10 +1,19 @@
 export type PapelIgreja = "administrador" | "tesoureiro" | "secretario";
 
-export type StatusOnboarding = "pendente" | "em_analise" | "aprovado" | "reprovado";
+export type StatusOnboarding =
+  | "pendente"
+  | "em_analise"
+  | "aprovado"
+  | "reprovado";
 
 export type MeioPagamento = "pix" | "cartao" | "boleto";
 
-export type TipoArrecadacao = "dizimo" | "oferta" | "campanha" | "evento" | "livre";
+export type TipoArrecadacao =
+  | "dizimo"
+  | "oferta"
+  | "campanha"
+  | "evento"
+  | "livre";
 
 export interface LinkExtra {
   id: string;

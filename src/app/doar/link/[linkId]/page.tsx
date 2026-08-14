@@ -15,7 +15,11 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Contribuição livre",
 };
 
-export default async function LinkPublicoPage({ params }: { params: Promise<{ linkId: string }> }) {
+export default async function LinkPublicoPage({
+  params,
+}: {
+  params: Promise<{ linkId: string }>;
+}) {
   const { linkId } = await params;
   const link = await getLinkPagamento(linkId);
   if (!link || !link.ativo) notFound();
@@ -23,7 +27,8 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
   const igreja = (await getIgreja(link.igrejaId))!;
 
   const sessao = await getSessao();
-  let fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  let fielLogado =
+    sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
   if (!fielLogado) {
     const convidadoId = await getFielConvidadoId();
     const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
@@ -55,7 +60,10 @@ export default async function LinkPublicoPage({ params }: { params: Promise<{ li
             </label>
           )}
 
-          <SeletorValor valorInicial={link.valorSugerido ?? undefined} tipo={link.tipo} />
+          <SeletorValor
+            valorInicial={link.valorSugerido ?? undefined}
+            tipo={link.tipo}
+          />
 
           <CartaoTaxa cartaoSalvo={fielLogado?.cartaoSalvo} />
 

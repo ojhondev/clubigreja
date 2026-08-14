@@ -15,7 +15,9 @@ export function InputMoeda({
   placeholder?: string;
   className?: string;
 }) {
-  const [digitos, setDigitos] = useState(defaultValue ? String(defaultValue) : "");
+  const [digitos, setDigitos] = useState(
+    defaultValue ? String(defaultValue) : "",
+  );
   const numero = digitos ? Number(digitos) : 0;
 
   return (

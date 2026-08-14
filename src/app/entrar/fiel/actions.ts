@@ -10,7 +10,7 @@ export interface EstadoLoginFiel {
 
 export async function entrarFielTelefoneAction(
   _estadoAnterior: EstadoLoginFiel,
-  formData: FormData
+  formData: FormData,
 ): Promise<EstadoLoginFiel> {
   const telefone = String(formData.get("telefone") ?? "").trim();
   const senha = String(formData.get("senha") ?? "");

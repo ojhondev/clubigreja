@@ -18,8 +18,8 @@ export function ComoFunciona({ qrDataUrl }: { qrDataUrl: string }) {
             Veja o Dizipay funcionando, na prática.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
-            Dois lados, um único fluxo: como a igreja lança uma campanha e como o fiel contribui em
-            poucos toques.
+            Dois lados, um único fluxo: como a igreja lança uma campanha e como
+            o fiel contribui em poucos toques.
           </p>
 
           <div className="mx-auto mt-8 flex w-fit rounded-full border border-border bg-white p-1">
@@ -27,7 +27,9 @@ export function ComoFunciona({ qrDataUrl }: { qrDataUrl: string }) {
               type="button"
               onClick={() => setLado("igreja")}
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-colors ${
-                lado === "igreja" ? "bg-primary text-white" : "text-muted hover:text-foreground"
+                lado === "igreja"
+                  ? "bg-primary text-white"
+                  : "text-muted hover:text-foreground"
               }`}
             >
               <Building2 size={16} />
@@ -37,7 +39,9 @@ export function ComoFunciona({ qrDataUrl }: { qrDataUrl: string }) {
               type="button"
               onClick={() => setLado("fiel")}
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-colors ${
-                lado === "fiel" ? "bg-primary text-white" : "text-muted hover:text-foreground"
+                lado === "fiel"
+                  ? "bg-primary text-white"
+                  : "text-muted hover:text-foreground"
               }`}
             >
               <Users size={16} />
@@ -46,10 +50,17 @@ export function ComoFunciona({ qrDataUrl }: { qrDataUrl: string }) {
           </div>
         </div>
 
-        {lado === "igreja" ? <IgrejaFlow qrDataUrl={qrDataUrl} /> : <FielFlow qrDataUrl={qrDataUrl} />}
+        {lado === "igreja" ? (
+          <IgrejaFlow qrDataUrl={qrDataUrl} />
+        ) : (
+          <FielFlow qrDataUrl={qrDataUrl} />
+        )}
 
         <div className="mt-14 text-center">
-          <Link href="/simulacao" className="text-sm font-bold text-primary hover:underline">
+          <Link
+            href="/simulacao"
+            className="text-sm font-bold text-primary hover:underline"
+          >
             Veja a plataforma por dentro →
           </Link>
         </div>

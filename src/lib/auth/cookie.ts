@@ -39,16 +39,23 @@ export const COOKIE_CONVIDADO = "cig_fiel_convidado";
 
 const SEGREDO = process.env.SESSION_SECRET;
 if (!SEGREDO && process.env.NODE_ENV === "production") {
-  throw new Error("SESSION_SECRET não configurado — obrigatório em produção pra assinar a sessão.");
+  throw new Error(
+    "SESSION_SECRET não configurado — obrigatório em produção pra assinar a sessão.",
+  );
 }
-const SEGREDO_EFETIVO = SEGREDO ?? "dev-only-insecure-secret-nao-usar-em-producao";
+const SEGREDO_EFETIVO =
+  SEGREDO ?? "dev-only-insecure-secret-nao-usar-em-producao";
 
 function assinar(payload: string): string {
-  return createHmac("sha256", SEGREDO_EFETIVO).update(payload).digest("base64url");
+  return createHmac("sha256", SEGREDO_EFETIVO)
+    .update(payload)
+    .digest("base64url");
 }
 
 function codificar<T>(valor: T): string {
-  const payload = Buffer.from(JSON.stringify(valor), "utf8").toString("base64url");
+  const payload = Buffer.from(JSON.stringify(valor), "utf8").toString(
+    "base64url",
+  );
   return `${payload}.${assinar(payload)}`;
 }
 
@@ -80,7 +87,9 @@ export function codificarOrigemWebmaster(origem: OrigemWebmaster): string {
   return codificar(origem);
 }
 
-export function decodificarOrigemWebmaster(valor: string): OrigemWebmaster | null {
+export function decodificarOrigemWebmaster(
+  valor: string,
+): OrigemWebmaster | null {
   return decodificar<OrigemWebmaster>(valor);
 }
 

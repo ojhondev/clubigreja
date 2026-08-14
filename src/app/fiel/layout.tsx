@@ -7,10 +7,19 @@ import { Logo } from "@/components/logo";
 import { BottomNav } from "@/components/fiel-nav";
 import { BannerAcessoWebmaster } from "@/components/banner-acesso-webmaster";
 
-export default async function FielLayout({ children }: { children: React.ReactNode }) {
+export default async function FielLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const sessao = await getSessao();
-  const igreja = sessao?.igrejaId ? await getIgreja(sessao.igrejaId) : undefined;
-  const naoLidas = sessao ? (await getNotificacoesDoFiel(sessao.usuarioId)).filter((n) => !n.lida).length : 0;
+  const igreja = sessao?.igrejaId
+    ? await getIgreja(sessao.igrejaId)
+    : undefined;
+  const naoLidas = sessao
+    ? (await getNotificacoesDoFiel(sessao.usuarioId)).filter((n) => !n.lida)
+        .length
+    : 0;
 
   return (
     <div className="flex min-h-full flex-col">
@@ -22,7 +31,10 @@ export default async function FielLayout({ children }: { children: React.ReactNo
             <p className="text-xs text-muted">{igreja?.nome ?? "Sua igreja"}</p>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/fiel/notificacoes" className="relative text-muted hover:text-primary">
+            <Link
+              href="/fiel/notificacoes"
+              className="relative text-muted hover:text-primary"
+            >
               <Bell size={20} />
               {naoLidas > 0 && (
                 <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
@@ -31,7 +43,10 @@ export default async function FielLayout({ children }: { children: React.ReactNo
               )}
             </Link>
             <form action={sair}>
-              <button type="submit" className="text-sm font-bold text-muted hover:text-primary">
+              <button
+                type="submit"
+                className="text-sm font-bold text-muted hover:text-primary"
+              >
                 Sair
               </button>
             </form>
@@ -39,7 +54,9 @@ export default async function FielLayout({ children }: { children: React.ReactNo
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 pb-24">{children}</main>
+      <main className="mx-auto w-full max-w-md flex-1 px-5 py-6 pb-24">
+        {children}
+      </main>
 
       <BottomNav />
     </div>

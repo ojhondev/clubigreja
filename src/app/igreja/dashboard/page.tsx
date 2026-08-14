@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { getSessao } from "@/lib/auth/session";
-import { getArrecadadoCampanha, getCampanhasDaIgreja, getIgreja } from "@/lib/db/repo";
+import {
+  getArrecadadoCampanha,
+  getCampanhasDaIgreja,
+  getIgreja,
+} from "@/lib/db/repo";
 import {
   getContribuicoesPorTipo,
   getCrescimentoMensal,
@@ -10,7 +14,14 @@ import {
   getUltimasContribuicoes,
 } from "@/lib/relatorios";
 import { formatarMoeda } from "@/lib/comissao";
-import { Badge, Button, Card, ProgressBar, SectionLabel, StatCard } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  ProgressBar,
+  SectionLabel,
+  StatCard,
+} from "@/components/ui";
 import { MonthlyBarChart } from "@/components/dashboard/monthly-bar-chart";
 import { FinalidadePieChart } from "@/components/dashboard/finalidade-pie-chart";
 import { UltimasContribuicoes } from "@/components/dashboard/ultimas-contribuicoes";
@@ -26,9 +37,14 @@ export default async function DashboardIgrejaPage() {
   const totaisMensais = await getTotaisPorMesDetalhado(igrejaId);
   const crescimento = await getCrescimentoMensal(igrejaId);
   const ultimas = await getUltimasContribuicoes(igrejaId, 5);
-  const campanhasAtivas = (await getCampanhasDaIgreja(igrejaId)).filter((c) => !c.encerrada);
+  const campanhasAtivas = (await getCampanhasDaIgreja(igrejaId)).filter(
+    (c) => !c.encerrada,
+  );
   const campanhas = await Promise.all(
-    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+    campanhasAtivas.map(async (c) => ({
+      ...c,
+      arrecadado: await getArrecadadoCampanha(c.id),
+    })),
   );
 
   const dadosPizza = [
@@ -47,7 +63,10 @@ export default async function DashboardIgrejaPage() {
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         <label className="flex flex-col justify-center gap-1 rounded-2xl border border-border bg-card px-4 py-3 sm:rounded-3xl sm:px-5 sm:py-4">
           <span className="text-xs font-bold text-muted">Filtros</span>
-          <select className="bg-transparent text-sm font-medium text-foreground outline-none" defaultValue="mes">
+          <select
+            className="bg-transparent text-sm font-medium text-foreground outline-none"
+            defaultValue="mes"
+          >
             <option value="mes">Este mês</option>
             <option value="30d">Últimos 30 dias</option>
             <option value="tudo">Desde o início</option>
@@ -55,12 +74,18 @@ export default async function DashboardIgrejaPage() {
         </label>
         <label className="flex flex-col justify-center gap-1 rounded-2xl border border-border bg-card px-4 py-3 sm:rounded-3xl sm:px-5 sm:py-4">
           <span className="text-xs font-bold text-muted">Por campanha</span>
-          <select className="bg-transparent text-sm font-medium text-foreground outline-none" defaultValue="todas">
+          <select
+            className="bg-transparent text-sm font-medium text-foreground outline-none"
+            defaultValue="todas"
+          >
             <option value="todas">Todas as campanhas</option>
           </select>
         </label>
         <div className="relative col-span-2 flex items-center overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-[#0047c9] px-5 py-4 text-white sm:rounded-3xl sm:px-6">
-          <Sparkles className="absolute -right-2 -top-2 text-white/20" size={96} />
+          <Sparkles
+            className="absolute -right-2 -top-2 text-white/20"
+            size={96}
+          />
           <p className="relative text-lg font-bold">Banner de anúncio</p>
         </div>
       </div>
@@ -81,16 +106,29 @@ export default async function DashboardIgrejaPage() {
           {crescimento.percentual !== null && (
             <Badge tone={crescimento.percentual >= 0 ? "success" : "warning"}>
               <span className="flex items-center gap-1">
-                {crescimento.percentual >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {crescimento.percentual >= 0 ? (
+                  <TrendingUp size={12} />
+                ) : (
+                  <TrendingDown size={12} />
+                )}
                 {crescimento.percentual >= 0 ? "+" : ""}
                 {crescimento.percentual}% vs. mês anterior
               </span>
             </Badge>
           )}
         </Card>
-        <StatCard label="Taxa paga pelos fiéis este mês" value={formatarMoeda(taxasFieisMes)} />
-        <StatCard label="Sua captação de campanhas" value={formatarMoeda(porTipo.campanha)} />
-        <StatCard label="Sua captação de dízimo" value={formatarMoeda(porTipo.dizimo)} />
+        <StatCard
+          label="Taxa paga pelos fiéis este mês"
+          value={formatarMoeda(taxasFieisMes)}
+        />
+        <StatCard
+          label="Sua captação de campanhas"
+          value={formatarMoeda(porTipo.campanha)}
+        />
+        <StatCard
+          label="Sua captação de dízimo"
+          value={formatarMoeda(porTipo.dizimo)}
+        />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -105,7 +143,8 @@ export default async function DashboardIgrejaPage() {
       </div>
 
       <p className="mt-4 text-xs text-muted">
-        Sua igreja recebe 100% do que for arrecadado — a taxa de processamento é paga pelos fiéis, à parte.
+        Sua igreja recebe 100% do que for arrecadado — a taxa de processamento é
+        paga pelos fiéis, à parte.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">
@@ -122,7 +161,9 @@ export default async function DashboardIgrejaPage() {
 
       <div className="mt-10">
         <SectionLabel>Campanhas em captação</SectionLabel>
-        {campanhas.length === 0 && <p className="text-muted">Nenhuma campanha ativa no momento.</p>}
+        {campanhas.length === 0 && (
+          <p className="text-muted">Nenhuma campanha ativa no momento.</p>
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           {campanhas.map((c) => {
             const arrecadado = c.arrecadado;
@@ -135,7 +176,8 @@ export default async function DashboardIgrejaPage() {
                 </div>
                 <ProgressBar percentual={pct} />
                 <p className="mt-2 text-sm text-muted">
-                  {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} ({pct.toFixed(0)}%)
+                  {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} (
+                  {pct.toFixed(0)}%)
                 </p>
               </Card>
             );

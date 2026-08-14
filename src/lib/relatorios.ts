@@ -1,11 +1,16 @@
-import { getContribuicoesDaIgreja as getTodasContribuicoesDaIgreja, getFiel } from "./db/repo";
+import {
+  getContribuicoesDaIgreja as getTodasContribuicoesDaIgreja,
+  getFiel,
+} from "./db/repo";
 import { mesAno, hoje } from "./hoje";
 import type { Contribuicao } from "./types";
 
 // Todo cálculo financeiro deste arquivo considera só Pix já confirmado pelo
 // fiel — enquanto ele não volta pra confirmar, esse dinheiro ainda não foi
 // de fato recebido pela igreja.
-async function getContribuicoesDaIgreja(igrejaId: string): Promise<Contribuicao[]> {
+async function getContribuicoesDaIgreja(
+  igrejaId: string,
+): Promise<Contribuicao[]> {
   const todas = await getTodasContribuicoesDaIgreja(igrejaId);
   return todas.filter((c) => c.status === "confirmado");
 }
@@ -21,7 +26,9 @@ export interface ResumoFinanceiro {
   quantidadeContribuicoes: number;
 }
 
-export async function getResumoFinanceiro(igrejaId: string): Promise<ResumoFinanceiro> {
+export async function getResumoFinanceiro(
+  igrejaId: string,
+): Promise<ResumoFinanceiro> {
   const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const mesAtual = mesAno(hoje());
 
@@ -30,14 +37,22 @@ export async function getResumoFinanceiro(igrejaId: string): Promise<ResumoFinan
       acc.totalBruto += c.valorBruto;
       acc.totalTaxasFieis += c.taxaValor;
       acc.quantidadeContribuicoes += 1;
-      if (mesAno(c.criadaEm) === mesAtual) acc.totalBrutoMesAtual += c.valorBruto;
+      if (mesAno(c.criadaEm) === mesAtual)
+        acc.totalBrutoMesAtual += c.valorBruto;
       return acc;
     },
-    { totalBruto: 0, totalTaxasFieis: 0, totalBrutoMesAtual: 0, quantidadeContribuicoes: 0 }
+    {
+      totalBruto: 0,
+      totalTaxasFieis: 0,
+      totalBrutoMesAtual: 0,
+      quantidadeContribuicoes: 0,
+    },
   );
 }
 
-export async function getContribuicoesPorTipo(igrejaId: string): Promise<Record<Contribuicao["tipo"], number>> {
+export async function getContribuicoesPorTipo(
+  igrejaId: string,
+): Promise<Record<Contribuicao["tipo"], number>> {
   const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const base: Record<Contribuicao["tipo"], number> = {
     dizimo: 0,
@@ -70,18 +85,39 @@ export interface TotalMensal {
 }
 
 const NOMES_MES_ABREV = [
-  "jan", "fev", "mar", "abr", "mai", "jun",
-  "jul", "ago", "set", "out", "nov", "dez",
+  "jan",
+  "fev",
+  "mar",
+  "abr",
+  "mai",
+  "jun",
+  "jul",
+  "ago",
+  "set",
+  "out",
+  "nov",
+  "dez",
 ];
 
-export async function getTotaisPorMes(igrejaId: string, meses = 6): Promise<TotalMensal[]> {
+export async function getTotaisPorMes(
+  igrejaId: string,
+  meses = 6,
+): Promise<TotalMensal[]> {
   const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
 
   const janela: TotalMensal[] = [];
   for (let i = meses - 1; i >= 0; i--) {
-    const data = new Date(referencia.getFullYear(), referencia.getMonth() - i, 1);
-    janela.push({ mesAno: mesAno(data), rotulo: NOMES_MES_ABREV[data.getMonth()], total: 0 });
+    const data = new Date(
+      referencia.getFullYear(),
+      referencia.getMonth() - i,
+      1,
+    );
+    janela.push({
+      mesAno: mesAno(data),
+      rotulo: NOMES_MES_ABREV[data.getMonth()],
+      total: 0,
+    });
   }
 
   const porMes = new Map(janela.map((m) => [m.mesAno, m]));
@@ -103,14 +139,27 @@ export interface TotalMensalDetalhado {
 
 // Mesma janela de getTotaisPorMes, mas quebrada por finalidade — alimenta o
 // gráfico de barras empilhadas do dashboard.
-export async function getTotaisPorMesDetalhado(igrejaId: string, meses = 6): Promise<TotalMensalDetalhado[]> {
+export async function getTotaisPorMesDetalhado(
+  igrejaId: string,
+  meses = 6,
+): Promise<TotalMensalDetalhado[]> {
   const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
 
   const janela: TotalMensalDetalhado[] = [];
   for (let i = meses - 1; i >= 0; i--) {
-    const data = new Date(referencia.getFullYear(), referencia.getMonth() - i, 1);
-    janela.push({ mesAno: mesAno(data), rotulo: NOMES_MES_ABREV[data.getMonth()], Dízimo: 0, Campanha: 0, Outros: 0 });
+    const data = new Date(
+      referencia.getFullYear(),
+      referencia.getMonth() - i,
+      1,
+    );
+    janela.push({
+      mesAno: mesAno(data),
+      rotulo: NOMES_MES_ABREV[data.getMonth()],
+      Dízimo: 0,
+      Campanha: 0,
+      Outros: 0,
+    });
   }
 
   const porMes = new Map(janela.map((m) => [m.mesAno, m]));
@@ -118,7 +167,8 @@ export async function getTotaisPorMesDetalhado(igrejaId: string, meses = 6): Pro
     const alvo = porMes.get(mesAno(c.criadaEm));
     if (!alvo) continue;
     if (c.tipo === "dizimo" || c.tipo === "oferta") alvo.Dízimo += c.valorBruto;
-    else if (c.tipo === "campanha" || c.tipo === "evento") alvo.Campanha += c.valorBruto;
+    else if (c.tipo === "campanha" || c.tipo === "evento")
+      alvo.Campanha += c.valorBruto;
     else alvo.Outros += c.valorBruto;
   }
 
@@ -133,11 +183,15 @@ export interface CrescimentoMensal {
 
 // Compara a arrecadação bruta do mês corrente com a do mês anterior — para o
 // selo de "crescimento" no dashboard.
-export async function getCrescimentoMensal(igrejaId: string): Promise<CrescimentoMensal> {
+export async function getCrescimentoMensal(
+  igrejaId: string,
+): Promise<CrescimentoMensal> {
   const contribuicoes = await getContribuicoesDaIgreja(igrejaId);
   const referencia = hoje();
   const mesAtualStr = mesAno(referencia);
-  const mesAnteriorStr = mesAno(new Date(referencia.getFullYear(), referencia.getMonth() - 1, 1));
+  const mesAnteriorStr = mesAno(
+    new Date(referencia.getFullYear(), referencia.getMonth() - 1, 1),
+  );
 
   let mesAtual = 0;
   let mesAnterior = 0;
@@ -147,7 +201,10 @@ export async function getCrescimentoMensal(igrejaId: string): Promise<Cresciment
     else if (m === mesAnteriorStr) mesAnterior += c.valorBruto;
   }
 
-  const percentual = mesAnterior > 0 ? Math.round(((mesAtual - mesAnterior) / mesAnterior) * 1000) / 10 : null;
+  const percentual =
+    mesAnterior > 0
+      ? Math.round(((mesAtual - mesAnterior) / mesAnterior) * 1000) / 10
+      : null;
   return { mesAtual, mesAnterior, percentual };
 }
 
@@ -160,7 +217,10 @@ export interface ContribuicaoRecente {
   criadaEm: string;
 }
 
-export async function getUltimasContribuicoes(igrejaId: string, limite = 5): Promise<ContribuicaoRecente[]> {
+export async function getUltimasContribuicoes(
+  igrejaId: string,
+  limite = 5,
+): Promise<ContribuicaoRecente[]> {
   const recentes = (await getContribuicoesDaIgreja(igrejaId))
     .sort((a, b) => (a.criadaEm < b.criadaEm ? 1 : -1))
     .slice(0, limite);
@@ -173,6 +233,6 @@ export async function getUltimasContribuicoes(igrejaId: string, limite = 5): Pro
       meio: c.meio,
       valorBruto: c.valorBruto,
       criadaEm: c.criadaEm,
-    }))
+    })),
   );
 }

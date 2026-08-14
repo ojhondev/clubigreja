@@ -4,7 +4,7 @@
 // localmente para exibir o dia correto.
 export function formatarData(
   dataISO: string,
-  opcoes: Intl.DateTimeFormatOptions = {}
+  opcoes: Intl.DateTimeFormatOptions = {},
 ): string {
   const [ano, mes, dia] = dataISO.slice(0, 10).split("-").map(Number);
   const data = new Date(ano, mes - 1, dia);

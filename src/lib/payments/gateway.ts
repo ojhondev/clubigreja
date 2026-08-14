@@ -49,6 +49,8 @@ export interface ConfirmacaoPagamento {
 //      que já pagou o Pix. É esse clique que dispara a segunda cobrança,
 //      independente, no cartão salvo do fiel — que cai na conta do Dizipay.
 export interface PaymentGateway {
-  iniciarContribuicao(input: IniciarContribuicaoInput): Promise<DadosParaPagamento>;
+  iniciarContribuicao(
+    input: IniciarContribuicaoInput,
+  ): Promise<DadosParaPagamento>;
   confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento>;
 }

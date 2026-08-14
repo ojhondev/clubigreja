@@ -37,7 +37,9 @@ export const usuariosIgreja = pgTable("usuarios_igreja", {
   // "salt:hash" via scrypt — ver src/lib/auth/senha.ts. Nunca exposto fora
   // das funções de autenticação em repo.ts.
   senhaHash: text("senha_hash").notNull(),
-  papel: text("papel", { enum: ["administrador", "tesoureiro", "secretario"] }).notNull(),
+  papel: text("papel", {
+    enum: ["administrador", "tesoureiro", "secretario"],
+  }).notNull(),
 });
 
 export const fieis = pgTable("fieis", {
@@ -64,7 +66,9 @@ export const linksPagamento = pgTable("links_pagamento", {
     .notNull()
     .references(() => igrejas.id, { onDelete: "cascade" }),
   titulo: text("titulo").notNull(),
-  tipo: text("tipo", { enum: ["dizimo", "oferta", "campanha", "evento", "livre"] }).notNull(),
+  tipo: text("tipo", {
+    enum: ["dizimo", "oferta", "campanha", "evento", "livre"],
+  }).notNull(),
   valorSugerido: real("valor_sugerido"),
   ativo: boolean("ativo").notNull().default(true),
   criadoEm: text("criado_em").notNull(),
@@ -93,7 +97,9 @@ export const eventos = pgTable("eventos", {
   data: text("data").notNull(),
   local: text("local").notNull(),
   descricao: text("descricao").notNull(),
-  arrecadacaoVinculada: boolean("arrecadacao_vinculada").notNull().default(false),
+  arrecadacaoVinculada: boolean("arrecadacao_vinculada")
+    .notNull()
+    .default(false),
 });
 
 export const comunicadosMural = pgTable("comunicados_mural", {
@@ -118,14 +124,20 @@ export const contribuicoes = pgTable("contribuicoes", {
   fielId: text("fiel_id")
     .notNull()
     .references(() => fieis.id, { onDelete: "cascade" }),
-  tipo: text("tipo", { enum: ["dizimo", "oferta", "campanha", "evento", "livre"] }).notNull(),
-  campanhaId: text("campanha_id").references(() => campanhas.id, { onDelete: "set null" }),
+  tipo: text("tipo", {
+    enum: ["dizimo", "oferta", "campanha", "evento", "livre"],
+  }).notNull(),
+  campanhaId: text("campanha_id").references(() => campanhas.id, {
+    onDelete: "set null",
+  }),
   meio: text("meio", { enum: ["pix", "cartao", "boleto"] }).notNull(),
   valorBruto: real("valor_bruto").notNull(),
   taxaPercentual: real("taxa_percentual").notNull(),
   taxaValor: real("taxa_valor").notNull(),
   valorTotalFiel: real("valor_total_fiel").notNull(),
-  taxaCobradaVia: text("taxa_cobrada_via", { enum: ["cartao_salvo", "pix_separado"] }).notNull(),
+  taxaCobradaVia: text("taxa_cobrada_via", {
+    enum: ["cartao_salvo", "pix_separado"],
+  }).notNull(),
   status: text("status", { enum: ["aguardando_pix", "confirmado"] })
     .notNull()
     .default("aguardando_pix"),
@@ -140,7 +152,9 @@ export const notificacoesFiel = pgTable("notificacoes_fiel", {
   igrejaId: text("igreja_id")
     .notNull()
     .references(() => igrejas.id, { onDelete: "cascade" }),
-  tipo: text("tipo", { enum: ["lembrete_dizimo", "comunicado", "campanha"] }).notNull(),
+  tipo: text("tipo", {
+    enum: ["lembrete_dizimo", "comunicado", "campanha"],
+  }).notNull(),
   titulo: text("titulo").notNull(),
   corpo: text("corpo").notNull(),
   lida: boolean("lida").notNull().default(false),
@@ -168,8 +182,12 @@ export const webmasters = pgTable("webmasters", {
   nome: text("nome").notNull(),
   email: text("email").notNull().unique(),
   senhaHash: text("senha_hash"),
-  nivel: text("nivel", { enum: ["primario", "secundario"] }).notNull().default("secundario"),
-  podeGerenciarPagamentos: boolean("pode_gerenciar_pagamentos").notNull().default(false),
+  nivel: text("nivel", { enum: ["primario", "secundario"] })
+    .notNull()
+    .default("secundario"),
+  podeGerenciarPagamentos: boolean("pode_gerenciar_pagamentos")
+    .notNull()
+    .default(false),
   podeAprovarIgrejas: boolean("pode_aprovar_igrejas").notNull().default(false),
   conviteToken: text("convite_token"),
   conviteExpiraEm: text("convite_expira_em"),
@@ -195,12 +213,21 @@ export const fieisRelations = relations(fieis, ({ one, many }) => ({
 }));
 
 export const campanhasRelations = relations(campanhas, ({ one, many }) => ({
-  igreja: one(igrejas, { fields: [campanhas.igrejaId], references: [igrejas.id] }),
+  igreja: one(igrejas, {
+    fields: [campanhas.igrejaId],
+    references: [igrejas.id],
+  }),
   contribuicoes: many(contribuicoes),
 }));
 
 export const contribuicoesRelations = relations(contribuicoes, ({ one }) => ({
-  igreja: one(igrejas, { fields: [contribuicoes.igrejaId], references: [igrejas.id] }),
+  igreja: one(igrejas, {
+    fields: [contribuicoes.igrejaId],
+    references: [igrejas.id],
+  }),
   fiel: one(fieis, { fields: [contribuicoes.fielId], references: [fieis.id] }),
-  campanha: one(campanhas, { fields: [contribuicoes.campanhaId], references: [campanhas.id] }),
+  campanha: one(campanhas, {
+    fields: [contribuicoes.campanhaId],
+    references: [campanhas.id],
+  }),
 }));

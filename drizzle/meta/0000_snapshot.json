@@ -71,12 +71,8 @@
           "name": "campanhas_igreja_id_igrejas_id_fk",
           "tableFrom": "campanhas",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -134,12 +130,8 @@
           "name": "comunicados_mural_igreja_id_igrejas_id_fk",
           "tableFrom": "comunicados_mural",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -240,12 +232,8 @@
           "name": "contribuicoes_igreja_id_igrejas_id_fk",
           "tableFrom": "contribuicoes",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -253,12 +241,8 @@
           "name": "contribuicoes_fiel_id_fieis_id_fk",
           "tableFrom": "contribuicoes",
           "tableTo": "fieis",
-          "columnsFrom": [
-            "fiel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["fiel_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -266,12 +250,8 @@
           "name": "contribuicoes_campanha_id_campanhas_id_fk",
           "tableFrom": "contribuicoes",
           "tableTo": "campanhas",
-          "columnsFrom": [
-            "campanha_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campanha_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -336,12 +316,8 @@
           "name": "eventos_igreja_id_igrejas_id_fk",
           "tableFrom": "eventos",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -411,12 +387,8 @@
           "name": "fieis_igreja_id_igrejas_id_fk",
           "tableFrom": "fieis",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -525,9 +497,7 @@
         "igrejas_slug_unique": {
           "name": "igrejas_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -569,12 +539,8 @@
           "name": "links_extras_igreja_id_igrejas_id_fk",
           "tableFrom": "links_extras",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -639,12 +605,8 @@
           "name": "links_pagamento_igreja_id_igrejas_id_fk",
           "tableFrom": "links_pagamento",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -715,12 +677,8 @@
           "name": "notificacoes_fiel_fiel_id_fieis_id_fk",
           "tableFrom": "notificacoes_fiel",
           "tableTo": "fieis",
-          "columnsFrom": [
-            "fiel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["fiel_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -728,12 +686,8 @@
           "name": "notificacoes_fiel_igreja_id_igrejas_id_fk",
           "tableFrom": "notificacoes_fiel",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -785,12 +739,8 @@
           "name": "usuarios_igreja_igreja_id_igrejas_id_fk",
           "tableFrom": "usuarios_igreja",
           "tableTo": "igrejas",
-          "columnsFrom": [
-            "igreja_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["igreja_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -800,9 +750,7 @@
         "usuarios_igreja_email_unique": {
           "name": "usuarios_igreja_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},

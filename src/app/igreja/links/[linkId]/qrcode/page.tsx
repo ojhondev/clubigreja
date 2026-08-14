@@ -11,7 +11,11 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Contribuição livre",
 };
 
-export default async function LinkQrCodePage({ params }: { params: Promise<{ linkId: string }> }) {
+export default async function LinkQrCodePage({
+  params,
+}: {
+  params: Promise<{ linkId: string }>;
+}) {
   const { linkId } = await params;
   const link = await getLinkPagamento(linkId);
   if (!link) notFound();

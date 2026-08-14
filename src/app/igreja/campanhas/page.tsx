@@ -9,7 +9,10 @@ export default async function CampanhasPage() {
   const sessao = await getSessao();
   const campanhasBrutas = await getCampanhasDaIgreja(sessao!.igrejaId!);
   const campanhas = await Promise.all(
-    campanhasBrutas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+    campanhasBrutas.map(async (c) => ({
+      ...c,
+      arrecadado: await getArrecadadoCampanha(c.id),
+    })),
   );
 
   return (
@@ -21,26 +24,54 @@ export default async function CampanhasPage() {
 
       <Card className="mb-8">
         <h2 className="mb-4 font-bold">Criar nova campanha</h2>
-        <form action={criarCampanhaAction} className="grid gap-4 sm:grid-cols-2">
+        <form
+          action={criarCampanhaAction}
+          className="grid gap-4 sm:grid-cols-2"
+        >
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="text-sm font-medium text-muted">Título</span>
-            <input name="titulo" required placeholder="Ex.: Reforma do templo" className="rounded-xl border border-border px-4 py-3" />
+            <input
+              name="titulo"
+              required
+              placeholder="Ex.: Reforma do templo"
+              className="rounded-xl border border-border px-4 py-3"
+            />
           </label>
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="text-sm font-medium text-muted">Descrição</span>
-            <textarea name="descricao" rows={2} className="rounded-xl border border-border px-4 py-3" />
+            <textarea
+              name="descricao"
+              rows={2}
+              className="rounded-xl border border-border px-4 py-3"
+            />
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-muted">Meta (R$)</span>
-            <InputMoeda name="meta" required placeholder="10.000" className="rounded-xl border border-border px-4 py-3" />
+            <InputMoeda
+              name="meta"
+              required
+              placeholder="10.000"
+              className="rounded-xl border border-border px-4 py-3"
+            />
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-muted">Prazo</span>
-            <input name="prazo" type="date" required className="rounded-xl border border-border px-4 py-3" />
+            <input
+              name="prazo"
+              type="date"
+              required
+              className="rounded-xl border border-border px-4 py-3"
+            />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-muted">Emoji de destaque</span>
-            <input name="imagemEmoji" defaultValue="🙏" className="rounded-xl border border-border px-4 py-3" />
+            <span className="text-sm font-medium text-muted">
+              Emoji de destaque
+            </span>
+            <input
+              name="imagemEmoji"
+              defaultValue="🙏"
+              className="rounded-xl border border-border px-4 py-3"
+            />
           </label>
           <div className="sm:col-span-2">
             <Button type="submit">Criar campanha</Button>
@@ -50,9 +81,15 @@ export default async function CampanhasPage() {
 
       <div className="space-y-4">
         {campanhas.map((c) => (
-          <CampanhaCardIgreja key={c.id} campanha={c} arrecadado={c.arrecadado} />
+          <CampanhaCardIgreja
+            key={c.id}
+            campanha={c}
+            arrecadado={c.arrecadado}
+          />
         ))}
-        {campanhas.length === 0 && <p className="text-muted">Nenhuma campanha criada ainda.</p>}
+        {campanhas.length === 0 && (
+          <p className="text-muted">Nenhuma campanha criada ainda.</p>
+        )}
       </div>
     </div>
   );

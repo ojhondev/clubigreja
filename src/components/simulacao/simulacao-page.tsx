@@ -17,8 +17,8 @@ export function SimulacaoPage() {
             O painel que sua igreja vai usar todo dia.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
-            Um tour pelo dashboard, do jeito que a igreja vê: arrecadação, contribuições e campanhas
-            em um único lugar.
+            Um tour pelo dashboard, do jeito que a igreja vê: arrecadação,
+            contribuições e campanhas em um único lugar.
           </p>
         </section>
 
@@ -28,18 +28,27 @@ export function SimulacaoPage() {
 
         <section className="bg-primary py-16 text-center sm:py-20">
           <div className="mx-auto max-w-2xl px-4 sm:px-6">
-            <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">Pronto para começar?</h2>
+            <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">
+              Pronto para começar?
+            </h2>
             <p className="mt-3 text-white/80">
-              Cadastre sua igreja gratuitamente ou fale com nosso time para tirar dúvidas antes de começar.
+              Cadastre sua igreja gratuitamente ou fale com nosso time para
+              tirar dúvidas antes de começar.
             </p>
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <Link href="/cadastrar-igreja">
-                <Button variant="accent" className="w-full font-display sm:w-auto">
+                <Button
+                  variant="accent"
+                  className="w-full font-display sm:w-auto"
+                >
                   Cadastre-se é grátis
                 </Button>
               </Link>
               <a href="mailto:contato@dclubigreja.com">
-                <Button variant="dark-outline" className="w-full border-white font-display text-white hover:bg-white/10 sm:w-auto">
+                <Button
+                  variant="dark-outline"
+                  className="w-full border-white font-display text-white hover:bg-white/10 sm:w-auto"
+                >
                   Fale com nosso time
                 </Button>
               </a>

@@ -7,7 +7,9 @@ export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-border bg-[#F7FAFF] px-4 py-3">
         <CreditCard size={18} className="shrink-0 text-primary" />
-        <p className="text-sm text-muted">Incluindo taxa de processamento do pagamento.</p>
+        <p className="text-sm text-muted">
+          Incluindo taxa de processamento do pagamento.
+        </p>
       </div>
     );
   }
@@ -15,7 +17,8 @@ export function CartaoTaxa({ cartaoSalvo }: { cartaoSalvo?: CartaoSalvo }) {
   return (
     <fieldset className="space-y-3 rounded-xl border border-border p-4">
       <legend className="px-1 text-sm font-medium text-muted">
-        Cadastre um cartão para a taxa de processamento (só precisa fazer isso uma vez)
+        Cadastre um cartão para a taxa de processamento (só precisa fazer isso
+        uma vez)
       </legend>
       <label className="flex flex-col gap-1">
         <span className="text-xs text-muted">Número do cartão</span>

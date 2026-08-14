@@ -5,7 +5,15 @@ import { TrendingUp } from "lucide-react";
 import { BrowserFrame } from "./browser-frame";
 import { StepFlow, type Step } from "./step-flow";
 
-function CartaoStat({ label, valor, delay }: { label: string; valor: string; delay: number }) {
+function CartaoStat({
+  label,
+  valor,
+  delay,
+}: {
+  label: string;
+  valor: string;
+  delay: number;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -23,11 +31,21 @@ function TelaVisaoGeral() {
   return (
     <BrowserFrame>
       <p className="mb-1 text-xs text-muted">Bem-vindo(a) de volta,</p>
-      <p className="mb-3 text-sm font-bold text-foreground">Igreja Batista Nova Vida</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Igreja Batista Nova Vida
+      </p>
       <div className="grid grid-cols-2 gap-2">
-        <CartaoStat label="Arrecadado este mês" valor="R$ 4.230,00" delay={0.1} />
+        <CartaoStat
+          label="Arrecadado este mês"
+          valor="R$ 4.230,00"
+          delay={0.1}
+        />
         <CartaoStat label="Contribuições" valor="38 este mês" delay={0.2} />
-        <CartaoStat label="Campanhas ativas" valor="2 em captação" delay={0.3} />
+        <CartaoStat
+          label="Campanhas ativas"
+          valor="2 em captação"
+          delay={0.3}
+        />
         <CartaoStat label="Dízimo recorrente" valor="R$ 2.850,00" delay={0.4} />
       </div>
       <motion.div
@@ -84,7 +102,9 @@ function TelaContribuicoes() {
   ];
   return (
     <BrowserFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Últimas contribuições</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Últimas contribuições
+      </p>
       <div className="space-y-2">
         {linhas.map((linha, i) => (
           <motion.div
@@ -113,7 +133,9 @@ function TelaCampanhas() {
   ];
   return (
     <BrowserFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Campanhas em captação</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Campanhas em captação
+      </p>
       <div className="space-y-4">
         {campanhas.map((c, i) => (
           <motion.div
@@ -130,7 +152,11 @@ function TelaCampanhas() {
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${c.pct}%` }}
-                transition={{ delay: 0.3 + 0.2 * i, duration: 0.6, ease: "easeOut" }}
+                transition={{
+                  delay: 0.3 + 0.2 * i,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
                 className="h-full rounded-full bg-primary"
               />
             </div>
@@ -146,22 +172,26 @@ export function DashboardTour() {
   const steps: Step[] = [
     {
       titulo: "Tudo em um painel só",
-      descricao: "Arrecadação, contribuições e campanhas — a igreja vê tudo de relance, sem planilha.",
+      descricao:
+        "Arrecadação, contribuições e campanhas — a igreja vê tudo de relance, sem planilha.",
       render: () => <TelaVisaoGeral />,
     },
     {
       titulo: "Gráficos que contam a história",
-      descricao: "Evolução mês a mês, separada por dízimo e campanha, pra igreja acompanhar o crescimento.",
+      descricao:
+        "Evolução mês a mês, separada por dízimo e campanha, pra igreja acompanhar o crescimento.",
       render: () => <TelaGraficos />,
     },
     {
       titulo: "Contribuições em tempo real",
-      descricao: "Cada contribuição aparece assim que é confirmada — sem esperar fechamento de caixa.",
+      descricao:
+        "Cada contribuição aparece assim que é confirmada — sem esperar fechamento de caixa.",
       render: () => <TelaContribuicoes />,
     },
     {
       titulo: "Campanhas com progresso visível",
-      descricao: "A igreja acompanha cada campanha em andamento, com a meta e o quanto já foi arrecadado.",
+      descricao:
+        "A igreja acompanha cada campanha em andamento, com a meta e o quanto já foi arrecadado.",
       render: () => <TelaCampanhas />,
     },
   ];

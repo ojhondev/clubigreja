@@ -20,17 +20,17 @@ function formatarMoedaInteira(valor: number): string {
 export function CalculadoraArrecadacao() {
   const [dizimistas, setDizimistas] = useState(250);
   const [valorMedio, setValorMedio] = useState(80);
-  const { arrecadacaoAtual, projecaoComClub, aumentoMensal, aumentoAnual } = calcularProjecaoArrecadacao(
-    dizimistas,
-    valorMedio
-  );
+  const { arrecadacaoAtual, projecaoComClub, aumentoMensal, aumentoAnual } =
+    calcularProjecaoArrecadacao(dizimistas, valorMedio);
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
       <div className="rounded-3xl border border-border bg-white p-6 sm:p-8">
         <label className="block">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">Dizimistas e doadores ativos</span>
+            <span className="text-sm font-bold text-foreground">
+              Dizimistas e doadores ativos
+            </span>
             <span className="rounded-full bg-[#EAF6FF] px-3 py-1 text-sm font-bold text-primary">
               {formatarInteiro(dizimistas)}
             </span>
@@ -52,7 +52,9 @@ export function CalculadoraArrecadacao() {
 
         <label className="mt-6 block">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">Valor médio por contribuição</span>
+            <span className="text-sm font-bold text-foreground">
+              Valor médio por contribuição
+            </span>
             <span className="rounded-full bg-[#EAF6FF] px-3 py-1 text-sm font-bold text-primary">
               {formatarMoedaInteira(valorMedio)}
             </span>
@@ -73,16 +75,20 @@ export function CalculadoraArrecadacao() {
         </label>
 
         <p className="mt-6 border-t border-border pt-4 text-xs text-muted">
-          Projeção baseada no aumento médio de <strong className="text-foreground">40%</strong> relatado por
-          comunidades no primeiro ano após ativar o canal digital de contribuição. Resultados variam
-          conforme a divulgação feita na paróquia.
+          Projeção baseada no aumento médio de{" "}
+          <strong className="text-foreground">40%</strong> relatado por
+          comunidades no primeiro ano após ativar o canal digital de
+          contribuição. Resultados variam conforme a divulgação feita na
+          paróquia.
         </p>
       </div>
 
       <div className="rounded-3xl bg-primary p-6 text-white sm:p-8">
         <div className="flex items-center justify-between border-b border-white/15 pb-4">
           <span className="text-sm text-white/70">Arrecadação mensal hoje</span>
-          <span className="text-xl font-bold">{formatarMoedaInteira(arrecadacaoAtual)}</span>
+          <span className="text-xl font-bold">
+            {formatarMoedaInteira(arrecadacaoAtual)}
+          </span>
         </div>
 
         <p className="mt-5 text-xs font-bold uppercase tracking-wide text-accent">
@@ -96,8 +102,11 @@ export function CalculadoraArrecadacao() {
         </span>
 
         <p className="mt-6 text-sm text-white/80">
-          Em 12 meses, isso é <strong className="text-white">{formatarMoedaInteira(aumentoAnual)}</strong> a
-          mais para as obras, a manutenção e as pastorais da sua comunidade.
+          Em 12 meses, isso é{" "}
+          <strong className="text-white">
+            {formatarMoedaInteira(aumentoAnual)}
+          </strong>{" "}
+          a mais para as obras, a manutenção e as pastorais da sua comunidade.
         </p>
       </div>
     </div>

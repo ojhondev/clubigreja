@@ -12,7 +12,10 @@ export async function hashSenha(senha: string): Promise<string> {
   return `${salt}:${derivado.toString("hex")}`;
 }
 
-export async function verificarSenha(senha: string, hashArmazenado: string): Promise<boolean> {
+export async function verificarSenha(
+  senha: string,
+  hashArmazenado: string,
+): Promise<boolean> {
   const [salt, hashHex] = hashArmazenado.split(":");
   if (!salt || !hashHex) return false;
 

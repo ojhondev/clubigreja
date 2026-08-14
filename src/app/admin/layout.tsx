@@ -5,7 +5,11 @@ import { getWebmasterPorId } from "@/lib/db/repo";
 import { sair } from "@/lib/auth/actions";
 import { Logo } from "@/components/logo";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const sessao = await getSessao();
   if (sessao?.papel !== "webmaster") {
     redirect("/webmaster");
@@ -38,10 +42,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
           <div className="flex items-center gap-4">
             <p className="text-xs text-muted">
-              {webmaster.nome} · {webmaster.nivel === "primario" ? "Master Primário" : "Master Secundário"}
+              {webmaster.nome} ·{" "}
+              {webmaster.nivel === "primario"
+                ? "Master Primário"
+                : "Master Secundário"}
             </p>
             <form action={sair}>
-              <button type="submit" className="text-sm font-bold text-muted hover:text-primary">
+              <button
+                type="submit"
+                className="text-sm font-bold text-muted hover:text-primary"
+              >
                 Sair
               </button>
             </form>
@@ -61,7 +71,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           )}
         </nav>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
+        {children}
+      </main>
     </div>
   );
 }

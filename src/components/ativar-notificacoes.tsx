@@ -26,7 +26,9 @@ export function AtivarNotificacoes() {
         return;
       }
 
-      const { publicKey } = await fetch("/api/push/vapid-public-key").then((r) => r.json());
+      const { publicKey } = await fetch("/api/push/vapid-public-key").then(
+        (r) => r.json(),
+      );
       const subscription = await registro.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),

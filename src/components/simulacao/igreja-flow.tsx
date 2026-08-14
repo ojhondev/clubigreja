@@ -15,7 +15,9 @@ const CAMPOS_FORM = [
 function TelaFormulario() {
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Criar nova campanha</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Criar nova campanha
+      </p>
       <div className="space-y-3">
         {CAMPOS_FORM.map((campo, i) => (
           <motion.div
@@ -45,7 +47,9 @@ function TelaFormulario() {
 function TelaQrCode({ qrDataUrl }: { qrDataUrl: string }) {
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Link gerado automaticamente</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Link gerado automaticamente
+      </p>
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -73,7 +77,9 @@ function TelaCompartilhar() {
   ];
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Divulgar a campanha</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Divulgar a campanha
+      </p>
       <div className="space-y-3">
         {canais.map((c, i) => (
           <motion.div
@@ -98,7 +104,9 @@ function TelaProgresso() {
   return (
     <PhoneFrame>
       <p className="mb-1 text-2xl">🔨</p>
-      <p className="text-sm font-bold text-foreground">Reforma do telhado do templo</p>
+      <p className="text-sm font-bold text-foreground">
+        Reforma do telhado do templo
+      </p>
       <motion.div
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
@@ -117,17 +125,19 @@ function TelaProgresso() {
         R$ 9.300 de R$ 15.000 (62%)
       </motion.p>
       <div className="mt-5 space-y-2">
-        {["Ana Beatriz Souza — R$ 100", "Carlos Eduardo Lima — R$ 250"].map((linha, i) => (
-          <motion.div
-            key={linha}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1 + i * 0.3 }}
-            className="rounded-xl border border-border bg-white px-3 py-2 text-xs font-medium text-foreground"
-          >
-            {linha}
-          </motion.div>
-        ))}
+        {["Ana Beatriz Souza — R$ 100", "Carlos Eduardo Lima — R$ 250"].map(
+          (linha, i) => (
+            <motion.div
+              key={linha}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1 + i * 0.3 }}
+              className="rounded-xl border border-border bg-white px-3 py-2 text-xs font-medium text-foreground"
+            >
+              {linha}
+            </motion.div>
+          ),
+        )}
       </div>
     </PhoneFrame>
   );
@@ -149,7 +159,8 @@ export function IgrejaFlow({ qrDataUrl }: { qrDataUrl: string }) {
     },
     {
       titulo: "A igreja divulga do jeito que já usa",
-      descricao: "WhatsApp, mural físico ou material impresso — o link e o QR Code funcionam em qualquer canal.",
+      descricao:
+        "WhatsApp, mural físico ou material impresso — o link e o QR Code funcionam em qualquer canal.",
       render: () => <TelaCompartilhar />,
     },
     {

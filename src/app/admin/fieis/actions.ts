@@ -16,8 +16,13 @@ export async function acessarComoFielAction(formData: FormData) {
   if (!fiel) return;
 
   await iniciarAcessoComo(
-    { papel: "fiel", usuarioId: fiel.id, igrejaId: fiel.igrejaId, nome: fiel.nome },
-    { webmasterId: webmaster.id, webmasterNome: webmaster.nome }
+    {
+      papel: "fiel",
+      usuarioId: fiel.id,
+      igrejaId: fiel.igrejaId,
+      nome: fiel.nome,
+    },
+    { webmasterId: webmaster.id, webmasterNome: webmaster.nome },
   );
   redirect("/fiel/inicio");
 }

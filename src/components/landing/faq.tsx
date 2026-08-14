@@ -42,7 +42,7 @@ const PERGUNTAS = [
   {
     pergunta: "E se tivermos alguma dúvida ou problema?",
     resposta:
-      "Nosso time responde diretamente por e-mail ou WhatsApp — sem robô, sem fila. É só usar o botão \"Fale com nosso time\" em qualquer parte do site.",
+      'Nosso time responde diretamente por e-mail ou WhatsApp — sem robô, sem fila. É só usar o botão "Fale com nosso time" em qualquer parte do site.',
   },
 ];
 
@@ -53,7 +53,9 @@ export function Faq() {
     <section id="duvidas" className="bg-[#F7FAFF] py-16 sm:py-24">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="mb-14 text-center">
-          <span className="text-sm font-bold text-primary">Tire suas dúvidas</span>
+          <span className="text-sm font-bold text-primary">
+            Tire suas dúvidas
+          </span>
           <h2 className="font-display mt-2 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
             Perguntas que todo pastor e padre nos faz.
           </h2>
@@ -63,19 +65,26 @@ export function Faq() {
           {PERGUNTAS.map((item, i) => {
             const estaAberta = aberta === i;
             return (
-              <div key={item.pergunta} className="rounded-2xl border border-border bg-white">
+              <div
+                key={item.pergunta}
+                className="rounded-2xl border border-border bg-white"
+              >
                 <button
                   type="button"
                   onClick={() => setAberta(estaAberta ? null : i)}
                   className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                 >
-                  <span className="font-bold text-foreground">{item.pergunta}</span>
+                  <span className="font-bold text-foreground">
+                    {item.pergunta}
+                  </span>
                   <ChevronDown
                     size={20}
                     className={`shrink-0 text-muted transition-transform ${estaAberta ? "rotate-180" : ""}`}
                   />
                 </button>
-                {estaAberta && <p className="px-6 pb-5 text-muted">{item.resposta}</p>}
+                {estaAberta && (
+                  <p className="px-6 pb-5 text-muted">{item.resposta}</p>
+                )}
               </div>
             );
           })}

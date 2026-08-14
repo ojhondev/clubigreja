@@ -13,7 +13,9 @@ export default async function WebmasterPage() {
         <div className="mb-3 flex justify-center">
           <Logo height={40} />
         </div>
-        <h1 className="text-xl font-bold">{jaConfigurado ? "WebMaster" : "Configurar Master Primário"}</h1>
+        <h1 className="text-xl font-bold">
+          {jaConfigurado ? "WebMaster" : "Configurar Master Primário"}
+        </h1>
         <p className="mt-1 text-sm text-muted">
           {jaConfigurado
             ? "Acesso restrito à equipe Dizipay."

@@ -17,7 +17,9 @@ export default async function InicioFielPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold">Olá, {sessao!.nome.split(" ")[0]} 👋</h1>
+        <h1 className="text-xl font-bold">
+          Olá, {sessao!.nome.split(" ")[0]} 👋
+        </h1>
       </div>
 
       <FraseDoDia />
@@ -50,7 +52,9 @@ export default async function InicioFielPage() {
               <div>
                 <p className="font-bold">{c.titulo}</p>
                 <p className="text-sm text-muted">{c.corpo}</p>
-                <p className="mt-1 text-xs text-muted">{formatarData(c.publicadoEm)}</p>
+                <p className="mt-1 text-xs text-muted">
+                  {formatarData(c.publicadoEm)}
+                </p>
               </div>
             </Card>
           ))}

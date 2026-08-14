@@ -8,14 +8,25 @@ import { StepFlow, type Step } from "./step-flow";
 function TelaEscanear({ qrDataUrl }: { qrDataUrl: string }) {
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Aponte a câmera para o QR Code</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Aponte a câmera para o QR Code
+      </p>
       <div className="relative flex flex-1 items-center justify-center rounded-2xl border border-border bg-white p-6">
         {}
-        <img src={qrDataUrl} alt="QR Code para escanear" className="h-40 w-40" />
+        <img
+          src={qrDataUrl}
+          alt="QR Code para escanear"
+          className="h-40 w-40"
+        />
         <motion.div
           initial={{ y: -70 }}
           animate={{ y: 70 }}
-          transition={{ duration: 1.6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+          transition={{
+            duration: 1.6,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
           className="pointer-events-none absolute h-0.5 w-32 rounded-full bg-accent shadow-[0_0_12px_2px_rgba(96,205,255,0.8)]"
         />
       </div>
@@ -35,7 +46,9 @@ function TelaValor() {
         <p className="text-xs text-muted">Finalidade</p>
         <p className="text-sm font-bold text-foreground">Dízimo</p>
       </div>
-      <p className="mb-2 mt-4 text-xs font-medium text-muted">Ou digite outro valor</p>
+      <p className="mb-2 mt-4 text-xs font-medium text-muted">
+        Ou digite outro valor
+      </p>
       <div className="grid grid-cols-2 gap-2">
         {valores.map((v, i) => (
           <motion.div
@@ -61,7 +74,9 @@ function TelaValor() {
       >
         <p className="text-xs text-muted">Você vai pagar</p>
         <p className="text-lg font-bold text-foreground">R$ 103,50</p>
-        <p className="mt-1 text-[11px] text-muted">Já inclui a taxa de processamento — a igreja recebe R$ 100,00.</p>
+        <p className="mt-1 text-[11px] text-muted">
+          Já inclui a taxa de processamento — a igreja recebe R$ 100,00.
+        </p>
       </motion.div>
     </PhoneFrame>
   );
@@ -70,14 +85,20 @@ function TelaValor() {
 function TelaPagamento() {
   return (
     <PhoneFrame>
-      <p className="mb-3 text-sm font-bold text-foreground">Confirmar contribuição</p>
+      <p className="mb-3 text-sm font-bold text-foreground">
+        Confirmar contribuição
+      </p>
       <div className="rounded-xl border border-border bg-white px-3 py-2.5">
         <p className="text-xs text-muted">Pix da doação</p>
-        <p className="text-sm font-bold text-foreground">R$ 100,00 direto pra igreja</p>
+        <p className="text-sm font-bold text-foreground">
+          R$ 100,00 direto pra igreja
+        </p>
       </div>
       <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2.5">
         <CreditCard size={16} className="shrink-0 text-primary" />
-        <p className="text-xs text-muted">Taxa cobrada automaticamente no cartão final 4242</p>
+        <p className="text-xs text-muted">
+          Taxa cobrada automaticamente no cartão final 4242
+        </p>
       </div>
       <motion.div
         initial={{ scale: 1 }}
@@ -87,7 +108,9 @@ function TelaPagamento() {
       >
         Confirmar contribuição
       </motion.div>
-      <p className="mt-3 text-center text-[11px] text-muted">Uma confirmação só — o Pix e a taxa acontecem juntos.</p>
+      <p className="mt-3 text-center text-[11px] text-muted">
+        Uma confirmação só — o Pix e a taxa acontecem juntos.
+      </p>
     </PhoneFrame>
   );
 }
@@ -137,12 +160,14 @@ export function FielFlow({ qrDataUrl }: { qrDataUrl: string }) {
   const steps: Step[] = [
     {
       titulo: "O fiel escaneia o QR Code ou abre o link",
-      descricao: "Nenhum aplicativo para baixar — funciona direto do mural, do panfleto ou do WhatsApp.",
+      descricao:
+        "Nenhum aplicativo para baixar — funciona direto do mural, do panfleto ou do WhatsApp.",
       render: () => <TelaEscanear qrDataUrl={qrDataUrl} />,
     },
     {
       titulo: "Escolhe a finalidade e o valor",
-      descricao: "O total já aparece com a taxa incluída, antes de confirmar — sem cálculo escondido.",
+      descricao:
+        "O total já aparece com a taxa incluída, antes de confirmar — sem cálculo escondido.",
       render: () => <TelaValor />,
     },
     {
@@ -153,7 +178,8 @@ export function FielFlow({ qrDataUrl }: { qrDataUrl: string }) {
     },
     {
       titulo: "Recebe o comprovante na hora",
-      descricao: "Com o valor que foi pra igreja e a taxa que o fiel pagou, bem separados.",
+      descricao:
+        "Com o valor que foi pra igreja e a taxa que o fiel pagou, bem separados.",
       render: () => <TelaComprovante />,
     },
   ];

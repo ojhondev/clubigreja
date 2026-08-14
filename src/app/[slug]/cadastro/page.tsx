@@ -5,7 +5,11 @@ import { Card } from "@/components/ui";
 import { Logo } from "@/components/logo";
 import { FormCadastroFiel } from "@/app/cadastrar-fiel/form";
 
-export default async function CadastroFielEscopadoPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CadastroFielEscopadoPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const igreja = await getIgrejaPorSlug(slug);
   if (!igreja || igreja.statusOnboarding !== "aprovado") notFound();
@@ -17,7 +21,9 @@ export default async function CadastroFielEscopadoPage({ params }: { params: Pro
           <Logo height={40} />
         </div>
         <h1 className="text-xl font-bold">Crie sua conta de fiel</h1>
-        <p className="mt-1 text-muted">Acompanhe o mural e contribua com sua igreja em segundos.</p>
+        <p className="mt-1 text-muted">
+          Acompanhe o mural e contribua com sua igreja em segundos.
+        </p>
       </div>
 
       <Card className="overflow-visible">

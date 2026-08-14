@@ -16,6 +16,11 @@ export async function criarLink(formData: FormData) {
 
   if (!titulo) return;
 
-  await criarLinkPagamento({ igrejaId: sessao.igrejaId, titulo, tipo, valorSugerido });
+  await criarLinkPagamento({
+    igrejaId: sessao.igrejaId,
+    titulo,
+    tipo,
+    valorSugerido,
+  });
   revalidatePath("/igreja/links");
 }

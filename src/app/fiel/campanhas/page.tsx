@@ -6,9 +6,14 @@ import { Badge, Button, Card, PageHeader, ProgressBar } from "@/components/ui";
 
 export default async function CampanhasFielPage() {
   const sessao = await getSessao();
-  const campanhasAtivas = (await getCampanhasDaIgreja(sessao!.igrejaId!)).filter((c) => !c.encerrada);
+  const campanhasAtivas = (
+    await getCampanhasDaIgreja(sessao!.igrejaId!)
+  ).filter((c) => !c.encerrada);
   const campanhas = await Promise.all(
-    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+    campanhasAtivas.map(async (c) => ({
+      ...c,
+      arrecadado: await getArrecadadoCampanha(c.id),
+    })),
   );
 
   return (
@@ -28,7 +33,8 @@ export default async function CampanhasFielPage() {
               <p className="mb-3 text-sm text-muted">{c.descricao}</p>
               <ProgressBar percentual={pct} />
               <p className="mt-2 mb-4 text-sm text-muted">
-                {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} ({pct.toFixed(0)}%)
+                {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} (
+                {pct.toFixed(0)}%)
               </p>
               <Link href={`/fiel/doar?campanhaId=${c.id}`}>
                 <Button className="w-full">Contribuir com esta campanha</Button>
@@ -36,7 +42,9 @@ export default async function CampanhasFielPage() {
             </Card>
           );
         })}
-        {campanhas.length === 0 && <p className="text-muted">Nenhuma campanha em captação no momento.</p>}
+        {campanhas.length === 0 && (
+          <p className="text-muted">Nenhuma campanha em captação no momento.</p>
+        )}
       </div>
     </div>
   );

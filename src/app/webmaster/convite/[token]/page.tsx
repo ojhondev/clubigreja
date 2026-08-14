@@ -4,7 +4,11 @@ import { Logo } from "@/components/logo";
 import { getConviteWebmasterPorToken } from "@/lib/db/repo";
 import { FormAceitarConvite } from "./form";
 
-export default async function ConviteWebmasterPage({ params }: { params: Promise<{ token: string }> }) {
+export default async function ConviteWebmasterPage({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
   const { token } = await params;
   const convite = await getConviteWebmasterPorToken(token);
 
@@ -15,7 +19,9 @@ export default async function ConviteWebmasterPage({ params }: { params: Promise
           <Logo height={40} />
         </div>
         <h1 className="text-xl font-bold">Convite inválido ou expirado</h1>
-        <p className="mt-2 text-muted">Peça um novo convite ao Master Primário.</p>
+        <p className="mt-2 text-muted">
+          Peça um novo convite ao Master Primário.
+        </p>
       </div>
     );
   }
@@ -28,7 +34,8 @@ export default async function ConviteWebmasterPage({ params }: { params: Promise
         </div>
         <h1 className="text-xl font-bold">Bem-vindo(a), {convite.nome}</h1>
         <p className="mt-1 text-sm text-muted">
-          Você foi convidado(a) como Master Secundário. Defina sua senha para ativar a conta ({convite.email}).
+          Você foi convidado(a) como Master Secundário. Defina sua senha para
+          ativar a conta ({convite.email}).
         </p>
       </div>
 

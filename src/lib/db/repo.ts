@@ -67,10 +67,15 @@ const COLUNAS_USUARIO_IGREJA = {
 
 // Junta cada linha de igreja com os próprios linksExtras — numa query só,
 // mesmo pra várias igrejas de uma vez, pra nunca cair em N+1.
-async function hidratarIgrejas(rows: (typeof schema.igrejas.$inferSelect)[]): Promise<Igreja[]> {
+async function hidratarIgrejas(
+  rows: (typeof schema.igrejas.$inferSelect)[],
+): Promise<Igreja[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((r) => r.id);
-  const links = await db.select().from(schema.linksExtras).where(sql`${schema.linksExtras.igrejaId} in ${ids}`);
+  const links = await db
+    .select()
+    .from(schema.linksExtras)
+    .where(sql`${schema.linksExtras.igrejaId} in ${ids}`);
   return rows.map((row) => ({
     id: row.id,
     slug: row.slug,
@@ -95,23 +100,35 @@ async function hidratarIgrejas(rows: (typeof schema.igrejas.$inferSelect)[]): Pr
 // --- Helpers de leitura ---
 
 export async function getIgreja(igrejaId: string): Promise<Igreja | undefined> {
-  const [row] = await db.select().from(schema.igrejas).where(eq(schema.igrejas.id, igrejaId));
+  const [row] = await db
+    .select()
+    .from(schema.igrejas)
+    .where(eq(schema.igrejas.id, igrejaId));
   if (!row) return undefined;
   return (await hidratarIgrejas([row]))[0];
 }
 
 export async function getFiel(fielId: string): Promise<Fiel | undefined> {
-  const [row] = await db.select().from(schema.fieis).where(eq(schema.fieis.id, fielId));
+  const [row] = await db
+    .select()
+    .from(schema.fieis)
+    .where(eq(schema.fieis.id, fielId));
   return row ? rowParaFiel(row) : undefined;
 }
 
 export async function getFieisDaIgreja(igrejaId: string): Promise<Fiel[]> {
-  const rows = await db.select().from(schema.fieis).where(eq(schema.fieis.igrejaId, igrejaId));
+  const rows = await db
+    .select()
+    .from(schema.fieis)
+    .where(eq(schema.fieis.igrejaId, igrejaId));
   return rows.map(rowParaFiel);
 }
 
 export async function getIgrejasAprovadas(): Promise<Igreja[]> {
-  const rows = await db.select().from(schema.igrejas).where(eq(schema.igrejas.statusOnboarding, "aprovado"));
+  const rows = await db
+    .select()
+    .from(schema.igrejas)
+    .where(eq(schema.igrejas.statusOnboarding, "aprovado"));
   return hidratarIgrejas(rows);
 }
 
@@ -131,7 +148,9 @@ export async function getTodosUsuariosIgreja(): Promise<UsuarioIgreja[]> {
   return db.select(COLUNAS_USUARIO_IGREJA).from(schema.usuariosIgreja);
 }
 
-export async function getUsuarioIgrejaPorId(usuarioId: string): Promise<UsuarioIgreja | undefined> {
+export async function getUsuarioIgrejaPorId(
+  usuarioId: string,
+): Promise<UsuarioIgreja | undefined> {
   const [row] = await db
     .select(COLUNAS_USUARIO_IGREJA)
     .from(schema.usuariosIgreja)
@@ -139,20 +158,33 @@ export async function getUsuarioIgrejaPorId(usuarioId: string): Promise<UsuarioI
   return row;
 }
 
-export async function getLinkPagamento(linkId: string): Promise<LinkPagamento | undefined> {
-  const [row] = await db.select().from(schema.linksPagamento).where(eq(schema.linksPagamento.id, linkId));
+export async function getLinkPagamento(
+  linkId: string,
+): Promise<LinkPagamento | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.linksPagamento)
+    .where(eq(schema.linksPagamento.id, linkId));
   return row;
 }
 
-export async function getIgrejaPorSlug(slug: string): Promise<Igreja | undefined> {
-  const [row] = await db.select().from(schema.igrejas).where(eq(schema.igrejas.slug, slug));
+export async function getIgrejaPorSlug(
+  slug: string,
+): Promise<Igreja | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.igrejas)
+    .where(eq(schema.igrejas.slug, slug));
   if (!row) return undefined;
   return (await hidratarIgrejas([row]))[0];
 }
 
 // Busca leve por nome — usada no cadastro de fiel quando ele não chega por
 // um link/QR code específico da igreja.
-export async function buscarIgrejasAprovadas(consulta: string, limite = 8): Promise<Igreja[]> {
+export async function buscarIgrejasAprovadas(
+  consulta: string,
+  limite = 8,
+): Promise<Igreja[]> {
   const termo = consulta.trim().toLowerCase();
   if (!termo) return [];
   const padrao = `%${termo}%`;
@@ -162,8 +194,11 @@ export async function buscarIgrejasAprovadas(consulta: string, limite = 8): Prom
     .where(
       and(
         eq(schema.igrejas.statusOnboarding, "aprovado"),
-        or(sql`lower(${schema.igrejas.nome}) like ${padrao}`, sql`lower(${schema.igrejas.cidade}) like ${padrao}`)
-      )
+        or(
+          sql`lower(${schema.igrejas.nome}) like ${padrao}`,
+          sql`lower(${schema.igrejas.cidade}) like ${padrao}`,
+        ),
+      ),
     )
     .limit(limite);
   return hidratarIgrejas(rows);
@@ -171,7 +206,9 @@ export async function buscarIgrejasAprovadas(consulta: string, limite = 8): Prom
 
 // Login do fiel é por telefone — tabela ainda pequena o bastante pra
 // normalizar em memória; numa base grande isso viraria uma coluna indexada.
-export async function getFielPorTelefone(telefone: string): Promise<Fiel | undefined> {
+export async function getFielPorTelefone(
+  telefone: string,
+): Promise<Fiel | undefined> {
   const alvo = normalizarTelefone(telefone);
   if (!alvo) return undefined;
   const rows = await db.select().from(schema.fieis);
@@ -181,21 +218,37 @@ export async function getFielPorTelefone(telefone: string): Promise<Fiel | undef
 
 // Doação via link avulso não exige cadastro prévio — criamos um registro
 // leve de fiel "convidado" para manter o histórico consistente.
-export async function criarFielConvidado(igrejaId: string, nome: string): Promise<Fiel> {
+export async function criarFielConvidado(
+  igrejaId: string,
+  nome: string,
+): Promise<Fiel> {
   const [row] = await db
     .insert(schema.fieis)
-    .values({ id: gerarId("fiel-convidado"), igrejaId, nome: nome || "Doador", telefone: "—", criadoEm: hoje() })
+    .values({
+      id: gerarId("fiel-convidado"),
+      igrejaId,
+      nome: nome || "Doador",
+      telefone: "—",
+      criadoEm: hoje(),
+    })
     .returning();
   return rowParaFiel(row);
 }
 
-export async function getLinksDaIgreja(igrejaId: string): Promise<LinkPagamento[]> {
-  return db.select().from(schema.linksPagamento).where(eq(schema.linksPagamento.igrejaId, igrejaId));
+export async function getLinksDaIgreja(
+  igrejaId: string,
+): Promise<LinkPagamento[]> {
+  return db
+    .select()
+    .from(schema.linksPagamento)
+    .where(eq(schema.linksPagamento.igrejaId, igrejaId));
 }
 
 // Mais nova primeiro — a campanha recém-criada é a que deve aparecer em
 // destaque, tanto pra igreja gerenciar quanto pro fiel ver.
-export async function getCampanhasDaIgreja(igrejaId: string): Promise<Campanha[]> {
+export async function getCampanhasDaIgreja(
+  igrejaId: string,
+): Promise<Campanha[]> {
   return db
     .select()
     .from(schema.campanhas)
@@ -203,13 +256,21 @@ export async function getCampanhasDaIgreja(igrejaId: string): Promise<Campanha[]
     .orderBy(desc(schema.campanhas.criadaEm));
 }
 
-export async function getCampanha(campanhaId: string): Promise<Campanha | undefined> {
-  const [row] = await db.select().from(schema.campanhas).where(eq(schema.campanhas.id, campanhaId));
+export async function getCampanha(
+  campanhaId: string,
+): Promise<Campanha | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.campanhas)
+    .where(eq(schema.campanhas.id, campanhaId));
   return row;
 }
 
 export async function getEventosDaIgreja(igrejaId: string): Promise<Evento[]> {
-  return db.select().from(schema.eventos).where(eq(schema.eventos.igrejaId, igrejaId));
+  return db
+    .select()
+    .from(schema.eventos)
+    .where(eq(schema.eventos.igrejaId, igrejaId));
 }
 
 export async function criarComunicado(input: {
@@ -232,7 +293,9 @@ export async function criarComunicado(input: {
   return row;
 }
 
-export async function getMuralDaIgreja(igrejaId: string): Promise<ComunicadoMural[]> {
+export async function getMuralDaIgreja(
+  igrejaId: string,
+): Promise<ComunicadoMural[]> {
   return db
     .select()
     .from(schema.comunicadosMural)
@@ -240,16 +303,28 @@ export async function getMuralDaIgreja(igrejaId: string): Promise<ComunicadoMura
     .orderBy(desc(schema.comunicadosMural.publicadoEm));
 }
 
-export async function getContribuicoesDaIgreja(igrejaId: string): Promise<Contribuicao[]> {
-  return db.select().from(schema.contribuicoes).where(eq(schema.contribuicoes.igrejaId, igrejaId));
+export async function getContribuicoesDaIgreja(
+  igrejaId: string,
+): Promise<Contribuicao[]> {
+  return db
+    .select()
+    .from(schema.contribuicoes)
+    .where(eq(schema.contribuicoes.igrejaId, igrejaId));
 }
 
-export async function getContribuicao(contribuicaoId: string): Promise<Contribuicao | undefined> {
-  const [row] = await db.select().from(schema.contribuicoes).where(eq(schema.contribuicoes.id, contribuicaoId));
+export async function getContribuicao(
+  contribuicaoId: string,
+): Promise<Contribuicao | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.contribuicoes)
+    .where(eq(schema.contribuicoes.id, contribuicaoId));
   return row;
 }
 
-export async function getContribuicoesDoFiel(fielId: string): Promise<Contribuicao[]> {
+export async function getContribuicoesDoFiel(
+  fielId: string,
+): Promise<Contribuicao[]> {
   return db
     .select()
     .from(schema.contribuicoes)
@@ -259,22 +334,33 @@ export async function getContribuicoesDoFiel(fielId: string): Promise<Contribuic
 
 // Só conta Pix já confirmado pelo fiel — enquanto ele não volta pra confirmar
 // que pagou, esse valor ainda não foi de fato recebido pela igreja.
-export async function getArrecadadoCampanha(campanhaId: string): Promise<number> {
+export async function getArrecadadoCampanha(
+  campanhaId: string,
+): Promise<number> {
   const rows = await db
     .select({ valorBruto: schema.contribuicoes.valorBruto })
     .from(schema.contribuicoes)
-    .where(and(eq(schema.contribuicoes.campanhaId, campanhaId), eq(schema.contribuicoes.status, "confirmado")));
+    .where(
+      and(
+        eq(schema.contribuicoes.campanhaId, campanhaId),
+        eq(schema.contribuicoes.status, "confirmado"),
+      ),
+    );
   return rows.reduce((soma, r) => soma + r.valorBruto, 0);
 }
 
-export async function getUsuariosDaIgreja(igrejaId: string): Promise<UsuarioIgreja[]> {
+export async function getUsuariosDaIgreja(
+  igrejaId: string,
+): Promise<UsuarioIgreja[]> {
   return db
     .select(COLUNAS_USUARIO_IGREJA)
     .from(schema.usuariosIgreja)
     .where(eq(schema.usuariosIgreja.igrejaId, igrejaId));
 }
 
-export async function getUsuarioIgrejaPorEmail(email: string): Promise<UsuarioIgreja | undefined> {
+export async function getUsuarioIgrejaPorEmail(
+  email: string,
+): Promise<UsuarioIgreja | undefined> {
   const alvo = email.trim().toLowerCase();
   const [row] = await db
     .select(COLUNAS_USUARIO_IGREJA)
@@ -285,7 +371,10 @@ export async function getUsuarioIgrejaPorEmail(email: string): Promise<UsuarioIg
 
 // Confere e-mail + senha. Só essa função (e o cadastro) toca em senha_hash —
 // todo o resto do app usa os getters acima, que nunca selecionam a coluna.
-export async function autenticarIgreja(email: string, senha: string): Promise<UsuarioIgreja | null> {
+export async function autenticarIgreja(
+  email: string,
+  senha: string,
+): Promise<UsuarioIgreja | null> {
   const alvo = email.trim().toLowerCase();
   const [row] = await db
     .select()
@@ -296,11 +385,20 @@ export async function autenticarIgreja(email: string, senha: string): Promise<Us
   const ok = await verificarSenha(senha, row.senhaHash);
   if (!ok) return null;
 
-  return { id: row.id, igrejaId: row.igrejaId, nome: row.nome, email: row.email, papel: row.papel };
+  return {
+    id: row.id,
+    igrejaId: row.igrejaId,
+    nome: row.nome,
+    email: row.email,
+    papel: row.papel,
+  };
 }
 
 // Idem para o fiel, por telefone — mesmo esquema "salt:hash" via scrypt.
-export async function autenticarFiel(telefone: string, senha: string): Promise<Fiel | null> {
+export async function autenticarFiel(
+  telefone: string,
+  senha: string,
+): Promise<Fiel | null> {
   const alvo = normalizarTelefone(telefone);
   if (!alvo) return null;
   const rows = await db.select().from(schema.fieis);
@@ -313,7 +411,9 @@ export async function autenticarFiel(telefone: string, senha: string): Promise<F
   return rowParaFiel(row);
 }
 
-export async function getNotificacoesDoFiel(fielId: string): Promise<NotificacaoFiel[]> {
+export async function getNotificacoesDoFiel(
+  fielId: string,
+): Promise<NotificacaoFiel[]> {
   return db
     .select()
     .from(schema.notificacoesFiel)
@@ -361,7 +461,9 @@ export async function iniciarContribuicao(input: {
 // Passo 2: o fiel confirma que já pagou o Pix pra chave da igreja. É esse
 // clique — não um webhook bancário — que dispara a cobrança da taxa de
 // processamento no cartão salvo (ou como Pix separado, se não tiver cartão).
-export async function confirmarContribuicao(contribuicaoId: string): Promise<Contribuicao | undefined> {
+export async function confirmarContribuicao(
+  contribuicaoId: string,
+): Promise<Contribuicao | undefined> {
   const [row] = await db
     .update(schema.contribuicoes)
     .set({ status: "confirmado" })
@@ -370,7 +472,10 @@ export async function confirmarContribuicao(contribuicaoId: string): Promise<Con
   return row;
 }
 
-export async function salvarCartaoFiel(fielId: string, cartao: CartaoSalvo): Promise<void> {
+export async function salvarCartaoFiel(
+  fielId: string,
+  cartao: CartaoSalvo,
+): Promise<void> {
   await db
     .update(schema.fieis)
     .set({
@@ -430,7 +535,13 @@ export async function criarCampanha(input: {
 export async function atualizarCampanha(
   campanhaId: string,
   igrejaId: string,
-  input: { titulo: string; descricao: string; meta: number; prazo: string; imagemEmoji: string }
+  input: {
+    titulo: string;
+    descricao: string;
+    meta: number;
+    prazo: string;
+    imagemEmoji: string;
+  },
 ): Promise<Campanha | undefined> {
   const [row] = await db
     .update(schema.campanhas)
@@ -441,7 +552,12 @@ export async function atualizarCampanha(
       prazo: input.prazo,
       imagemEmoji: input.imagemEmoji || "🙏",
     })
-    .where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)))
+    .where(
+      and(
+        eq(schema.campanhas.id, campanhaId),
+        eq(schema.campanhas.igrejaId, igrejaId),
+      ),
+    )
     .returning();
   return row;
 }
@@ -449,19 +565,34 @@ export async function atualizarCampanha(
 export async function alternarEncerramentoCampanha(
   campanhaId: string,
   igrejaId: string,
-  encerrada: boolean
+  encerrada: boolean,
 ): Promise<void> {
   await db
     .update(schema.campanhas)
     .set({ encerrada })
-    .where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)));
+    .where(
+      and(
+        eq(schema.campanhas.id, campanhaId),
+        eq(schema.campanhas.igrejaId, igrejaId),
+      ),
+    );
 }
 
 // Apagar de verdade é seguro no banco (contribuicoes.campanhaId vira NULL via
 // onDelete: "set null" — o histórico de doações não some, só perde o vínculo
 // com a campanha). Ainda assim, escopado à própria igreja.
-export async function removerCampanha(campanhaId: string, igrejaId: string): Promise<void> {
-  await db.delete(schema.campanhas).where(and(eq(schema.campanhas.id, campanhaId), eq(schema.campanhas.igrejaId, igrejaId)));
+export async function removerCampanha(
+  campanhaId: string,
+  igrejaId: string,
+): Promise<void> {
+  await db
+    .delete(schema.campanhas)
+    .where(
+      and(
+        eq(schema.campanhas.id, campanhaId),
+        eq(schema.campanhas.igrejaId, igrejaId),
+      ),
+    );
 }
 
 export async function criarEvento(input: {
@@ -495,7 +626,10 @@ async function gerarSlugUnico(nome: string): Promise<string> {
   let sufixo = 2;
   // eslint-disable-next-line no-constant-condition -- só sai quando encontra um slug livre
   while (true) {
-    const [existe] = await db.select({ id: schema.igrejas.id }).from(schema.igrejas).where(eq(schema.igrejas.slug, slug));
+    const [existe] = await db
+      .select({ id: schema.igrejas.id })
+      .from(schema.igrejas)
+      .where(eq(schema.igrejas.slug, slug));
     if (!existe) return slug;
     slug = `${base}-${sufixo++}`;
   }
@@ -555,8 +689,14 @@ export async function criarUsuarioIgreja(input: {
   return row;
 }
 
-export async function atualizarStatusIgreja(igrejaId: string, status: Igreja["statusOnboarding"]): Promise<void> {
-  await db.update(schema.igrejas).set({ statusOnboarding: status }).where(eq(schema.igrejas.id, igrejaId));
+export async function atualizarStatusIgreja(
+  igrejaId: string,
+  status: Igreja["statusOnboarding"],
+): Promise<void> {
+  await db
+    .update(schema.igrejas)
+    .set({ statusOnboarding: status })
+    .where(eq(schema.igrejas.id, igrejaId));
 }
 
 // Dados cadastrais que a própria igreja pode alterar depois, na área de
@@ -574,7 +714,7 @@ export async function atualizarPerfilIgreja(
     uf: string;
     chavePix: string;
     fotoUrl?: string;
-  }
+  },
 ): Promise<Igreja | undefined> {
   const [row] = await db
     .update(schema.igrejas)
@@ -597,21 +737,34 @@ export async function atualizarPerfilIgreja(
 
 export async function adicionarLinkExtra(
   igrejaId: string,
-  input: { rotulo: string; url: string }
+  input: { rotulo: string; url: string },
 ): Promise<LinkExtra | undefined> {
   const igreja = await getIgreja(igrejaId);
   if (!igreja) return undefined;
   const [row] = await db
     .insert(schema.linksExtras)
-    .values({ id: gerarId("link-extra"), igrejaId, rotulo: input.rotulo, url: input.url })
+    .values({
+      id: gerarId("link-extra"),
+      igrejaId,
+      rotulo: input.rotulo,
+      url: input.url,
+    })
     .returning();
   return { id: row.id, rotulo: row.rotulo, url: row.url };
 }
 
-export async function removerLinkExtra(igrejaId: string, linkExtraId: string): Promise<void> {
+export async function removerLinkExtra(
+  igrejaId: string,
+  linkExtraId: string,
+): Promise<void> {
   await db
     .delete(schema.linksExtras)
-    .where(and(eq(schema.linksExtras.id, linkExtraId), eq(schema.linksExtras.igrejaId, igrejaId)));
+    .where(
+      and(
+        eq(schema.linksExtras.id, linkExtraId),
+        eq(schema.linksExtras.igrejaId, igrejaId),
+      ),
+    );
 }
 
 export async function criarFiel(input: {
@@ -660,7 +813,7 @@ export async function criarNotificacao(input: {
 
 export async function notificarFieisDaIgreja(
   igrejaId: string,
-  input: { tipo: NotificacaoFiel["tipo"]; titulo: string; corpo: string }
+  input: { tipo: NotificacaoFiel["tipo"]; titulo: string; corpo: string },
 ): Promise<void> {
   const fieisDaIgreja = await getFieisDaIgreja(igrejaId);
   if (fieisDaIgreja.length === 0) return;
@@ -674,17 +827,24 @@ export async function notificarFieisDaIgreja(
       corpo: input.corpo,
       lida: false,
       criadaEm: hoje(),
-    }))
+    })),
   );
 }
 
-export async function marcarNotificacaoLida(notificacaoId: string): Promise<void> {
-  await db.update(schema.notificacoesFiel).set({ lida: true }).where(eq(schema.notificacoesFiel.id, notificacaoId));
+export async function marcarNotificacaoLida(
+  notificacaoId: string,
+): Promise<void> {
+  await db
+    .update(schema.notificacoesFiel)
+    .set({ lida: true })
+    .where(eq(schema.notificacoesFiel.id, notificacaoId));
 }
 
 // --- Equipe interna (WebMaster) ---------------------------------------
 
-function rowParaWebmaster(row: typeof schema.webmasters.$inferSelect): Webmaster {
+function rowParaWebmaster(
+  row: typeof schema.webmasters.$inferSelect,
+): Webmaster {
   return {
     id: row.id,
     nome: row.nome,
@@ -703,14 +863,21 @@ function gerarTokenConvite(): string {
 }
 
 export async function existeWebmaster(): Promise<boolean> {
-  const [row] = await db.select({ id: schema.webmasters.id }).from(schema.webmasters).limit(1);
+  const [row] = await db
+    .select({ id: schema.webmasters.id })
+    .from(schema.webmasters)
+    .limit(1);
   return !!row;
 }
 
 // Bootstrap: cria o Master Primário — só funciona a primeira vez (nenhum
 // webmaster ainda cadastrado). Depois disso, novas contas só entram por
 // convite do Master Primário.
-export async function criarWebmasterPrimario(input: { nome: string; email: string; senha: string }): Promise<Webmaster | null> {
+export async function criarWebmasterPrimario(input: {
+  nome: string;
+  email: string;
+  senha: string;
+}): Promise<Webmaster | null> {
   if (await existeWebmaster()) return null;
   const senhaHash = await hashSenha(input.senha);
   const [row] = await db
@@ -767,8 +934,13 @@ export async function gerarConviteWebmaster(input: {
   };
 }
 
-export async function getConviteWebmasterPorToken(token: string): Promise<ConviteWebmaster | undefined> {
-  const [row] = await db.select().from(schema.webmasters).where(eq(schema.webmasters.conviteToken, token));
+export async function getConviteWebmasterPorToken(
+  token: string,
+): Promise<ConviteWebmaster | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.webmasters)
+    .where(eq(schema.webmasters.conviteToken, token));
   if (!row || !row.conviteToken || !row.conviteExpiraEm) return undefined;
   if (new Date(row.conviteExpiraEm).getTime() < Date.now()) return undefined;
   return {
@@ -783,7 +955,10 @@ export async function getConviteWebmasterPorToken(token: string): Promise<Convit
   };
 }
 
-export async function aceitarConviteWebmaster(token: string, senha: string): Promise<Webmaster | null> {
+export async function aceitarConviteWebmaster(
+  token: string,
+  senha: string,
+): Promise<Webmaster | null> {
   const convite = await getConviteWebmasterPorToken(token);
   if (!convite) return null;
   const senhaHash = await hashSenha(senha);
@@ -795,22 +970,38 @@ export async function aceitarConviteWebmaster(token: string, senha: string): Pro
   return rowParaWebmaster(row);
 }
 
-export async function autenticarWebmaster(email: string, senha: string): Promise<Webmaster | null> {
+export async function autenticarWebmaster(
+  email: string,
+  senha: string,
+): Promise<Webmaster | null> {
   const alvo = email.trim().toLowerCase();
-  const [row] = await db.select().from(schema.webmasters).where(sql`lower(${schema.webmasters.email}) = ${alvo}`);
+  const [row] = await db
+    .select()
+    .from(schema.webmasters)
+    .where(sql`lower(${schema.webmasters.email}) = ${alvo}`);
   if (!row || !row.senhaHash) return null;
   const ok = await verificarSenha(senha, row.senhaHash);
   if (!ok) return null;
   return rowParaWebmaster(row);
 }
 
-export async function getWebmasterPorId(id: string): Promise<Webmaster | undefined> {
-  const [row] = await db.select().from(schema.webmasters).where(eq(schema.webmasters.id, id));
+export async function getWebmasterPorId(
+  id: string,
+): Promise<Webmaster | undefined> {
+  const [row] = await db
+    .select()
+    .from(schema.webmasters)
+    .where(eq(schema.webmasters.id, id));
   return row ? rowParaWebmaster(row) : undefined;
 }
 
-export async function getTodosMembrosWebmaster(): Promise<MembroWebmasterListagem[]> {
-  const rows = await db.select().from(schema.webmasters).orderBy(schema.webmasters.criadoEm);
+export async function getTodosMembrosWebmaster(): Promise<
+  MembroWebmasterListagem[]
+> {
+  const rows = await db
+    .select()
+    .from(schema.webmasters)
+    .orderBy(schema.webmasters.criadoEm);
   return rows.map((row) => ({
     id: row.id,
     nome: row.nome,
@@ -828,7 +1019,7 @@ export async function getTodosMembrosWebmaster(): Promise<MembroWebmasterListage
 // só pra ajustar as permissões de um secundário.
 export async function atualizarPermissoesWebmaster(
   id: string,
-  input: { podeGerenciarPagamentos: boolean; podeAprovarIgrejas: boolean }
+  input: { podeGerenciarPagamentos: boolean; podeAprovarIgrejas: boolean },
 ): Promise<void> {
   await db
     .update(schema.webmasters)
@@ -836,12 +1027,23 @@ export async function atualizarPermissoesWebmaster(
       podeGerenciarPagamentos: input.podeGerenciarPagamentos,
       podeAprovarIgrejas: input.podeAprovarIgrejas,
     })
-    .where(and(eq(schema.webmasters.id, id), eq(schema.webmasters.nivel, "secundario")));
+    .where(
+      and(
+        eq(schema.webmasters.id, id),
+        eq(schema.webmasters.nivel, "secundario"),
+      ),
+    );
 }
 
 // Ação sensível gatilhada pela permissão podeGerenciarPagamentos — permite à
 // equipe interna corrigir a chave Pix de uma igreja (ex.: suporte a pedido
 // da própria igreja), sem que a igreja precise ter acesso ao próprio painel.
-export async function atualizarChavePixIgreja(igrejaId: string, chavePix: string): Promise<void> {
-  await db.update(schema.igrejas).set({ chavePix }).where(eq(schema.igrejas.id, igrejaId));
+export async function atualizarChavePixIgreja(
+  igrejaId: string,
+  chavePix: string,
+): Promise<void> {
+  await db
+    .update(schema.igrejas)
+    .set({ chavePix })
+    .where(eq(schema.igrejas.id, igrejaId));
 }

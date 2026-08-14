@@ -22,7 +22,10 @@ export default async function NotificacoesPage() {
         {notificacoes.map((n) => {
           const Icone = ICONE_TIPO[n.tipo] ?? Bell;
           return (
-            <Card key={n.id} className={`flex gap-3 ${n.lida ? "opacity-60" : ""}`}>
+            <Card
+              key={n.id}
+              className={`flex gap-3 ${n.lida ? "opacity-60" : ""}`}
+            >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF6FF] text-primary">
                 <Icone size={18} />
               </span>
@@ -33,11 +36,16 @@ export default async function NotificacoesPage() {
                 </div>
                 <p className="text-sm text-muted">{n.corpo}</p>
                 <div className="mt-2 flex items-center justify-between">
-                  <p className="text-xs text-muted">{formatarData(n.criadaEm)}</p>
+                  <p className="text-xs text-muted">
+                    {formatarData(n.criadaEm)}
+                  </p>
                   {!n.lida && (
                     <form action={marcarLidaAction}>
                       <input type="hidden" name="notificacaoId" value={n.id} />
-                      <button type="submit" className="text-xs font-bold text-primary">
+                      <button
+                        type="submit"
+                        className="text-xs font-bold text-primary"
+                      >
                         Marcar como lida
                       </button>
                     </form>
@@ -47,7 +55,9 @@ export default async function NotificacoesPage() {
             </Card>
           );
         })}
-        {notificacoes.length === 0 && <p className="text-muted">Nenhuma notificação por enquanto.</p>}
+        {notificacoes.length === 0 && (
+          <p className="text-muted">Nenhuma notificação por enquanto.</p>
+        )}
       </div>
     </div>
   );

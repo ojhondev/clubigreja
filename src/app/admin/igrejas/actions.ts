@@ -3,8 +3,16 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { iniciarAcessoComo } from "@/lib/auth/session";
-import { podeAprovarIgrejas, podeGerenciarPagamentos, webmasterDaSessao } from "@/lib/auth/permissoes";
-import { atualizarStatusIgreja, atualizarChavePixIgreja, getUsuariosDaIgreja } from "@/lib/db/repo";
+import {
+  podeAprovarIgrejas,
+  podeGerenciarPagamentos,
+  webmasterDaSessao,
+} from "@/lib/auth/permissoes";
+import {
+  atualizarStatusIgreja,
+  atualizarChavePixIgreja,
+  getUsuariosDaIgreja,
+} from "@/lib/db/repo";
 
 export async function aprovarIgrejaAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
@@ -51,7 +59,7 @@ export async function acessarComoIgrejaAction(formData: FormData) {
 
   await iniciarAcessoComo(
     { papel: "igreja", usuarioId: usuario.id, igrejaId, nome: usuario.nome },
-    { webmasterId: webmaster.id, webmasterNome: webmaster.nome }
+    { webmasterId: webmaster.id, webmasterNome: webmaster.nome },
   );
   redirect("/igreja/dashboard");
 }

@@ -13,16 +13,36 @@ export interface LinhaExportavel {
 }
 
 function paraCsv(linhas: LinhaExportavel[]): string {
-  const cabecalho = ["Data", "Fiel", "Finalidade", "Valor recebido pela igreja", "Taxa paga pelo fiel", "Total pago pelo fiel"];
+  const cabecalho = [
+    "Data",
+    "Fiel",
+    "Finalidade",
+    "Valor recebido pela igreja",
+    "Taxa paga pelo fiel",
+    "Total pago pelo fiel",
+  ];
   const corpo = linhas.map((l) =>
-    [l.data, l.fiel, l.finalidade, l.valorIgreja.toFixed(2), l.taxaFiel.toFixed(2), l.totalPagoFiel.toFixed(2)]
+    [
+      l.data,
+      l.fiel,
+      l.finalidade,
+      l.valorIgreja.toFixed(2),
+      l.taxaFiel.toFixed(2),
+      l.totalPagoFiel.toFixed(2),
+    ]
       .map((campo) => `"${String(campo).replace(/"/g, '""')}"`)
-      .join(";")
+      .join(";"),
   );
   return ["﻿" + cabecalho.join(";"), ...corpo].join("\r\n");
 }
 
-export function ExportarCsvButton({ linhas, nomeArquivo }: { linhas: LinhaExportavel[]; nomeArquivo: string }) {
+export function ExportarCsvButton({
+  linhas,
+  nomeArquivo,
+}: {
+  linhas: LinhaExportavel[];
+  nomeArquivo: string;
+}) {
   function exportar() {
     const csv = paraCsv(linhas);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });

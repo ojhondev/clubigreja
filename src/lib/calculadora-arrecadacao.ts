@@ -16,9 +16,14 @@ export interface ProjecaoArrecadacao {
   aumentoAnual: number;
 }
 
-export function calcularProjecaoArrecadacao(dizimistas: number, valorMedio: number): ProjecaoArrecadacao {
+export function calcularProjecaoArrecadacao(
+  dizimistas: number,
+  valorMedio: number,
+): ProjecaoArrecadacao {
   const arrecadacaoAtual = dizimistas * valorMedio;
-  const projecaoComClub = Math.round(arrecadacaoAtual * (1 + AUMENTO_PERCENTUAL));
+  const projecaoComClub = Math.round(
+    arrecadacaoAtual * (1 + AUMENTO_PERCENTUAL),
+  );
   const aumentoMensal = projecaoComClub - arrecadacaoAtual;
   const aumentoAnual = aumentoMensal * 12;
 

@@ -5,12 +5,18 @@ import { generateKeyPairSync } from "node:crypto";
 // suficiente para exercitar o fluxo real de inscrição em push do navegador.
 // Em produção, gere um par fixo (`web-push generate-vapid-keys`) e leve as
 // chaves via variável de ambiente, para que as inscrições sobrevivam a um redeploy.
-let cache: { publicKeyBase64Url: string; publicKeyJwk: JsonWebKey; privateKeyJwk: JsonWebKey } | null = null;
+let cache: {
+  publicKeyBase64Url: string;
+  publicKeyJwk: JsonWebKey;
+  privateKeyJwk: JsonWebKey;
+} | null = null;
 
 export function getVapidKeys() {
   if (cache) return cache;
 
-  const { publicKey, privateKey } = generateKeyPairSync("ec", { namedCurve: "prime256v1" });
+  const { publicKey, privateKey } = generateKeyPairSync("ec", {
+    namedCurve: "prime256v1",
+  });
   const publicKeyJwk = publicKey.export({ format: "jwk" }) as JsonWebKey;
   const privateKeyJwk = privateKey.export({ format: "jwk" }) as JsonWebKey;
 

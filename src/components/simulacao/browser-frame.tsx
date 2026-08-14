@@ -11,7 +11,9 @@ export function BrowserFrame({ children }: { children: ReactNode }) {
           app.dclubigreja.com/igreja/dashboard
         </span>
       </div>
-      <div className="h-[340px] overflow-hidden bg-[#F7FAFF] p-4">{children}</div>
+      <div className="h-[340px] overflow-hidden bg-[#F7FAFF] p-4">
+        {children}
+      </div>
     </div>
   );
 }

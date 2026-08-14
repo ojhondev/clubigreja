@@ -11,7 +11,9 @@ export default function CadastrarFielPage() {
           <Logo height={40} />
         </div>
         <h1 className="text-xl font-bold">Crie sua conta de fiel</h1>
-        <p className="mt-1 text-muted">Acompanhe o mural e contribua com sua igreja em segundos.</p>
+        <p className="mt-1 text-muted">
+          Acompanhe o mural e contribua com sua igreja em segundos.
+        </p>
       </div>
 
       <Card className="overflow-visible">

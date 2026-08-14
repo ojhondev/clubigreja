@@ -27,7 +27,9 @@ export async function iniciarDoacaoAction(formData: FormData) {
     campanhaId,
     valorBruto,
     novoCartao:
-      cartaoNumero && cartaoNome ? { numero: String(cartaoNumero), nome: String(cartaoNome) } : undefined,
+      cartaoNumero && cartaoNome
+        ? { numero: String(cartaoNumero), nome: String(cartaoNome) }
+        : undefined,
   });
 
   redirect(`/fiel/doar/pagar/${dados.contribuicaoId}`);

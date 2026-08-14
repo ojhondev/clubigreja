@@ -28,7 +28,9 @@ export default async function LinksPagamentoPage() {
       <Card className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-bold">Página pública da sua igreja</p>
-          <code className="break-all text-sm text-muted">dclubigreja.com/{igreja.slug}</code>
+          <code className="break-all text-sm text-muted">
+            dclubigreja.com/{igreja.slug}
+          </code>
         </div>
         <Link href={`/${igreja.slug}`} target="_blank">
           <Button variant="secondary" className="w-full sm:w-auto">
@@ -41,7 +43,9 @@ export default async function LinksPagamentoPage() {
         <h2 className="mb-4 font-bold">Criar novo link</h2>
         <form action={criarLink} className="grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1 sm:col-span-2">
-            <span className="text-sm font-medium text-muted">Título do link</span>
+            <span className="text-sm font-medium text-muted">
+              Título do link
+            </span>
             <input
               name="titulo"
               required
@@ -51,14 +55,19 @@ export default async function LinksPagamentoPage() {
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium text-muted">Finalidade</span>
-            <select name="tipo" className="rounded-xl border border-border px-4 py-3">
+            <select
+              name="tipo"
+              className="rounded-xl border border-border px-4 py-3"
+            >
               <option value="dizimo">Dízimo</option>
               <option value="oferta">Oferta</option>
               <option value="livre">Valor livre / outra finalidade</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-muted">Valor sugerido (opcional)</span>
+            <span className="text-sm font-medium text-muted">
+              Valor sugerido (opcional)
+            </span>
             <input
               name="valorSugerido"
               type="number"
@@ -77,14 +86,19 @@ export default async function LinksPagamentoPage() {
       <h2 className="mb-4 text-lg font-bold">Seus links</h2>
       <div className="space-y-3">
         {links.map((l) => (
-          <Card key={l.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Card
+            key={l.id}
+            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+          >
             <div>
               <div className="mb-1 flex items-center gap-2">
                 <p className="font-bold">{l.titulo}</p>
                 <Badge>{ROTULO_TIPO[l.tipo]}</Badge>
                 {!l.ativo && <Badge tone="warning">Inativo</Badge>}
               </div>
-              <code className="break-all text-sm text-muted">dclubigreja.com/doar/link/{l.id}</code>
+              <code className="break-all text-sm text-muted">
+                dclubigreja.com/doar/link/{l.id}
+              </code>
             </div>
             <Link href={`/igreja/links/${l.id}/qrcode`}>
               <Button variant="secondary" className="w-full sm:w-auto">

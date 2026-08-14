@@ -19,15 +19,24 @@ const ROTULO_TIPO: Record<string, string> = {
   livre: "Valor livre",
 };
 
-export default async function IgrejaPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function IgrejaPublicaPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const igreja = await getIgrejaPorSlug(slug);
   if (!igreja || igreja.statusOnboarding !== "aprovado") notFound();
 
   const links = (await getLinksDaIgreja(igreja.id)).filter((l) => l.ativo);
-  const campanhasAtivas = (await getCampanhasDaIgreja(igreja.id)).filter((c) => !c.encerrada);
+  const campanhasAtivas = (await getCampanhasDaIgreja(igreja.id)).filter(
+    (c) => !c.encerrada,
+  );
   const campanhas = await Promise.all(
-    campanhasAtivas.map(async (c) => ({ ...c, arrecadado: await getArrecadadoCampanha(c.id) }))
+    campanhasAtivas.map(async (c) => ({
+      ...c,
+      arrecadado: await getArrecadadoCampanha(c.id),
+    })),
   );
 
   return (
@@ -82,7 +91,13 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
       )}
 
       {campanhas.length > 0 && (
-        <div className={links.length > 0 || igreja.linksExtras.length > 0 ? "mb-8" : undefined}>
+        <div
+          className={
+            links.length > 0 || igreja.linksExtras.length > 0
+              ? "mb-8"
+              : undefined
+          }
+        >
           <h2 className="mb-3 text-lg font-bold">Campanhas em captação</h2>
           <div className="space-y-3">
             {campanhas.map((c, i) => {
@@ -98,7 +113,8 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
                     </div>
                     <ProgressBar percentual={pct} />
                     <p className="mt-2 text-sm text-muted">
-                      {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} ({pct.toFixed(0)}%)
+                      {formatarMoeda(arrecadado)} de {formatarMoeda(c.meta)} (
+                      {pct.toFixed(0)}%)
                     </p>
                   </Card>
                 </Link>
@@ -113,7 +129,12 @@ export default async function IgrejaPublicaPage({ params }: { params: Promise<{ 
           <h2 className="mb-3 text-lg font-bold">Mais sobre a igreja</h2>
           <div className="space-y-3">
             {igreja.linksExtras.map((link) => (
-              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer">
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Card className="flex items-center justify-between hover:border-primary">
                   <p className="font-bold">{link.rotulo}</p>
                   <ExternalLink size={16} className="shrink-0 text-primary" />

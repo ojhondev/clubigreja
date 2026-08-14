@@ -15,8 +15,15 @@ interface IgrejaResumo {
   logoEmoji: string;
 }
 
-export function FormCadastroFiel({ igrejaFixa }: { igrejaFixa?: IgrejaResumo }) {
-  const [estado, action, pending] = useActionState(cadastrarFielAction, ESTADO_INICIAL);
+export function FormCadastroFiel({
+  igrejaFixa,
+}: {
+  igrejaFixa?: IgrejaResumo;
+}) {
+  const [estado, action, pending] = useActionState(
+    cadastrarFielAction,
+    ESTADO_INICIAL,
+  );
 
   return (
     <form action={action} className="space-y-4">
@@ -37,11 +44,21 @@ export function FormCadastroFiel({ igrejaFixa }: { igrejaFixa?: IgrejaResumo }) 
 
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">Seu nome</span>
-        <input name="nome" required placeholder="Nome completo" className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="nome"
+          required
+          placeholder="Nome completo"
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">Seu celular</span>
-        <input name="telefone" required placeholder="(11) 99999-9999" className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="telefone"
+          required
+          placeholder="(11) 99999-9999"
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">Crie uma senha</span>
@@ -56,11 +73,19 @@ export function FormCadastroFiel({ igrejaFixa }: { igrejaFixa?: IgrejaResumo }) 
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-sm font-bold text-muted">Confirme a senha</span>
-        <input name="confirmarSenha" type="password" required minLength={6} className="rounded-xl border border-border px-4 py-3" />
+        <input
+          name="confirmarSenha"
+          type="password"
+          required
+          minLength={6}
+          className="rounded-xl border border-border px-4 py-3"
+        />
       </label>
 
       {estado.erro && (
-        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{estado.erro}</p>
+        <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {estado.erro}
+        </p>
       )}
 
       <Button type="submit" disabled={pending} className="w-full">

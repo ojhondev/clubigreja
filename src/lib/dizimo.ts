@@ -9,10 +9,16 @@ export interface StatusDizimo {
 
 export async function getStatusDizimo(fielId: string): Promise<StatusDizimo> {
   const todas = await getContribuicoesDoFiel(fielId);
-  const contribuicoesDizimo = todas.filter((c) => c.tipo === "dizimo" && c.status === "confirmado");
+  const contribuicoesDizimo = todas.filter(
+    (c) => c.tipo === "dizimo" && c.status === "confirmado",
+  );
 
   if (contribuicoesDizimo.length === 0) {
-    return { contribuiuEsteMes: false, ultimaContribuicaoEm: null, mesesSemContribuir: 1 };
+    return {
+      contribuiuEsteMes: false,
+      ultimaContribuicaoEm: null,
+      mesesSemContribuir: 1,
+    };
   }
 
   const ultima = contribuicoesDizimo[0]; // já vem ordenado desc por getContribuicoesDoFiel
@@ -32,8 +38,18 @@ export async function getStatusDizimo(fielId: string): Promise<StatusDizimo> {
 }
 
 const NOMES_MES = [
-  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
 ];
 
 export function nomeMesAtual(): string {

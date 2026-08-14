@@ -35,7 +35,13 @@ export function LandingNav() {
       <div className="flex w-full items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
         <Link href="/" className="flex shrink-0 items-center">
           {rolado ? (
-            <Image src="/dizipay-icon.png" alt="Dizipay" width={34} height={34} priority />
+            <Image
+              src="/dizipay-icon.png"
+              alt="Dizipay"
+              width={34}
+              height={34}
+              priority
+            />
           ) : (
             <Logo height={30} />
           )}
@@ -54,7 +60,10 @@ export function LandingNav() {
         </nav>
 
         <div className="hidden shrink-0 items-center gap-3 md:flex">
-          <Link href="/entrar" className="text-sm font-bold text-foreground hover:text-primary">
+          <Link
+            href="/entrar"
+            className="text-sm font-bold text-foreground hover:text-primary"
+          >
             Entrar
           </Link>
           <Link href="/cadastrar-igreja">
@@ -87,7 +96,11 @@ export function LandingNav() {
                 {l.label}
               </a>
             ))}
-            <Link href="/entrar" onClick={() => setAberto(false)} className="text-sm font-bold text-foreground">
+            <Link
+              href="/entrar"
+              onClick={() => setAberto(false)}
+              className="text-sm font-bold text-foreground"
+            >
               Entrar
             </Link>
             <Link href="/cadastrar-igreja" onClick={() => setAberto(false)}>

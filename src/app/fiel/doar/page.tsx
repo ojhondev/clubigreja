@@ -19,12 +19,19 @@ export default async function DoarPage({
   const fiel = await getFiel(sessao!.usuarioId);
 
   const campanha = campanhaId ? await getCampanha(campanhaId) : undefined;
-  const tipo: TipoArrecadacao = campanha ? "campanha" : (tipoParam as TipoArrecadacao) || "dizimo";
-  const campanhas = (await getCampanhasDaIgreja(igrejaId)).filter((c) => !c.encerrada);
+  const tipo: TipoArrecadacao = campanha
+    ? "campanha"
+    : (tipoParam as TipoArrecadacao) || "dizimo";
+  const campanhas = (await getCampanhasDaIgreja(igrejaId)).filter(
+    (c) => !c.encerrada,
+  );
 
   return (
     <div>
-      <PageHeader title={campanha ? campanha.titulo : "Contribuir"} subtitle="Poucos toques, sem burocracia." />
+      <PageHeader
+        title={campanha ? campanha.titulo : "Contribuir"}
+        subtitle="Poucos toques, sem burocracia."
+      />
 
       <Card>
         <form action={iniciarDoacaoAction} className="space-y-5">
@@ -40,8 +47,9 @@ export default async function DoarPage({
             <>
               {campanhas.length > 0 && (
                 <p className="text-xs text-muted">
-                  Quer contribuir com uma campanha específica? Acesse a campanha em{" "}
-                  <span className="font-medium">Campanhas</span> e use o botão de contribuir por lá.
+                  Quer contribuir com uma campanha específica? Acesse a campanha
+                  em <span className="font-medium">Campanhas</span> e use o
+                  botão de contribuir por lá.
                 </p>
               )}
               <CampoFinalidadeEValor tipoInicial={tipo} />

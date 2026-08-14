@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 
-export function CopiarTexto({ texto, rotulo = "Copiar código" }: { texto: string; rotulo?: string }) {
+export function CopiarTexto({
+  texto,
+  rotulo = "Copiar código",
+}: {
+  texto: string;
+  rotulo?: string;
+}) {
   const [copiado, setCopiado] = useState(false);
 
   async function copiar() {

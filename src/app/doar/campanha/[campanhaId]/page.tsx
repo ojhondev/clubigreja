@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
-import { getArrecadadoCampanha, getCampanha, getFiel, getIgreja } from "@/lib/db/repo";
+import {
+  getArrecadadoCampanha,
+  getCampanha,
+  getFiel,
+  getIgreja,
+} from "@/lib/db/repo";
 import { getFielConvidadoId, getSessao } from "@/lib/auth/session";
 import { formatarMoeda } from "@/lib/comissao";
 import { Card, ProgressBar } from "@/components/ui";
@@ -8,7 +13,11 @@ import { CartaoTaxa } from "@/components/cartao-taxa";
 import { BotaoContinuarPix } from "@/components/botao-continuar-pix";
 import { doarCampanhaPublicoAction } from "./actions";
 
-export default async function CampanhaPublicaPage({ params }: { params: Promise<{ campanhaId: string }> }) {
+export default async function CampanhaPublicaPage({
+  params,
+}: {
+  params: Promise<{ campanhaId: string }>;
+}) {
   const { campanhaId } = await params;
   const campanha = await getCampanha(campanhaId);
   if (!campanha || campanha.encerrada) notFound();
@@ -22,7 +31,8 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
   // (sem login) que já doou desse mesmo navegador antes também é reconhecido
   // pelo cookie de "convidado lembrado" — mesma lógica, sem precisar de conta.
   const sessao = await getSessao();
-  let fielLogado = sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
+  let fielLogado =
+    sessao?.papel === "fiel" ? await getFiel(sessao.usuarioId) : undefined;
   if (!fielLogado) {
     const convidadoId = await getFielConvidadoId();
     const convidado = convidadoId ? await getFiel(convidadoId) : undefined;
@@ -43,7 +53,8 @@ export default async function CampanhaPublicaPage({ params }: { params: Promise<
       <Card className="mb-4">
         <ProgressBar percentual={pct} />
         <p className="mt-2 text-sm font-medium">
-          {formatarMoeda(arrecadado)} de {formatarMoeda(campanha.meta)} ({pct.toFixed(0)}%)
+          {formatarMoeda(arrecadado)} de {formatarMoeda(campanha.meta)} (
+          {pct.toFixed(0)}%)
         </p>
       </Card>
 

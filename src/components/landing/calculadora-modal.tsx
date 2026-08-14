@@ -15,7 +15,8 @@ export function CalculadoraModal() {
   const [visivel, setVisivel] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined" || sessionStorage.getItem(CHAVE_SESSAO)) return;
+    if (typeof window === "undefined" || sessionStorage.getItem(CHAVE_SESSAO))
+      return;
 
     const timer = setTimeout(() => {
       sessionStorage.setItem(CHAVE_SESSAO, "1");
@@ -45,17 +46,30 @@ export function CalculadoraModal() {
         <h2 className="font-display mt-4 max-w-md text-2xl font-bold leading-tight text-foreground sm:text-3xl">
           Quanto a sua comunidade deixa de arrecadar por mês?
         </h2>
-        <p className="mt-2 max-w-lg text-muted">Ajuste os números da sua realidade e veja a projeção com o canal digital ativo.</p>
+        <p className="mt-2 max-w-lg text-muted">
+          Ajuste os números da sua realidade e veja a projeção com o canal
+          digital ativo.
+        </p>
 
         <div className="mt-6">
           <CalculadoraArrecadacao />
         </div>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Link href="/cadastrar-igreja" className="sm:flex-1" onClick={() => setVisivel(false)}>
-            <Button className="w-full font-display">Cadastre-se é grátis</Button>
+          <Link
+            href="/cadastrar-igreja"
+            className="sm:flex-1"
+            onClick={() => setVisivel(false)}
+          >
+            <Button className="w-full font-display">
+              Cadastre-se é grátis
+            </Button>
           </Link>
-          <Link href="/calculadora" className="sm:flex-1" onClick={() => setVisivel(false)}>
+          <Link
+            href="/calculadora"
+            className="sm:flex-1"
+            onClick={() => setVisivel(false)}
+          >
             <Button variant="secondary" className="w-full font-display">
               Ver calculadora completa
             </Button>

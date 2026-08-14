@@ -3,7 +3,11 @@ import { getCampanha, getIgreja } from "@/lib/db/repo";
 import { urlAbsoluta } from "@/lib/qrcode";
 import { QrPoster } from "@/components/qr-poster";
 
-export default async function CampanhaQrCodePage({ params }: { params: Promise<{ campanhaId: string }> }) {
+export default async function CampanhaQrCodePage({
+  params,
+}: {
+  params: Promise<{ campanhaId: string }>;
+}) {
   const { campanhaId } = await params;
   const campanha = await getCampanha(campanhaId);
   if (!campanha) notFound();

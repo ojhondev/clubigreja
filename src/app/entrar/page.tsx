@@ -24,7 +24,9 @@ export default function EntrarPage() {
             </span>
             <div className="flex-1">
               <p className="font-bold">Sou uma igreja</p>
-              <p className="text-sm text-muted">Gerenciar arrecadação, campanhas e mural</p>
+              <p className="text-sm text-muted">
+                Gerenciar arrecadação, campanhas e mural
+              </p>
             </div>
             <span className="text-primary">→</span>
           </Card>
@@ -37,13 +39,14 @@ export default function EntrarPage() {
             </span>
             <div className="flex-1">
               <p className="font-bold">Sou fiel</p>
-              <p className="text-sm text-muted">Acompanhar minha igreja e contribuir</p>
+              <p className="text-sm text-muted">
+                Acompanhar minha igreja e contribuir
+              </p>
             </div>
             <span className="text-primary">→</span>
           </Card>
         </Link>
       </div>
-
     </div>
   );
 }
