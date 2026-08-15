@@ -18,7 +18,12 @@ export default async function DoarPage({
   const igrejaId = sessao!.igrejaId!;
   const fiel = await getFiel(sessao!.usuarioId);
 
-  const campanha = campanhaId ? await getCampanha(campanhaId) : undefined;
+  // Escopado à própria igreja — sem isso, um campanhaId de outra igreja na
+  // query string faria essa tela mostrar (e a action tentar usar) uma
+  // campanha alheia.
+  const campanha = campanhaId
+    ? await getCampanha(campanhaId, igrejaId)
+    : undefined;
   const tipo: TipoArrecadacao = campanha
     ? "campanha"
     : (tipoParam as TipoArrecadacao) || "dizimo";

@@ -71,10 +71,14 @@ export class MockPaymentGateway implements PaymentGateway {
 
   async confirmarPagamento(
     contribuicaoId: string,
+    fielIdEsperado?: string,
   ): Promise<ConfirmacaoPagamento> {
     await simularLatenciaDeRede();
 
-    const contribuicao = await confirmarContribuicao(contribuicaoId);
+    const contribuicao = await confirmarContribuicao(
+      contribuicaoId,
+      fielIdEsperado,
+    );
     if (!contribuicao) throw new Error("Contribuição não encontrada");
 
     return {

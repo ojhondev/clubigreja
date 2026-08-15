@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getIgreja, getLinkPagamento } from "@/lib/db/repo";
+import { getSessao } from "@/lib/auth/session";
 import { urlAbsoluta } from "@/lib/qrcode";
 import { QrPoster } from "@/components/qr-poster";
 
@@ -17,7 +18,9 @@ export default async function LinkQrCodePage({
   params: Promise<{ linkId: string }>;
 }) {
   const { linkId } = await params;
-  const link = await getLinkPagamento(linkId);
+  const sessao = await getSessao();
+  // Escopado à própria igreja — mesmo achado C1 do QR code de campanha.
+  const link = await getLinkPagamento(linkId, sessao!.igrejaId!);
   if (!link) notFound();
 
   const igreja = (await getIgreja(link.igrejaId))!;

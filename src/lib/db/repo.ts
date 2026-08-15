@@ -158,13 +158,26 @@ export async function getUsuarioIgrejaPorId(
   return row;
 }
 
+// `igrejaId`, quando informado, restringe a busca ao link daquela igreja —
+// obrigatório em qualquer contexto autenticado (painel da igreja), pra não
+// permitir acesso a link de outra igreja via id manipulado na URL. Omitido
+// nos fluxos públicos de doação (/doar/link/[id]), onde o próprio id já
+// funciona como capability pública por design.
 export async function getLinkPagamento(
   linkId: string,
+  igrejaId?: string,
 ): Promise<LinkPagamento | undefined> {
   const [row] = await db
     .select()
     .from(schema.linksPagamento)
-    .where(eq(schema.linksPagamento.id, linkId));
+    .where(
+      igrejaId
+        ? and(
+            eq(schema.linksPagamento.id, linkId),
+            eq(schema.linksPagamento.igrejaId, igrejaId),
+          )
+        : eq(schema.linksPagamento.id, linkId),
+    );
   return row;
 }
 
@@ -256,13 +269,27 @@ export async function getCampanhasDaIgreja(
     .orderBy(desc(schema.campanhas.criadaEm));
 }
 
+// `igrejaId`, quando informado, restringe a busca à campanha daquela igreja
+// — obrigatório em qualquer contexto autenticado (painel da igreja, seleção
+// de campanha pelo fiel logado), pra não permitir acesso/uso de campanha de
+// outra igreja via id manipulado. Omitido nos fluxos públicos de doação
+// (/doar/campanha/[id]), onde o próprio id já funciona como capability
+// pública por design.
 export async function getCampanha(
   campanhaId: string,
+  igrejaId?: string,
 ): Promise<Campanha | undefined> {
   const [row] = await db
     .select()
     .from(schema.campanhas)
-    .where(eq(schema.campanhas.id, campanhaId));
+    .where(
+      igrejaId
+        ? and(
+            eq(schema.campanhas.id, campanhaId),
+            eq(schema.campanhas.igrejaId, igrejaId),
+          )
+        : eq(schema.campanhas.id, campanhaId),
+    );
   return row;
 }
 
@@ -461,13 +488,28 @@ export async function iniciarContribuicao(input: {
 // Passo 2: o fiel confirma que já pagou o Pix pra chave da igreja. É esse
 // clique — não um webhook bancário — que dispara a cobrança da taxa de
 // processamento no cartão salvo (ou como Pix separado, se não tiver cartão).
+// `fielIdEsperado`, quando informado, exige que a contribuição pertença a
+// esse fiel — obrigatório no fluxo autenticado (/fiel/doar/pagar/[id]), pra
+// impedir que uma sessão de fiel confirme (e dispare cobrança de taxa em
+// cima de) uma contribuição alheia via id manipulado. Omitido no fluxo
+// público de convidado (/doar/pagar/[id]), que não tem sessão pra comparar
+// — lá o id da contribuição (10 hex chars aleatórios, gerado em gerarId)
+// já funciona como capability, mesmo padrão do link/campanha públicos.
 export async function confirmarContribuicao(
   contribuicaoId: string,
+  fielIdEsperado?: string,
 ): Promise<Contribuicao | undefined> {
   const [row] = await db
     .update(schema.contribuicoes)
     .set({ status: "confirmado" })
-    .where(eq(schema.contribuicoes.id, contribuicaoId))
+    .where(
+      fielIdEsperado
+        ? and(
+            eq(schema.contribuicoes.id, contribuicaoId),
+            eq(schema.contribuicoes.fielId, fielIdEsperado),
+          )
+        : eq(schema.contribuicoes.id, contribuicaoId),
+    )
     .returning();
   return row;
 }
@@ -831,13 +873,22 @@ export async function notificarFieisDaIgreja(
   );
 }
 
+// Escopado ao próprio fiel — sem isso, qualquer sessão de fiel autenticada
+// conseguiria marcar como lida a notificação de outra pessoa (de qualquer
+// igreja) só sabendo/adivinhando o id.
 export async function marcarNotificacaoLida(
   notificacaoId: string,
+  fielId: string,
 ): Promise<void> {
   await db
     .update(schema.notificacoesFiel)
     .set({ lida: true })
-    .where(eq(schema.notificacoesFiel.id, notificacaoId));
+    .where(
+      and(
+        eq(schema.notificacoesFiel.id, notificacaoId),
+        eq(schema.notificacoesFiel.fielId, fielId),
+      ),
+    );
 }
 
 // --- Equipe interna (WebMaster) ---------------------------------------

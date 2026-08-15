@@ -52,5 +52,12 @@ export interface PaymentGateway {
   iniciarContribuicao(
     input: IniciarContribuicaoInput,
   ): Promise<DadosParaPagamento>;
-  confirmarPagamento(contribuicaoId: string): Promise<ConfirmacaoPagamento>;
+  // fielIdEsperado: quando a chamada vem de uma sessão de fiel autenticada,
+  // o caller deve passar o id do fiel da sessão — a confirmação só é aceita
+  // se a contribuição pertencer a ele. Omitido no fluxo público de
+  // convidado, que não tem sessão pra validar contra.
+  confirmarPagamento(
+    contribuicaoId: string,
+    fielIdEsperado?: string,
+  ): Promise<ConfirmacaoPagamento>;
 }
