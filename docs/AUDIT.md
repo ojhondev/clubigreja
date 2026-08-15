@@ -7,18 +7,21 @@ Data: 2026-08-14. Baseado em leitura completa do código-fonte (153 arquivos TS/
 ## 🔴 CRITICAL — impedem evolução segura com dinheiro real
 
 ### C1 — Vazamento de dados entre igrejas (multi-tenancy)
-- **Local**: `src/lib/db/repo.ts:161-169` (`getLinkPagamento`), `src/lib/db/repo.ts:259-267` (`getCampanha`); consumido em `src/app/igreja/campanhas/[campanhaId]/qrcode/page.tsx:12` e `src/app/igreja/links/[linkId]/qrcode/page.tsx:20`.
-- **Impacto**: uma igreja autenticada, trocando o id na URL, acessa campanha/link de pagamento de outra igreja.
-- **Causa**: função de leitura não recebe/filtra por `igrejaId` da sessão; middleware só valida papel, não posse.
-- **Recomendação**: adicionar `igrejaId` como parâmetro obrigatório nessas funções nos contextos autenticados, comparando com `sessao.igrejaId`.
-- **Esforço**: P (pequeno — 2 funções + 2 páginas).
+- **Status**: 🟡 **Correção implementada (Sprint 01), aguardando verificação por teste E2E contra banco real** — `TEST_DATABASE_URL` não estava configurada no ambiente onde a correção foi feita; testes existem e passam por design, mas não foram executados contra um Postgres de verdade. Ver `tests/e2e/security/tenant-isolation.spec.ts`.
+- **Local original**: `src/lib/db/repo.ts:161-169` (`getLinkPagamento`), `src/lib/db/repo.ts:259-267` (`getCampanha`); consumido em `src/app/igreja/campanhas/[campanhaId]/qrcode/page.tsx:12` e `src/app/igreja/links/[linkId]/qrcode/page.tsx:20`.
+- **Impacto**: uma igreja autenticada, trocando o id na URL, acessava campanha/link de pagamento de outra igreja.
+- **Causa**: função de leitura não recebia/filtrava por `igrejaId` da sessão; middleware só valida papel, não posse.
+- **Correção aplicada**: `getCampanha`/`getLinkPagamento` ganharam parâmetro `igrejaId` opcional (scoping via `and(eq(id,x), eq(igrejaId,y))`, mesmo padrão já usado em `atualizarCampanha`); as duas páginas de QR code passam a exigir `sessao.igrejaId`, com `notFound()` (404) em caso de mismatch. **Achado adicional durante a correção, fora do escopo original do relatório**: o mesmo problema existia no fluxo de doação do fiel (`src/app/fiel/doar/page.tsx` + `actions.ts`) — um `campanhaId` de outra igreja injetado via query string/form criava uma contribuição com `igrejaId` da própria igreja mas `campanhaId` de outra, inflando o total arrecadado (público) da campanha alheia. Corrigido com a mesma validação na Server Action (nunca confiar só na tela).
+- **Decisão de resposta a acesso não autorizado**: 404 (`notFound()`), não 403 — evita confirmar a existência do recurso em outro tenant, consistente com o padrão já usado no projeto para "não encontrado".
+- **Esforço**: P (pequeno — 2 funções + 2 páginas + 1 action adicional).
 - **Prioridade**: P0.
 
 ### C2 — Confirmação de pagamento sem checagem de dono
-- **Local**: `src/lib/db/repo.ts:464-473` (`confirmarContribuicao`); disparado por `src/components/pagamento-pix.tsx:91` (`contribuicaoId` em `<input type="hidden">`) via `mock-gateway.ts:72-90`.
-- **Impacto**: qualquer sessão de fiel autenticada pode confirmar o pagamento de contribuição de outra pessoa, disparando a cobrança de taxa no cartão do dono real.
-- **Causa**: função não valida `fielId`/`igrejaId` do chamador contra o dono da contribuição.
-- **Recomendação**: validar posse antes de confirmar; considerar não depender de id em campo hidden do DOM.
+- **Status**: 🟡 **Correção implementada (Sprint 01), aguardando verificação por teste E2E contra banco real** — mesma limitação de ambiente do C1. Ver `tests/e2e/security/contribution-authorization.spec.ts`.
+- **Local original**: `src/lib/db/repo.ts:464-473` (`confirmarContribuicao`); disparado por `src/components/pagamento-pix.tsx:91` (`contribuicaoId` em `<input type="hidden">`) via `mock-gateway.ts:72-90`.
+- **Impacto**: qualquer sessão de fiel autenticada podia confirmar o pagamento de contribuição de outra pessoa, disparando a cobrança de taxa no cartão do dono real.
+- **Causa**: função não validava `fielId` do chamador contra o dono da contribuição.
+- **Correção aplicada**: `confirmarContribuicao` ganhou parâmetro `fielIdEsperado` opcional; `PaymentGateway.confirmarPagamento` e `MockPaymentGateway.confirmarPagamento` propagam esse parâmetro; `/fiel/doar/pagar/[id]/actions.ts` (fluxo autenticado) passa `sessao.usuarioId`. **Decisão deliberada, não corrigida por igual**: o fluxo público de convidado (`/doar/pagar/[id]/actions.ts`) continua sem essa checagem — não há sessão pra comparar nesse fluxo (doação sem login é um caso de uso legítimo do produto), e o id da contribuição (10 hex chars aleatórios) já funciona como capability, mesmo modelo de segurança do link/campanha públicos. Documentado em comentário no próprio arquivo.
 - **Esforço**: P.
 - **Prioridade**: P0.
 
@@ -34,9 +37,11 @@ Data: 2026-08-14. Baseado em leitura completa do código-fonte (153 arquivos TS/
 - **Prioridade**: P1 (bloqueador antes de integrar gateway real).
 
 ### H2 — Impersonação de WebMaster sem flag de permissão própria
-- **Local**: `src/app/admin/igrejas/actions.ts:49-65`, `src/app/admin/fieis/actions.ts:8-28`.
-- **Impacto**: qualquer webmaster, mesmo secundário sem nenhuma flag, acessa 100% dos dados de qualquer igreja/fiel via "Acessar como".
-- **Recomendação**: nova flag de permissão dedicada à impersonação.
+- **Status**: 🟡 **Correção implementada (Sprint 01), aguardando verificação por teste E2E contra banco real**. Ver `tests/e2e/security/webmaster-impersonation.spec.ts`.
+- **Local original**: `src/app/admin/igrejas/actions.ts:49-65`, `src/app/admin/fieis/actions.ts:8-28`.
+- **Impacto**: qualquer webmaster, mesmo secundário sem nenhuma flag, acessava 100% dos dados de qualquer igreja/fiel via "Acessar como".
+- **Correção aplicada**: `podeImpersonar(webmaster)` em `src/lib/auth/permissoes.ts`, restrito a `nivel === "primario"` — **sem nova coluna/migration**, reaproveitando o enum `nivel` já existente (reaproveitar `podeAprovarIgrejas`/`podeGerenciarPagamentos` seria semanticamente incorreto, essas flags autorizam ações específicas, não "ver tudo de qualquer conta"). Se o produto precisar que um Master Secundário impersone no futuro, isso pede uma flag própria — mudança de schema, a passar pelo fluxo normal (`DATABASE-ROADMAP.md`).
+- **Não corrigido nesta etapa**: os botões "Acessar como" continuam visíveis para Master Secundário na UI (clicar não faz nada, a Server Action rejeita silenciosamente) — não escondido por instrução explícita do sprint de não redesenhar telas. Recomendado como polish futuro (P3).
 - **Esforço**: P.
 - **Prioridade**: P1.
 
@@ -131,6 +136,13 @@ Formulários reimplementam estilo repetido. **P3**.
 
 ### L9 — CSRF de baixo impacto em `/api/push/subscribe`
 Sem checagem de `Origin`. **P3**.
+
+### L10 — `marcarNotificacaoLida` sem checagem de sessão/dono (achado novo, Sprint 01)
+- **Status**: 🟡 Correção implementada, aguardando verificação por teste E2E contra banco real.
+- **Local original**: `src/lib/db/repo.ts:834-840`; `src/app/fiel/notificacoes/actions.ts`.
+- **Impacto**: qualquer chamada à Server Action (mesmo sem sessão de fiel) marcava como lida a notificação de qualquer fiel de qualquer igreja, só sabendo/adivinhando o id — achado durante a varredura sistemática deste sprint, não estava no relatório original.
+- **Correção aplicada**: `marcarNotificacaoLida` passou a exigir `fielId` e escopar a atualização por `and(eq(id), eq(fielId))`; a action passou a exigir `sessao.papel === "fiel"` antes de chamar.
+- **Esforço**: P. **Prioridade**: P3 (impacto baixo — não expõe dado sensível, só suprime um "não lido" alheio).
 
 ---
 

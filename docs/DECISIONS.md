@@ -83,7 +83,7 @@ A decidir quando o gateway for escolhido. Recomenda-se registrar a decisão fina
 Corrigir os dois achados CRITICAL de multi-tenancy (C1, C2 em AUDIT.md) antes de qualquer onboarding de igreja real com volume.
 
 ## Status
-**Proposto** — deveria virar "Aceito" assim que implementado (DZP-001, DZP-002).
+**🟡 Implementado (Sprint 01) — aguardando verificação por teste E2E contra banco real antes de virar "Aceito" definitivamente.** Código corrigido; testes existem (`tests/e2e/security/`) mas não puderam ser executados nesta etapa por falta de `TEST_DATABASE_URL` no ambiente.
 
 ## Context
 Achados desta auditoria: `getCampanha`/`getLinkPagamento` sem filtro de `igrejaId`, e `confirmarContribuicao` sem checagem de dono.
@@ -167,3 +167,35 @@ Todas as colunas de timestamp do schema são `text` (string ISO), não o tipo na
 
 ## Consequences
 Exige tocar todo ponto de insert em `repo.ts` (trocar a `hoje()` local truncada por `new Date()` completo) — não é só `ALTER COLUMN`. Dado histórico migrado via `USING criada_em::timestamptz` fica com granularidade de meia-noite (não pode "ganhar" precisão de hora retroativamente). Ver `DATABASE-ROADMAP.md`, item 4.
+
+---
+
+# ADR-008
+
+## Decision
+Para recurso tenant-scoped acessado fora do próprio tenant (C1), responder com 404 (`notFound()`), não 403. Para impersonação de webmaster (H2), restringir a Master Primário via `podeImpersonar()` sem criar nova coluna de permissão. Para o fluxo público de doação/confirmação de convidado, manter o id da contribuição como único controle de acesso (capability), sem exigir sessão.
+
+## Status
+**Aceito** (implementado, Sprint 01)
+
+## Context
+Ao corrigir C1/C2/H2 (`docs/AUDIT.md`), três decisões de design precisavam ser tomadas e não eram óbvias só pela descrição do bug:
+1. Resposta a acesso cross-tenant: 403 ou 404?
+2. Impersonação: criar uma flag de permissão nova (migration) ou usar o que já existe?
+3. O fluxo público de doação/pagamento sem login não tem sessão — como fica a autorização lá?
+
+## Alternatives
+
+**(1) 403 vs 404**: 403 confirmaria "esse recurso existe, mas você não pode vê-lo" — vaza a existência de dado de outro tenant. 404 não distingue "não existe" de "existe mas não é seu". Escolhido: 404, consistente com o padrão que as duas páginas de QR code já usavam para campanha/link genuinamente inexistente.
+
+**(2) Impersonação**: (a) nova coluna `pode_impersonar` no schema — mais granular, mas é migration, fora do fluxo deste sprint (`docs/DATABASE-ROADMAP.md` trata isso separadamente); (b) reaproveitar `podeAprovarIgrejas`/`podeGerenciarPagamentos` — rejeitado, semanticamente errado (essas flags autorizam ações específicas, não "ver tudo de qualquer conta"); (c) restringir a `nivel === "primario"` — escolhido, zero migration, fecha o risco por completo (Master Primário já tem acesso total por design, segundo o próprio schema).
+
+**(3) Fluxo público**: (a) exigir login pra confirmar qualquer pagamento — rejeitado, quebra o caso de uso de doação sem cadastro, que é intencional; (b) manter capability-based (id de 10 hex chars, ~40 bits de entropia, não força-bruteável na prática) — escolhido, é o modelo que o produto já usa pra link/campanha públicos.
+
+## Why
+Cada decisão prioriza não vazar mais informação do que o necessário (1), não introduzir mudança de schema fora do fluxo combinado com quem cuida do banco (2), e não quebrar um caso de uso legítimo do produto só para "fechar" uma checagem que não se aplica a esse fluxo (3).
+
+## Consequences
+- (1) Usuário vendo 404 num recurso que na verdade existe (só não é dele) pode achar que o id está errado — aceitável, é o trade-off de não vazar existência.
+- (2) Master Secundário continua vendo o botão "Acessar como" na UI mesmo sem poder usá-lo (ação rejeita silenciosamente) — não corrigido nesta etapa por instrução explícita de não redesenhar telas; registrado como polish futuro em `docs/AUDIT.md` (nota em H2).
+- (3) O fluxo de convidado continua dependendo só da imprevisibilidade do id como controle de acesso — aceitável hoje (mock, sem dinheiro real fora da própria chave Pix da igreja), mas deve ser revisitado se/quando o produto adicionar informação mais sensível a essa tela.

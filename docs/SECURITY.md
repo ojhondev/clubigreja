@@ -5,9 +5,9 @@
 | Área | Estado | Risco | Prioridade | Ação |
 |---|---|---|---|---|
 | Auth (sessão/senha) | Bem implementado (HMAC-SHA256, scrypt, `timingSafeEqual`) | Baixo | — | Manter padrão |
-| Multi-tenancy (isolamento entre igrejas) | Falho em 2 pontos confirmados | **Crítico** | P0 | Corrigir `getCampanha`/`getLinkPagamento` sem filtro de `igrejaId` |
-| Confirmação de pagamento | Sem checagem de dono | **Alto** | P0 | Validar `fielId`/`igrejaId` em `confirmarContribuicao` |
-| RBAC — impersonação WebMaster | Sem flag de permissão própria | Alto | P1 | Adicionar `podeImpersonar` e checar antes de "Acessar como" |
+| Multi-tenancy (isolamento entre igrejas) | 🟡 Correção implementada (Sprint 01) — `getCampanha`/`getLinkPagamento` escopados por `igrejaId`; aguardando teste E2E verde contra banco real | **Crítico** | P0 | Rodar `tests/e2e/security/tenant-isolation.spec.ts` contra `TEST_DATABASE_URL` |
+| Confirmação de pagamento | 🟡 Correção implementada (Sprint 01) — `confirmarContribuicao` exige `fielIdEsperado` no fluxo autenticado; aguardando teste E2E verde | **Alto** | P0 | Rodar `tests/e2e/security/contribution-authorization.spec.ts` |
+| RBAC — impersonação WebMaster | 🟡 Correção implementada (Sprint 01) — `podeImpersonar` restringe a Master Primário; aguardando teste E2E verde | Alto | P1 | Rodar `tests/e2e/security/webmaster-impersonation.spec.ts` |
 | `SESSION_SECRET` fallback | Condicional a `NODE_ENV` | Alto | P1 | Checar obrigatoriedade incondicionalmente |
 | Rate limiting | Inexistente | Médio | P1 | Adicionar em rotas de login (igreja/fiel/webmaster) |
 | Payments/Webhooks | Não existe (mock) | Médio (vira alto na integração real) | P2 (bloqueador pra ir a produção real) | Desenhar webhook + idempotência antes do gateway real |
@@ -45,7 +45,7 @@ Três papéis (`igreja`, `fiel`, `webmaster`). Middleware (`src/proxy.ts`) prote
 
 **Cenário**: um Master Secundário criado sem nenhuma flag ainda consegue "ver como se fosse" qualquer conta da plataforma.
 
-**Recomendação**: nova flag (`podeImpersonar` ou granularidade equivalente), checada antes de iniciar o "Acessar como".
+**🟡 Corrigido no Sprint 01, aguardando teste E2E verde**: `podeImpersonar(webmaster)` em `src/lib/auth/permissoes.ts`, restrito a `nivel === "primario"` — sem migration, reaproveitando o enum já existente. Aplicado em `acessarComoIgrejaAction` e `acessarComoFielAction`. Ver `docs/AUDIT.md` H2 e `tests/e2e/security/webmaster-impersonation.spec.ts`.
 
 ## Sistema WebMaster — convites e bootstrap
 
@@ -53,13 +53,13 @@ Bootstrap do primeiro webmaster só é possível se nenhum existir (`existeWebma
 
 ## Multi-tenancy
 
-Ver detalhamento completo em [`DATABASE.md`](DATABASE.md). Resumo: **falha CRITICAL confirmada** — `getCampanha`/`getLinkPagamento` não filtram por `igrejaId`, permitindo uma igreja ver campanha/link de outra trocando o id na URL.
+Ver detalhamento completo em [`DATABASE.md`](DATABASE.md). Resumo: **🟡 falha CRITICAL corrigida no Sprint 01, aguardando teste E2E verde** — `getCampanha`/`getLinkPagamento` ganharam parâmetro `igrejaId` opcional, aplicado nos dois pontos de consumo autenticados (QR code de campanha/link) e, achado adicional durante o sprint, no fluxo de doação do fiel (`fiel/doar`). Ver `docs/AUDIT.md` C1 e `tests/e2e/security/tenant-isolation.spec.ts`.
 
 ## Pagamentos
 
 Ver detalhamento completo em [`ARCHITECTURE.md`](ARCHITECTURE.md) e no relatório de auditoria de pagamentos consolidado em [`AUDIT.md`](AUDIT.md). Pontos-chave:
 
-- Confirmação de pagamento sem checagem de dono (`confirmarContribuicao` aceita qualquer id vindo de campo hidden no DOM).
+- Confirmação de pagamento sem checagem de dono — **🟡 corrigido no Sprint 01** no fluxo autenticado (`confirmarContribuicao` exige `fielIdEsperado`); o fluxo público de convidado permanece sem essa checagem por design (sem sessão pra comparar, id já funciona como capability). Aguardando teste E2E verde — ver `tests/e2e/security/contribution-authorization.spec.ts`.
 - Nenhuma idempotência — clique duplo (ou reenvio malicioso) reprocessaria a confirmação; hoje inofensivo (mock), mas replicaria cobrança de taxa real com gateway de verdade.
 - Sem webhook — confirmação depende só do clique do fiel, sem verificação bancária.
 - Cartão: **sem risco de PCI hoje** — só últimos 4 dígitos + bandeira + token fake são persistidos (`mock-gateway.ts:16`, `repo.ts:475`); número completo nunca é salvo nem logado. Isso muda de figura na integração real: tokenização deve acontecer no client via SDK do gateway, nunca passando pelo server da aplicação.

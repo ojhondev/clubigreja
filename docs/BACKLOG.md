@@ -4,18 +4,18 @@ Prioridade: **P0** bloqueador/crítico · **P1** essencial pra MVP seguro · **P
 Esforço: **P** pequeno (horas) · **M** médio (1-2 dias) · **G** grande (multi-dia/depende de terceiro).
 
 ```text
-[ ] DZP-001 — Corrigir getCampanha/getLinkPagamento sem filtro de igrejaId
+[x] DZP-001 — Corrigir getCampanha/getLinkPagamento sem filtro de igrejaId
 Priority: P0
 Area: Security / Multi-tenancy
-Status: Todo
+Status: Done (código) — aguardando teste E2E verde contra TEST_DATABASE_URL
 Effort: P
 Dependencies: —
 Ref: AUDIT.md C1
 
-[ ] DZP-002 — Validar dono (fielId/igrejaId) em confirmarContribuicao
+[x] DZP-002 — Validar dono (fielId/igrejaId) em confirmarContribuicao
 Priority: P0
 Area: Security / Payments
-Status: Todo
+Status: Done (código) — aguardando teste E2E verde contra TEST_DATABASE_URL
 Effort: P
 Dependencies: —
 Ref: AUDIT.md C2
@@ -28,10 +28,10 @@ Effort: P
 Dependencies: —
 Ref: AUDIT.md H3
 
-[ ] DZP-004 — Flag de permissão dedicada para impersonação de WebMaster
+[x] DZP-004 — Flag de permissão dedicada para impersonação de WebMaster
 Priority: P1
 Area: Security / RBAC
-Status: Todo
+Status: Done (código, sem migration — restrito a nivel=primario) — aguardando teste E2E verde
 Effort: P
 Dependencies: —
 Ref: AUDIT.md H2
@@ -202,4 +202,28 @@ Status: Todo
 Effort: P
 Dependencies: —
 Ref: AUDIT.md L7
+
+[x] DZP-026 — Escopar marcarNotificacaoLida por fielId (achado novo, Sprint 01)
+Priority: P3
+Area: Security
+Status: Done (código) — aguardando teste E2E
+Effort: P
+Dependencies: —
+Ref: AUDIT.md L10
+
+[ ] DZP-027 — Rodar suíte E2E de segurança contra TEST_DATABASE_URL real e confirmar C1/C2/H2 verdes
+Priority: P0
+Area: QA
+Status: Todo — bloqueado por falta de banco de teste configurado
+Effort: P
+Dependencies: TEST_DATABASE_URL (branch Neon dedicado, ver docs/TESTING.md)
+Ref: docs/AUDIT.md C1/C2/H2, tests/e2e/security/
+
+[ ] DZP-028 — Esconder/desabilitar botão "Acessar como" na UI para Master Secundário
+Priority: P3
+Area: UX
+Status: Todo
+Effort: P
+Dependencies: DZP-004
+Ref: AUDIT.md H2 (nota de UX não corrigida no Sprint 01)
 ```
