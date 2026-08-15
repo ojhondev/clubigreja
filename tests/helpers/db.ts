@@ -9,7 +9,7 @@
 // para o banco de dev/produção.
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import * as schema from "../../src/lib/db/schema";
 import { hashSenha } from "../../src/lib/auth/senha";
 import {
@@ -19,10 +19,15 @@ import {
   adminB,
   campaignA,
   campaignB,
+  linkA,
+  linkB,
   fielA,
   fielB,
   donationA,
   donationB,
+  donationPendenteA,
+  donationPendenteA2,
+  webmasterSecundario,
   SENHA_TESTE,
 } from "../fixtures/test-data";
 
@@ -71,11 +76,12 @@ async function limparBancoDeTeste() {
 }
 
 // Semente mínima e determinística pra suíte baseline: 2 igrejas, 2 admins,
-// 2 fiéis, 2 campanhas, 2 contribuições confirmadas — o suficiente pros
-// testes de login, criação de campanha, página pública, relatório/dashboard
-// e isolamento multi-tenant (Church A / Church B).
-// WebMaster não é seedado aqui — o teste que precisa dele cria via fluxo
-// real da aplicação (ver tests/e2e/webmaster).
+// 2 fiéis, 2 campanhas, 2 links de pagamento, 2 contribuições confirmadas,
+// 1 webmaster secundário sem permissões — o suficiente pros testes de
+// login, criação de campanha, página pública, relatório/dashboard,
+// isolamento multi-tenant e autorização de impersonação.
+// Master Primário não é seedado aqui — o teste que precisa dele cria via
+// fluxo real de bootstrap da aplicação (ver tests/e2e/webmaster).
 export async function resetAndSeedTestDb() {
   await limparBancoDeTeste();
   const db = getTestDb();
@@ -86,7 +92,32 @@ export async function resetAndSeedTestDb() {
     { ...adminA, senhaHash },
     { ...adminB, senhaHash },
   ]);
-  await db.insert(schema.fieis).values([fielA, fielB]);
+  await db.insert(schema.fieis).values([
+    { ...fielA, senhaHash },
+    { ...fielB, senhaHash },
+  ]);
   await db.insert(schema.campanhas).values([campaignA, campaignB]);
-  await db.insert(schema.contribuicoes).values([donationA, donationB]);
+  await db.insert(schema.linksPagamento).values([linkA, linkB]);
+  await db
+    .insert(schema.contribuicoes)
+    .values([donationA, donationB, donationPendenteA, donationPendenteA2]);
+  await db.insert(schema.webmasters).values({
+    ...webmasterSecundario,
+    senhaHash,
+  });
+}
+
+// Leitura direta de status — usada pra confirmar que uma tentativa de
+// confirmação não autorizada (C2) realmente não mudou nada no banco, em vez
+// de inferir isso só pelo comportamento da UI (que hoje é um throw genérico
+// sem página de erro dedicada — ver src/app/fiel/doar/pagar/[id]/actions.ts).
+export async function getContribuicaoStatusTeste(
+  contribuicaoId: string,
+): Promise<string | undefined> {
+  const db = getTestDb();
+  const [row] = await db
+    .select({ status: schema.contribuicoes.status })
+    .from(schema.contribuicoes)
+    .where(eq(schema.contribuicoes.id, contribuicaoId));
+  return row?.status;
 }

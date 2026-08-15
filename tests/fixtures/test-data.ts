@@ -81,6 +81,26 @@ export const campaignB = {
   criadaEm: "2026-01-02",
 };
 
+export const linkA = {
+  id: "e2e-link-a",
+  igrejaId: churchA.id,
+  titulo: "Dízimo Igreja Alfa",
+  tipo: "dizimo" as const,
+  valorSugerido: 50,
+  ativo: true,
+  criadoEm: "2026-01-02",
+};
+
+export const linkB = {
+  id: "e2e-link-b",
+  igrejaId: churchB.id,
+  titulo: "Oferta Igreja Beta",
+  tipo: "oferta" as const,
+  valorSugerido: 30,
+  ativo: true,
+  criadoEm: "2026-01-02",
+};
+
 export const fielA = {
   id: "e2e-fiel-a",
   igrejaId: churchA.id,
@@ -116,6 +136,49 @@ export const donationA = {
   criadaEm: "2026-01-04",
 };
 
+// Contribuição de Fiel A ainda não confirmada — usada pra testar que outra
+// pessoa (Fiel B, ou uma sessão de igreja) não consegue confirmá-la em nome
+// do dono (achado C2/AUDIT.md). Fica de fora do resetAndSeedTestDb padrão
+// só se algum teste precisar resetar status entre execuções; hoje é
+// seedada junto, já que confirmá-la (ou falhar em confirmar) não afeta
+// outros testes.
+export const donationPendenteA = {
+  id: "e2e-doacao-pendente-a",
+  igrejaId: churchA.id,
+  fielId: fielA.id,
+  campanhaId: null,
+  tipo: "dizimo" as const,
+  meio: "pix" as const,
+  valorBruto: 50,
+  taxaPercentual: 0.035,
+  taxaValor: 1.75,
+  valorTotalFiel: 51.75,
+  taxaCobradaVia: "pix_separado" as const,
+  status: "aguardando_pix" as const,
+  criadaEm: "2026-01-05",
+};
+
+// Segunda contribuição pendente de Fiel A, dedicada ao teste de confirmação
+// bem-sucedida pelo próprio dono — separada de donationPendenteA pra não
+// criar dependência de ordem entre os dois testes de C2 (um confirma de
+// verdade, mudando o status; o outro precisa que o status continue
+// "aguardando_pix" o tempo todo).
+export const donationPendenteA2 = {
+  id: "e2e-doacao-pendente-a2",
+  igrejaId: churchA.id,
+  fielId: fielA.id,
+  campanhaId: null,
+  tipo: "oferta" as const,
+  meio: "pix" as const,
+  valorBruto: 40,
+  taxaPercentual: 0.035,
+  taxaValor: 1.4,
+  valorTotalFiel: 41.4,
+  taxaCobradaVia: "pix_separado" as const,
+  status: "aguardando_pix" as const,
+  criadaEm: "2026-01-05",
+};
+
 export const donationB = {
   id: "e2e-doacao-b",
   igrejaId: churchB.id,
@@ -140,4 +203,18 @@ export const webmasterPrimario = {
   nome: "WebMaster E2E",
   email: "webmaster@e2e.dizipay.test",
   senha: SENHA_TESTE,
+};
+
+// Master Secundário sem nenhuma flag de permissão — seedado direto (ao
+// contrário do primário, que nasce só via bootstrap da UI), pra testar que
+// ele NÃO consegue impersonar (achado H2/AUDIT.md, corrigido com
+// podeImpersonar em src/lib/auth/permissoes.ts).
+export const webmasterSecundario = {
+  id: "e2e-webmaster-secundario",
+  nome: "WebMaster Secundário E2E",
+  email: "webmaster-secundario@e2e.dizipay.test",
+  nivel: "secundario" as const,
+  podeGerenciarPagamentos: false,
+  podeAprovarIgrejas: false,
+  criadoEm: "2026-01-01",
 };
