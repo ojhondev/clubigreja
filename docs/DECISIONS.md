@@ -96,3 +96,74 @@ Vazamento de dado entre tenants é inaceitável num produto que lida com dado fi
 
 ## Consequences
 Nenhuma negativa relevante — a correção é local (2-3 funções) e não exige mudança de schema.
+
+---
+
+# ADR-005 (Proposto)
+
+## Decision
+Migrar colunas monetárias (`campanhas.meta`, `links_pagamento.valor_sugerido`, `contribuicoes.valor_bruto/taxa_percentual/taxa_valor/valor_total_fiel`) de `real` (ponto flutuante) para `numeric(12,2)` do Postgres.
+
+## Status
+**Proposto**
+
+## Context
+Auditoria de banco (`DATABASE.md`) encontrou que todo valor monetário do schema usa `real` — ponto flutuante de precisão simples, ~6-7 dígitos decimais significativos. Cálculo de taxa em `src/lib/comissao.ts` já usa `Math.round(x*100)/100` como paliativo pra imprecisão de ponto flutuante em JS, mas isso não impede erro de representação no próprio Postgres, nem erro acumulado em somas (`relatorios.ts` soma `valorBruto`/`taxaValor` de todas as contribuições de uma igreja).
+
+## Alternatives
+1. Manter `real` (rejeitado — risco cresce com volume/valor).
+2. Integer em centavos (`10050` = R$100,50) — mais "correto" no sentido estrito, mas exige reescrever toda a camada de cálculo (`comissao.ts`, `calculadora-arrecadacao.ts`) pra trabalhar em inteiros.
+3. `numeric(12,2)` — decimal exato do Postgres, sem os riscos de ponto flutuante, migration de tipo de coluna sem exigir reescrever a lógica de cálculo em reais decimais (escolhido).
+
+## Why
+`numeric(12,2)` resolve o problema de precisão com o menor blast radius — é uma mudança de tipo de coluna, não uma mudança de unidade de medida em toda a aplicação. Centavos-inteiros seria mais "canônico" para sistemas financeiros greenfield, mas o Dizipay já tem uma camada de cálculo inteira trabalhando em reais decimais; reescrevê-la agora seria refactor não solicitado nesta etapa.
+
+## Consequences
+Drizzle representa `numeric` como `string` em TS, não `number` — toca `src/lib/types.ts` e todo ponto que faz aritmética direta sobre esses campos (precisa `Number(valor)` explícito ou lib de decimal). Migration + mudança de aplicação em conjunto, não só schema. Ver `DATABASE-ROADMAP.md`, item 2.
+
+---
+
+# ADR-006 (Proposto)
+
+## Decision
+Expandir `contribuicoes.status` de `"aguardando_pix" | "confirmado"` para incluir `expirado`, `cancelado`, `falhou`, `estornado`; adicionar colunas `provider` e `external_payment_id` com unique constraint parcial para idempotência.
+
+## Status
+**Proposto**
+
+## Context
+Modelo atual de 2 estados não representa o domínio real de um pagamento — um Pix nunca pago fica "aguardando" para sempre, sem forma de diferenciar abandono de erro. Ausência de identificador de transação externa significa que não há como garantir idempotência quando um gateway real existir (ver ADR-003).
+
+## Alternatives
+1. Manter só os 2 estados atuais, tratar tudo mais como caso especial na aplicação (rejeitado — empurra complexidade de modelagem pra fora do banco, onde ela é mais frágil).
+2. Expandir o enum de status + colunas de idempotência agora, mesmo sem gateway real ainda usá-las (escolhido) — estrutura pronta, sem uso até a integração acontecer.
+
+## Why
+Corrigir o modelo de dados antes da pressão de uma integração real em andamento é mais barato do que migrar em produção com dinheiro real fluindo. A estrutura de idempotência (`UNIQUE(provider, external_payment_id) WHERE external_payment_id IS NOT NULL`) é barata de ter pronta e cara de faltar quando for necessária.
+
+## Consequences
+Nenhum dado existente precisa mudar (é `ALTER TABLE ADD COLUMN` + `CHECK` novo). Novas colunas ficam `NULL` até a integração real existir. Ver `DATABASE-ROADMAP.md`, item 3.
+
+---
+
+# ADR-007 (Proposto)
+
+## Decision
+Migrar colunas de timestamp (`criada_em`, `criado_em`, `publicado_em`, `convite_expira_em`) de `text` para `timestamptz`, sempre com granularidade completa (data + hora), nunca só data.
+
+## Status
+**Proposto**
+
+## Context
+Todas as colunas de timestamp do schema são `text` (string ISO), não o tipo nativo do Postgres. Além disso, a função `hoje()` local de `src/lib/db/repo.ts` usada na maioria dos inserts trunca pra `YYYY-MM-DD` (sem hora) — duas contribuições no mesmo dia não são ordenáveis entre si por horário de criação.
+
+## Alternatives
+1. Manter `text` (rejeitado — perde comparação/ordenação nativa garantida pelo tipo, e a truncagem de hora já causa perda de informação hoje).
+2. `timestamp` sem timezone (rejeitado — ambíguo quanto a fuso, já existe inconsistência de granularidade que uma mudança de tipo sem timezone não resolveria).
+3. `timestamptz`, sempre com hora completa (escolhido) — instante absoluto, sem ambiguidade, comparável nativamente.
+
+## Why
+`timestamptz` é o tipo padrão recomendado do Postgres para "quando isso aconteceu" — resolve timezone de uma vez (armazena UTC internamente, conversão de exibição fica na aplicação) e permite `ORDER BY`/`WHERE` nativos e eficientes, ao contrário de comparação lexicográfica de string.
+
+## Consequences
+Exige tocar todo ponto de insert em `repo.ts` (trocar a `hoje()` local truncada por `new Date()` completo) — não é só `ALTER COLUMN`. Dado histórico migrado via `USING criada_em::timestamptz` fica com granularidade de meia-noite (não pode "ganhar" precisão de hora retroativamente). Ver `DATABASE-ROADMAP.md`, item 4.

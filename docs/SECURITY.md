@@ -11,7 +11,9 @@
 | `SESSION_SECRET` fallback | Condicional a `NODE_ENV` | Alto | P1 | Checar obrigatoriedade incondicionalmente |
 | Rate limiting | Inexistente | Médio | P1 | Adicionar em rotas de login (igreja/fiel/webmaster) |
 | Payments/Webhooks | Não existe (mock) | Médio (vira alto na integração real) | P2 (bloqueador pra ir a produção real) | Desenhar webhook + idempotência antes do gateway real |
-| Secrets/env vars | Sem `.env.example`, sem vazamento encontrado | Baixo | P2 | Criar `.env.example` |
+| Secrets/env vars | Sem `.env.example` versionado (bloqueado por permissão local ao tentar criar — ver `TESTING.md`), sem vazamento encontrado | Baixo | P2 | Criar `.env.example` quando a permissão permitir |
+| Credenciais/permissões do banco (`DATABASE_URL`) | **Não verificável** — sem acesso ao Neon Console nesta sessão | Desconhecido | P1 (verificar) | Confirmar se a role usada pela app tem privilégio mínimo (schema `public`, sem superuser) |
+| Backups do Neon | **Não verificável** — sem acesso ao Neon Console nesta sessão | Desconhecido | P1 (verificar) | Confirmar PITR habilitado, janela de retenção, teste de restauração |
 | API (rotas HTTP reais) | Sem CSRF explícito em `/api/push/subscribe` | Baixo | P3 | Checar `Origin`/`Sec-Fetch-Site` |
 | Input validation | Validação HTML nativa (`required`, `type`) + checagens em Server Actions | Médio | P2 | Padronizar validação server-side com retorno de erro estruturado |
 | Logs | Sem vazamento sensível encontrado | Baixo | — | Manter disciplina |
@@ -104,6 +106,25 @@ Validação HTML nativa (`required`, `minLength`, `type="email"`) no cliente + c
 2. Checkbox de consentimento explícito no cadastro, com timestamp registrado.
 3. Definir política de retenção (ex: dados de fiel inativo há N anos).
 4. Revisão jurídica de `/privacidade` e `/termos` antes de captar dinheiro real de terceiros.
+
+## Credenciais e acesso ao banco de dados
+
+**Não verificável nesta sessão.** Sem acesso ao Neon Console nem ao valor real de `DATABASE_URL`, não foi possível confirmar:
+
+- Se a role Postgres usada pela aplicação tem privilégio mínimo necessário (CRUD no schema `public`) ou é a role admin/owner default do projeto Neon (mais privilégio do que a aplicação precisa).
+- Se existe uma role separada, com menos privilégio, especificamente para o pipeline de teste (`TEST_DATABASE_URL`) — hoje a recomendação em `TESTING.md` é um branch Neon dedicado, mas o *usuário* de conexão desse branch não foi auditado.
+
+**Ação recomendada**: quem administra o projeto Neon deve confirmar isso e, se a aplicação estiver usando a role owner/admin, criar uma role de aplicação com privilégio restrito (`GRANT` só no necessário, sem `CREATEDB`/`CREATEROLE`).
+
+## Backups
+
+**Não verificável nesta sessão** — depende do painel do Neon. Registrado como dependência a confirmar com quem administra o projeto:
+
+1. Point-in-time recovery (PITR) habilitado? Qual a janela de retenção do plano atual?
+2. Existe algum backup adicional fora do Neon (dump agendado, replicação)?
+3. O processo de restauração já foi testado ao menos uma vez (não só configurado)?
+
+Se isso for responsabilidade de outra pessoa/área (infra/DevOps), registrar aqui como uma dependência explícita, não como algo implementado — não presumir que backups "devem estar funcionando" sem confirmação.
 
 ## Security headers
 

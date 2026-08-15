@@ -19,6 +19,10 @@ import {
   adminB,
   campaignA,
   campaignB,
+  fielA,
+  fielB,
+  donationA,
+  donationB,
   SENHA_TESTE,
 } from "../fixtures/test-data";
 
@@ -67,10 +71,11 @@ async function limparBancoDeTeste() {
 }
 
 // Semente mínima e determinística pra suíte baseline: 2 igrejas, 2 admins,
-// 2 campanhas — o suficiente pros testes de login, criação de campanha,
-// página pública e isolamento multi-tenant (Church A / Church B).
-// WebMaster e Fiel não são seedados aqui — cada spec que precisar deles cria
-// via fluxo real da aplicação (ver tests/e2e/webmaster).
+// 2 fiéis, 2 campanhas, 2 contribuições confirmadas — o suficiente pros
+// testes de login, criação de campanha, página pública, relatório/dashboard
+// e isolamento multi-tenant (Church A / Church B).
+// WebMaster não é seedado aqui — o teste que precisa dele cria via fluxo
+// real da aplicação (ver tests/e2e/webmaster).
 export async function resetAndSeedTestDb() {
   await limparBancoDeTeste();
   const db = getTestDb();
@@ -81,5 +86,7 @@ export async function resetAndSeedTestDb() {
     { ...adminA, senhaHash },
     { ...adminB, senhaHash },
   ]);
+  await db.insert(schema.fieis).values([fielA, fielB]);
   await db.insert(schema.campanhas).values([campaignA, campaignB]);
+  await db.insert(schema.contribuicoes).values([donationA, donationB]);
 }

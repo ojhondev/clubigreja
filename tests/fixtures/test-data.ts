@@ -81,6 +81,57 @@ export const campaignB = {
   criadaEm: "2026-01-02",
 };
 
+export const fielA = {
+  id: "e2e-fiel-a",
+  igrejaId: churchA.id,
+  nome: "Fiel Teste A",
+  telefone: "(11) 90000-1001",
+  criadoEm: "2026-01-03",
+};
+
+export const fielB = {
+  id: "e2e-fiel-b",
+  igrejaId: churchB.id,
+  nome: "Fiel Teste B",
+  telefone: "(11) 90000-1002",
+  criadoEm: "2026-01-03",
+};
+
+// Uma contribuição confirmada por igreja — suficiente para testar relatório/
+// dashboard (soma de arrecadação) e, futuramente, um teste de isolamento
+// multi-tenant sobre dado financeiro (não só sobre campanha/link).
+export const donationA = {
+  id: "e2e-doacao-a",
+  igrejaId: churchA.id,
+  fielId: fielA.id,
+  campanhaId: campaignA.id,
+  tipo: "campanha" as const,
+  meio: "pix" as const,
+  valorBruto: 100,
+  taxaPercentual: 0.025,
+  taxaValor: 2.5,
+  valorTotalFiel: 102.5,
+  taxaCobradaVia: "pix_separado" as const,
+  status: "confirmado" as const,
+  criadaEm: "2026-01-04",
+};
+
+export const donationB = {
+  id: "e2e-doacao-b",
+  igrejaId: churchB.id,
+  fielId: fielB.id,
+  campanhaId: campaignB.id,
+  tipo: "campanha" as const,
+  meio: "pix" as const,
+  valorBruto: 200,
+  taxaPercentual: 0.025,
+  taxaValor: 5,
+  valorTotalFiel: 205,
+  taxaCobradaVia: "pix_separado" as const,
+  status: "confirmado" as const,
+  criadaEm: "2026-01-04",
+};
+
 // WebMaster não é seedado — nenhum webmaster existe no banco de teste
 // recém-resetado, então o teste de webmaster (tests/e2e/webmaster) usa o
 // próprio fluxo de bootstrap ("Master Primário") da aplicação, e não um

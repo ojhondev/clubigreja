@@ -65,6 +65,8 @@ Centralizados em `tests/fixtures/test-data.ts` — nenhuma credencial espalhada 
 - **Church A** / **Church B** — duas igrejas, para todo teste que precisa provar isolamento entre tenants.
 - **Admin A** / **Admin B** — um usuário de igreja por church (senha compartilhada `SENHA_TESTE`, só existe dentro do banco de teste descartável).
 - **Campaign A** / **Campaign B** — uma campanha por church.
+- **Fiel A** / **Fiel B** — um doador por church, base para as contribuições abaixo.
+- **Donation A** / **Donation B** — uma contribuição confirmada por church (campanha + Pix), suficiente para testar relatório/dashboard e um futuro teste de isolamento sobre dado financeiro.
 - **Staff** (segundo usuário por igreja) — não seedado: o fluxo de convite de staff adicional não está implementado no produto ainda (ver `docs/PRODUCT.md`).
 - **WebMaster** — não seedado. O banco de teste recém-resetado não tem nenhum registro em `webmasters`, então o teste de webmaster exercita o fluxo real de bootstrap ("Master Primário") em vez de um fixture artificial.
 
