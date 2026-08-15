@@ -6,6 +6,7 @@ import { iniciarAcessoComo } from "@/lib/auth/session";
 import {
   podeAprovarIgrejas,
   podeGerenciarPagamentos,
+  podeImpersonar,
   webmasterDaSessao,
 } from "@/lib/auth/permissoes";
 import {
@@ -48,7 +49,7 @@ export async function editarChavePixAction(formData: FormData) {
 // dela — dá pra ver exatamente as mesmas telas que a igreja vê.
 export async function acessarComoIgrejaAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
-  if (!webmaster) return;
+  if (!webmaster || !podeImpersonar(webmaster)) return;
 
   const igrejaId = String(formData.get("igrejaId"));
   if (!igrejaId) return;

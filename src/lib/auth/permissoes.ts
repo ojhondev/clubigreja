@@ -29,3 +29,15 @@ export function podeAprovarIgrejas(webmaster: Webmaster): boolean {
 export function podeGerenciarPagamentos(webmaster: Webmaster): boolean {
   return webmaster.nivel === "primario" || webmaster.podeGerenciarPagamentos;
 }
+
+// "Acessar como" (impersonação de igreja/fiel) dá visão total da conta
+// impersonada — dashboard financeiro, histórico, dados pessoais. Restrito
+// ao Master Primário por ora: não existe coluna de permissão própria pra
+// isso ainda (achado H2/AUDIT.md), e reaproveitar podeAprovarIgrejas ou
+// podeGerenciarPagamentos pra esse fim seria semanticamente errado — essas
+// flags autorizam ações específicas, não "ver tudo de qualquer conta". Se o
+// produto precisar que um Master Secundário impersone no futuro, isso pede
+// uma flag própria (migration), não uma reinterpretação de flag existente.
+export function podeImpersonar(webmaster: Webmaster): boolean {
+  return webmaster.nivel === "primario";
+}

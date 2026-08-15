@@ -2,12 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { iniciarAcessoComo } from "@/lib/auth/session";
-import { webmasterDaSessao } from "@/lib/auth/permissoes";
+import { podeImpersonar, webmasterDaSessao } from "@/lib/auth/permissoes";
 import { getFiel } from "@/lib/db/repo";
 
 export async function acessarComoFielAction(formData: FormData) {
   const webmaster = await webmasterDaSessao();
-  if (!webmaster) return;
+  if (!webmaster || !podeImpersonar(webmaster)) return;
 
   const fielId = String(formData.get("fielId"));
   if (!fielId) return;
