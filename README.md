@@ -40,6 +40,17 @@ npm run build
 npm start
 ```
 
+## Testes E2E
+
+```bash
+npm run test:e2e         # roda a suíte completa (headless)
+npm run test:e2e:ui      # UI mode interativo
+npm run test:e2e:headed  # com browser visível
+npm run test:e2e:report  # abre o relatório da última execução
+```
+
+Requer `TEST_DATABASE_URL` (banco de teste dedicado, nunca o mesmo de `DATABASE_URL`) para os testes que dependem de dados — sem ela, esses testes são pulados automaticamente. Ver [`docs/TESTING.md`](docs/TESTING.md).
+
 ## Documentação
 
 Documentação completa em [`/docs`](docs/):
@@ -55,4 +66,5 @@ Documentação completa em [`/docs`](docs/):
 - [`ROADMAP.md`](docs/ROADMAP.md) e [`BACKLOG.md`](docs/BACKLOG.md) — o que vem a seguir
 - [`CHECKLIST.md`](docs/CHECKLIST.md) — prontidão para produção
 - [`DECISIONS.md`](docs/DECISIONS.md) — ADRs
+- [`TESTING.md`](docs/TESTING.md) — infraestrutura de testes E2E (Playwright)
 - [`conventions/`](docs/conventions/) — convenções de código de backend e frontend
